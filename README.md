@@ -1,2 +1,2 @@
 # MATL
-A programming language based on MATLB and suitable for code golfing
+A programming language based on MATLAB and suitable for code golfing
