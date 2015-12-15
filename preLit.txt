@@ -1,0 +1,239 @@
+X0
+
+1	'stable'
+2	'sorted'
+3	'rows'
+4	'last'
+5	'reverse'
+10	'first'
+11	'forward'
+12	'legacy'
+
+
+X1
+
+1	'bank'
+2	'compact'
+3	'hex'
+4	'short'
+5	'shortg'
+6	'long'
+7	'longg'
+8	'loose'
+9	'rat'
+10	'longe'
+11	'longeng'
+12	'shorte'
+13	'shorteng'
+
+
+X2
+
+1	'double'
+2	'int8'
+3	'int64'
+4	'uint8'
+5	'uint64'
+6	'char'
+7	'logical'
+8	'single'
+10	'int16'
+11	'int32'
+12	'uint16'
+13	'uint32'
+14	'like'
+15	'decimals'
+16	'includenan'
+17	'native'
+18	'omitnan'
+19	'significant'
+
+
+X3
+
+1	'start'
+2	'end'
+3	'tokenExtents'
+4	'match'
+5	'tokens'
+6	'names'
+7	'split'
+8	'once'
+10	'ignorecase'
+11	'preservecase'
+
+
+X4
+
+1	'CollapseDelimiters'
+2	'DelimiterType'
+3	'RegularExpression'
+4	'center'
+5	'left'
+6	'local'
+10	'right'
+
+
+X5
+
+1	'full'
+2	'same'
+3	'valid'
+6	'linear'
+7	'nearest'
+8	'next'
+9	'previous'
+10	'spline'
+11	'pchip'
+12	'cubic'
+13	'v5cubic'
+14	'extrap'
+
+
+X6
+
+1	'get'
+2	'post'
+3	'Timeout'
+9	'none'
+11	'Frames'
+12	'BackgroundColor'
+13	'Index'
+14	'Info'
+15	'ReductionLevel'
+16	'PixelRegion'
+17	'V79Compatible'	
+
+
+
+
+X7
+1	'BinWidth'
+2	'BinLimits'
+3	'Normalization'
+4	'count'
+5	'probability'
+6	'countdensity'
+7	'pdf'
+8	'cumcount'
+9	'cdf'
+10	'BinMethod'
+11	'auto'
+12	'scott'
+13	'fd'
+14	'integers'
+15	'sturges'
+16	'sqrt'
+
+
+X8
+
+1	'cityblock'
+2	'minkowski'
+3	'chebychev'
+4	'cosine'
+5	'correlation'
+6	'hamming'
+10	'euclidean'
+11	'seuclidean'
+12	'mahalanobis'
+13	'spearman'
+14	'jaccard'
+15	'fro'
+16	'Smallest'
+17	'Largest'
+18	'tomatrix'
+19	'tovector'
+
+
+X9
+
+1	'shuffle'
+2	'default'
+3	'twister'
+4	'simdTwister'
+5	'combRecursive'
+6	'multFibonacci'
+10	'v5uniform'
+11	'v5normal'
+12	'v4'
+
+
+Y0
+
+1	'Color'
+2	'LineStyle'
+3	'LineWidth'
+4	'Marker'
+5	'MarkerSize'
+6	'on'
+7	'off'
+8	'CDataMapping'
+9	'scaled'
+20	'auto'
+21	'LineJoin'
+22	'chamfer' 
+23	'miter'
+24	'round'
+25	'square'
+26	'diamond'
+27	'pentagram'
+28	'hexagram'
+29	'visible'
+30	'Clipping'
+31	'MarkerEdgeColor'
+32	'MarkerFaceColor'
+40	'direct'
+41	'AlphaData'
+42	'AlphaDataMapping'
+43	'Cdata'
+44	'Xdata'
+45	'Ydata'
+46	'ZData'
+50	'autumn'
+51	'bone'
+52	'colorcube'
+53	'cool'
+54	'copper'
+55	'flag'
+56	'gray'
+57	'hot'
+58	'hsv'
+59	'jet'
+60	'lines'
+61	'parula'
+62	'pink'
+63	'prism'
+64	'spring'
+65	'summer'
+66	'winter'
+
+
+Y1
+
+1	'mean'
+2	'min'
+3	'max'
+4	'{sort(x)}'
+5	'{sort(x).''}'
+10	'sum'
+11	'x(end)'
+12	'{cumsum(x)}'
+13	'{cumsum(x).''}'
+14	'nansum'
+15	'nanmean'
+16	'nanmin'
+17	'nanmax'
+18	'{cummax(x)}'
+19	'{cummax(x).''}'
+
+
+Y2
+
+1	'A':'Z'
+2	'a':'z'
+3	['A':'Z' 'a':'z']
+4	'0':'9'
+11	'aeiou'
+12	'AEIOU'
+13	'aeiouAEIOU'

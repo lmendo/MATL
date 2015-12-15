@@ -1,0 +1,563 @@
+% This is the function definition master file. It is used for reading from the MATL compiler, and for generating LaTeX content.					
+%   Comment lines start with "%" symbol
+%   Columns are separated by tabs, and are as follows:
+%     - source: MATL source code
+%     - minIn: minimum number of inputs. This is interpreted as a string that goes to the compiled code directly
+%     - maxIn: default number of inputs. A string too
+%     - defIn: default number of inputs
+%     - minOut: minimum number of outputs
+%     - maxOut: maximum number of outputs
+%     - defOut: default number of outputs. A string too
+%     - consumeInputs: whether used inputs are removed from the stack
+%     - wrap: whether function body should be wrapped at all
+%     - body: function body. May span several lines, leaving first column empty
+%     - comment (for matl program)
+%     - description (for LaTeX)
+%						
+% src	minIn	maxIn	defIn	minOut	maxOut	defOut	consumeInputs	wrap	body	Comment (for matl)	description (for LaTex)
+!	1	1	1	1	1	1	true	true	out{1} = in{1}.';	transpose	\matlab+.'+ (\matlab+transpose+)
+X!	1	2	1	1	1	1	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
+Y!	1	1	1	0	2	2	true	true	[out{:}] = system(in{:});	execute system command	\matlab+system+
+Z!	1	1	1	1	1	1	true	true	out{1} = full(in{1});	convert sparse matrix to full matrix	\matlab+full+
+"					
+X"	2	inf	3	1	1	1	true	true	out{1} = repmat(in{:});	replicate and tile array	\matlab+repmat+
+Y"	2	inf	2	1	1	1	true	true	out{1} = repelem(in{:});	replicate elements of array	\matlab+repelem+ (run-length decoding)
+Z"
+#	1	1	1	0	0	0	false	false	S_OUT = STACK{end}; STACK(end) = [];	output specification	specify outputs for next function
+% The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
+X#	
+Y#	1	2	1	0	0	0	true	true	rng(in{:});	control the random number generator	\matlab+rng+
+Z#	1	3	1	0	0	0	true	true	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Appends first input to file \comp{inout}, creating it if necessary. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether any previous contents of file should be kept.
+									sep = char(10);
+									if numel(in)>=2 && ~isempty(in{2}), file = in{2}; else file = 'inout'; end
+									if numel(in)>=3 && ~in{3}, perm = 'w'; else perm = 'a'; end
+									fid = fopen(file, perm);	
+									for n = 1:numel(data)
+									fwrite(fid, char(data{n}));
+									if n<numel(data), fwrite(fid, sep); end
+									end
+									fclose(fid);
+$	1	1	1	0	0	0	false	false	S_IN = STACK{end}; STACK(end) = [];	input specification	specify inputs for next function
+% The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
+X$	1	inf	2	0	inf	1	true	true	[out{:}] = feval(in{:});	execute Matlab function	execute Matlab function specified by first input, using the rest of the inputs as arguments.
+Y$	1	2	1	1	1	1	true	true	out{1} = char(vpa(in{:}));	variable precision arithmetic	\matlab+char(vpa(...))+
+Z$	0	1	0	1	1	1	true	true	if ~numel(in) || isempty(in{1}), in{1} = 'inout'; end; fid = fopen(in{1}, 'r');	read from file	Reads bytes from specifed file. The output is a row vector of char. If $0$ inputs or empty input: file name is \comp{inout}.
+									x = reshape(fread(fid,inf,'*char'),1,[]);
+									fclose(fid); out{1} = x;
+%					
+X%	1	1	1	1	1	1	true	true	out{1} = class(in{1});	class	class of input (\matlab+class+ with one input)
+Y%	2	3	2	1	1	1	true	true	out{1} = cast(in{:});	cast to data type	\matlab+cast+				
+Z%	2	2	2	1	1	1	true	true	out{1} = typecast(in{:});	convert datatypes without changing underlying data	\matlab+typecast+
+&	2	2	2	1	1	1	true	true	out{1} = bsxfun(@and, in{1}, in{2});	logical 'and' (element-wise, singleton expansion)	\matlab+&+ (\matlab+and+), element-wise with singleton expansion
+X&	2	4	2	1	3	1	true	true	[out{:}] = intersect(in{:});	set intersection	\matlab+intersect+
+Y&					
+Z&	2	3	2	1	1	1	true	true	out{1} = bitand(in{:});	bit-wise logical 'and'	\matlab+bitand+
+'											
+X'
+Y'	1	1	1	2	2	2	true	true	data = in{1}(:);	run-length encoding	run-length encoding (inverse of \matlab+repelem+). Input may be an array or cell array. Numeric values must be finite
+									if ~iscell(in{1}), ch = [1; find(diff(data))+1; numel(data)+1];
+									else ch = [1 find(arrayfun(@(n) data{n}~=data{n+1}, 1:numel(data)-1))+1 numel(data)+1].'; end
+									result = {data(ch(1:end-1)), diff(ch)};
+									if ndims(in{1})==2 && size(in{1},1)==1, result{1} = result{1}.'; result{2} = result{2}.'; end
+									[out{:}] = result{:};
+Z'	0	0	0	1	1	1	true	true	out{1} = now;	current date and time	\matlab+now+
+(	3	inf	3	1	1	1	true	true	arrayDestination = in{1};	assignment () indexing	assignment \matlab+( )+ indexing
+									arrayData = in{2};
+									indices = in(3:end);
+									Ni = numel(indices);
+									sz = size(arrayDestination);
+									sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ];
+									for n = 1:Ni
+									if ~islogical(indices{n}) && ~all(real(indices{n}(:)))
+									indices{n} = num2cell(real(indices{n})+(sz(n)+imag(indices{n})).*~real(indices{n}));
+									if numel(indices{n})==1, indices{n} = indices{n}{1}; else shape = find(size(indices{n})>1,1); indices{n} = colon(indices{n}{:}); indices{n} = shiftdim(indices{n}(:),1-shape); end
+									end
+									end
+									arrayDestination(indices{:}) = arrayData;
+									out{1} = arrayDestination;
+% This code above was easy, after the code for ) had been done
+% shiftdim is needed to preserve end-index shape (the colon operation gives a row vector both for say [1 0] and [1;0]). I realized this here, with assignment indexing. For referencing indexing and for curly-brace indexing it probably doesn't matter, but I also add the shiftdim operation there just case
+X(	3	inf	3	1	1	1	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{end};	assignment {} indexing	assignment \matlab+{ }+ indexing
+									indices = in(end-Ni:end-1);
+									data = in(2:end-Ni-1); 
+									arrayDestination = in{1};
+									assert(iscell(arrayDestination), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
+									sz = size(arrayDestination);
+									sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ];
+									for n = 1:Ni
+									if ~islogical(indices{n}) && ~all(real(indices{n}(:)))
+									indices{n} = num2cell(real(indices{n})+(sz(n)+imag(indices{n})).*~real(indices{n}));
+									if numel(indices{n})==1, indices{n} = indices{n}{1}; else shape = find(size(indices{n})>1,1); indices{n} = colon(indices{n}{:}); indices{n} = shiftdim(indices{n}(:),1-shape); end
+									end
+									end
+									nei = cellfun(@nnz, indices);
+									if numel(nei)==1, nei = [nei 1]; end
+									arrayDestination(indices{:}) = reshape(data, nei);
+									out{1} = arrayDestination;
+% This code above was based on that for (.
+% An added difficulty is that `[arrayDestination{indices{:}}] = deal(data{:})` doesn't work (but explicitly writing the indices does work!: [arrayDestination{1:2, 3:4}] = deal(data{:}) ). So I had to use () indexing on the LHS and reshape on the RHS
+% nnz works for numeric, logical or char indices
+Y(					
+Z(					
+)	2	inf	2	1	1	1	true	true	array = in{1};	reference () indexing	reference \matlab+( )+ indexing
+									indices = in(2:end);
+									Ni = numel(indices);
+									sz = size(array);
+									sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ];
+									for n = 1:Ni
+									if ~islogical(indices{n}) && ~all(real(indices{n}(:)))
+									indices{n} = num2cell(real(indices{n})+(sz(n)+imag(indices{n})).*~real(indices{n}));
+									if numel(indices{n})==1, indices{n} = indices{n}{1}; else shape = find(size(indices{n})>1,1); indices{n} = colon(indices{n}{:}); indices{n} = shiftdim(indices{n}(:),1-shape); end
+									end
+									end
+									out{1} = array(indices{:});
+% This code above for ) indexing has been a little difficult. It had to correctly handle an arbitrary number of indices, possibly with partially linear indexing; and end-based indexing
+X)	2	inf	2	1	1	1	true	true	array = in{1};	reference {} indexing	reference \matlab+{ }+ indexing
+									assert(iscell(array), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
+									indices = in(2:end);
+									Ni = numel(indices);
+									sz = size(array);
+									sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ];
+									for n = 1:Ni
+									if ~islogical(indices{n}) && ~all(real(indices{n}(:)))
+									indices{n} = num2cell(real(indices{n})+(sz(n)+imag(indices{n})).*~real(indices{n}));
+									if numel(indices{n})==1, indices{n} = indices{n}{1}; else shape = find(size(indices{n})>1,1); indices{n} = colon(indices{n}{:}); indices{n} = shiftdim(indices{n}(:),1-shape); end
+									end
+									end
+									out = reshape(array(indices{:}),1,[]);
+Y)	1	1	1	1	1	1	true	true	out{1} = in{1}(:);	linearize to column array	linearize to column array (\matlab+(:)+)
+Z)	1	1	1	1	inf	numel(in{1})	true	true	assert(iscell(in{1}), 'MATL:runtime', 'MATL run-time error: a cell array is needed as input');	unbox cell array	generate comma-separated list from cell array (\matlab+{:}+) and push each element onto stack
+									out = reshape(in{1}(1:nout),1,[]);
+*	2	2	2	1	1	1	true	true	out{1} = bsxfun(@times, in{1}, in{2});	array product (element-wise, singleton expansion)	\matlab+.*+ (\matlab+times+), element-wise with singleton expansion
+X*	2	2	2	1	1	1	true	true	out{1} = kron(in{:});	Kronecker tensor product	\matlab+kron+
+Y*	2	2	2	1	1	1	true	true	out{1} = in{1}*in{2};	matrix product	matrix product, \matlab+*+ (\matlab+mtimes+)
+Z*	1	inf	2	1	1	1	true	true	n = numel(in); combs = cell(1,n);	Cartesian product	Cartesian product. Given an $n$ of vectors of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those vectors
+									[combs{end:-1:1}] = ndgrid(in{end:-1:1});
+									combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
+									out{1} = combs; clear combs n
++	2	2	2	1	1	1	true	true	out{1} = bsxfun(@plus, in{1}, in{2});	addition (element-wise, singleton expansion)	\matlab|+| (\matlab+plus+), element-wise with singleton expansion
+X+	2	3	2	1	1	1	true	true	out{1} = conv(in{:});	convolution	\matlab+conv+
+Y+	2	4	2	1	1	1	true	true	out{1} = conv2(in{:});	two-dimensional convolution	\matlab+conv2+
+Z+	2	2	2	1	1	1	true	true	out{1} = convmtx(in{:});	convolution matrix	\matlab+convmtx+
+,					
+X,	1	1	1	1	1	1	true	true	out{1} = cos(in{1});	cosine (radians)	\matlab+cos+
+Y,	1	1	1	1	1	1	true	true	out{1} = sin(in{1});	sine (radians)	\matlab+sin+
+Z,	1	1	1	1	1	1	true	true	out{1} = tan(in{1});	tangent (radians)	\matlab+tan+
+-	2	2	2	1	1	1	true	true	out{1} = bsxfun(@minus, in{1}, in{2});	subtraction (element-wise, singleton expansion)	\matlab+-+ (\matlab+minus+), element-wise with singleton expansion
+X-	2	4	2	1	2	1	true	true	[out{:}] = setdiff(in{:});	set difference	\matlab+setdiff+
+Y-					
+Z-					
+.					
+X.
+Y.	0	1	1	0	0	0	true	true	pause(in{:})	pause	\matlab+pause+ (without outputs)
+Z.	2	3	2	1	1	1	true	true	out{1} = bitget(in{:});	get bit	\matlab+bitget+
+/	2	2	2	1	1	1	true	true	out{1} = bsxfun(@rdivide, in{1}, in{2});	array right division (element-wise, singleton expansion)	\matlab+./+ (\matlab+rdivide+), element-wise with singleton expansion
+X/	1	1	1	1	1	1	true	true	out{1} = angle(in{1});	phase angle (radians)	\matlab+angle+
+Y/	2	2	2	1	1	1	true	true	out{1} = in{1}/in{2};	right matrix division	right matrix division, \matlab+/+ (\matlab+mrdivide+)
+Z/	1	3	1	1	1	1	true	true	out{1} = unwrap(in{:});	unwrap phase angle	\matlab+unwrap+
+0					
+X0	1	1	1	1	1	1	true	true	fn = 'X0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y0	1	1	1	1	1	1	true	true	fn = 'Y0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Z0
+1					
+X1	1	1	1	1	1	1	true	true	fn = 'X1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y1	1	1	1	1	1	1	true	true	fn = 'Y1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Z1					
+2					
+X2	1	1	1	1	1	1	true	true	fn = 'X2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y2	1	1	1	1	1	1	true	true	fn = 'Y2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Z2					
+3					
+X3	1	1	1	1	1	1	true	true	fn = 'X3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y3	1	1	1	1	1	1	true	true	fn = 'Y3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Z3					
+4					
+X4	1	1	1	1	1	1	true	true	fn = 'X4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y4	1	1	1	1	1	1	true	true	fn = 'Y4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+
+Z4					
+5					
+X5	1	1	1	1	1	1	true	true	fn = 'X5'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y5					
+Z5					
+6					
+X6	1	1	1	1	1	1	true	true	fn = 'X6'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y6					
+Z6					
+7					
+X7	1	1	1	1	1	1	true	true	fn = 'X7'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y7					
+Z7					
+8					
+X8	1	1	1	1	1	1	true	true	fn = 'X8'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y8					
+Z8					
+9					
+X9	1	1	1	1	1	1	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+									assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
+									out{1} = preLit.(fn).val{k};
+Y9					
+Z9					
+:	1	3	1	1	1	1	true	true	if numel(in)==1, out{1} = colon(1,in{1}); else out{1} = colon(in{:}); end	vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+
+X:
+Y:
+Z:	2	3	2	1	1	1	true	true	out{1} = bitset(in{:});	set bit	\matlab+bitset+
+;
+X;	1	1	1	1	1	1	true	true	out{1} = acos(in{1});	inverse cosine (radians)	\matlab+acos+
+Y;	1	1	1	1	1	1	true	true	out{1} = asin(in{1});	inverse sine (radians)	\matlab+asin+
+Z;	2	2	2	1	1	1	true	true	out{1} = bsxfun(@atan2, in{1}, in{2});	four quadrant inverse tangent (radians; element-wise, singleton expansion)	\matlab+atan2+, element-wise with singleton expansion
+<	2	2	2	1	1	1	true	true	out{1} = bsxfun(@lt, in{1}, in{2});	is less than? (element-wise, singleton expansion)	\matlab+<+ (\matlab+lt+), element-wise with singleton expansion
+X<	1	3	1	1	2	1	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion
+									else [out{:}] = min(in{:}); end
+Y<	1	3	1	1	1	1	true	true	out{1} = cummin(in{:});	cumulative minimum	\matlab+cummin+
+Z<					
+=	2	2	2	1	1	1	true	true	out{1} = bsxfun(@eq, in{1}, in{2});	is equal? (element-wise, singleton expansion)	\matlab+==+ (\matlab+eq+), element-wise with singleton expansion
+X=	2	inf	2	1	1	1	true	true	out{1} = isequal(in{:});	true if arrays are numerically equal	\matlab+isequal+
+Y=	2	2	2	1	1	1	true	true	out{1} = strcmp(in{:});	compare strings	\matlab+strcmp+
+Z=	3	3	3	1	1	1	true	true	out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+
+>	2	2	2	1	1	1	true	true	out{1} = bsxfun(@gt, in{1}, in{2});	is greater than? (element-wise, singleton expansion)	\matlab+>+ (\matlab+gt+), element-wise with singleton expansion
+X>	1	3	1	1	2	1	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion
+									else [out{:}] = max(in{:}); end
+Y>	1	3	1	1	1	1	true	true	[out{1}] = cummax(in{:});	cumulative maximum	\matlab+cummax+
+Z>					
+?					
+X?					
+Y?
+Z?	1	6	3	1	1	1	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
+@					
+X@	1	1	1	1	1	1	true	true	out{1} = spiral(in{:});	matrix with spiral pattern	\matlab+spiral+
+Y@	1	1	1	1	1	1	true	true	out{1} = perms(in{:});	all possible permutations	\matlab+perms+
+Z@	1	2	1	1	1	1	true	true	out{1} = randperm(in{:});	random permutation	\matlab+randperm+
+A	1	2	1	1	1	1	true	true	out{1} = all(in{:});	all	\matlab+all+
+XA					
+YA	2	4	2	1	1	1	true	true	if numel(in{2})==1, out{1} = dec2base(in{:});	convert integer to string representation in given base	\matlab+dec2base+. If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$
+									else d = in{1}(:); symbols = in{2}(:).'; b = numel(symbols);
+									if ~(isnumeric(d) || ischar(d)) || any(d ~= floor(d)) || any(d < 0) || any(d > 1/eps)
+									error(message('MATLAB:dec2base:FirstArg')); end
+									if numel(in)>2 && (~isscalar(in{3}) || ~(isnumeric(in{3}) || ischar(in{3})) || in{3} ~= floor(in{3}) || in{3} < 0)
+									error(message('MATLAB:dec2base:ThirdArg')); end
+									d = double(d);
+									n = max(1,round(log2(max(d)+1)/log2(b)));
+									while any(b.^n <= d), n = n + 1; end
+									if numel(in)>2, n = max(n,in{3}); end
+									s(:,n) = rem(d,b);
+									while any(d) && n >1, n = n - 1; d = floor(d/b); s(:,n) = rem(d,b); end
+									s = reshape(symbols(s + 1),size(s));
+									out{1} = s;
+									end
+% Adapted from dec2base
+ZA	2	2	2	1	1	1	true	true	if numel(in{2})==1, out{1} = base2dec(in{:});	convert string in given base to decimal integer	\matlab+base2dec+. If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$
+									else h = char(in{1}); symbols = double(in{2}); b = numel(symbols);
+									if ~isempty(find(h==' ' | h==0,1)), 
+									h = strjust(h); h(h==' ' | h==0) = '0'; end
+									[m,n] = size(h);
+									bArr = [ones(m,1) cumprod(b(ones(m,n-1)),2)];
+									values = -1*ones(256,1);
+									values(symbols) = 0:b-1;
+									if any(any(values(h) >= b | values(h) < 0))
+									error(message('MATLAB:base2dec:NumberOutsideRange', h,b));
+									end
+									a = fliplr(reshape(values(abs(h)),size(h)));
+									out{1} = sum((bArr .* a),2); end
+B	1	2	1	1	1	1	true	true	out{1} = logical(dec2bin(in{:})-'0');	convert from decimal to binary. Produces a logical vector	\matlab|logical(dec2bin(...)-'0')|
+XB	1	1	1	1	1	1	true	true	out{1} = bin2dec(char(in{1}+'0'));	convert from binary to decimal	\matlab|bin2dec(char(...+'0'))|
+YB	1	2	1	1	1	1	true	true	out{1} = dec2bin(in{:});	convert decimal number to binary string	\matlab|dec2bin|
+ZB	1	1	1	1	1	1	true	true	out{1} = bin2dec(in{1});	convert binary string to decimal number	\matlab|bin2dec|
+C					
+XC	1	7	2	1	3	1	true	true	[out{:}] = histcounts(in{:});	histogram bin counts	\matlab+histcounts+
+YC	1	inf	2	1	1	1	true	true	out{1} = cell(in{:});	create cell array	\matlab+cell+
+ZC
+D	0	inf	1	0	0	0	true	true	if numel(in)==1, data = in; fmt = {16}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.16g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+									kk = cellfun(@iscell, data); 
+									while any(kk)
+									data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
+									for k = find(kk), data{k} = data{k}(:); end
+									data = vertcat(data{:}); kk = cellfun(@iscell, data); end
+									for k = 1:numel(data), disp(num2str(data{k}, fmt{:})), end
+									clear data kk k
+XD	0	inf	numel(STACK)	0	0	0	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.16g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+D+, \matl+YD+, \matl+ZD+
+									kk = cellfun(@iscell, data); 
+									while any(kk)
+									data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
+									for k = find(kk), data{k} = data{k}(:); end
+									data = vertcat(data{:}); kk = cellfun(@iscell, data); end
+									for k = 1:numel(data), disp(num2str(data{k}, '%.16g ')), end
+									clear data kk k
+YD	1	inf	2	0	2	1	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+ (without file identifier). \sa \matl+D+, \matl+XD+, \matl+ZD+
+									else fprintf(in{:}); end					
+ZD	0	inf	1	0	0	0	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
+E
+XE
+YE					
+ZE					
+F					
+XF					
+YF	0	1	1	0	0	0	true	true	format(in{:})	set output format	\matlab+format+				
+ZF					
+G					
+XG	1	inf	1	0	0	0	true	true	plot(in{:});	plot	\matlab+plot+				
+YG	0	3	1	0	0	0	true	true	image(in{:}); axis ij, axis image	display image	\matlab+image(...), axis ij, axis image+
+ZG	1	1	1	0	1	0	true	true	[out{:}] = colormap(in{:});
+H	0	0	0	0	inf	numel(CB_H)	true	true	out = CB_H(1:nout);	paste from clipboard H	paste from clipboard H
+XH	0	inf	1	0	0	0	false	true	CB_H = in;	copy to clipboard H	copy to clipboard H
+YH	
+ZH	
+I	0	0	0	0	inf	numel(CB_I)	true	true	out = CB_I(1:nout);	paste from clipboard I	paste from clipboard I
+XI	0	inf	1	0	0	0	false	true	CB_I = in;	copy to clipboard I	copy to clipboard I
+YI	
+ZI	
+J	0	0	0	0	inf	numel(CB_J)	true	true	out = CB_J(1:nout);	paste from clipboard J	paste from clipboard J
+XJ	0	inf	1	0	0	0	false	true	CB_J = in;	copy to clipboard J	copy to clipboard J
+YJ	
+ZJ	
+K	0	0	0	0	inf	numel(CB_K)	true	true	out = CB_K(1:nout);	paste from clipboard K	paste from clipboard K
+XK	0	inf	1	0	0	0	false	true	CB_K = in;	copy to clipboard K	copy to clipboard K
+YK	
+ZK	
+L	1	1	1	0	inf	numel(CB_L{in{1}})	true	true	out = [CB_L{in{1}}(1:nout)];	paste from multi-level clipboard L.	paste from multi-level clipboard L. Input specifies level
+XL	1	inf	2	0	0	0	false	true	CB_L{in{end}} = in(1:end-1); STACK(end+nin(end)) = [];	copy to multi-level clipboard L	copy to multi-level clipboard L. Topmost input specifies level
+YL	
+ZL	
+M					
+XM					
+YM					
+ZM					
+N	0	0	0	1	1	1	true	true	out{1} = numel(STACK);	number of elements in the stack	number of elements in the stack
+XN					
+YN	0	inf	0	1	1	1	true	true	out{1} = NaN(in{:});	not-a-number	\matlab+NaN+ function. If $0$ inputs: produces literal \matlab+NaN+.
+ZN	1	1	1	1	1	1	true	true	out{1} = isnan(in{:});	true for not-a-number	\matlab+isnan+
+O	0	inf	0	1	1	1	true	true	if numel(in)==0, out{1} = 0; else out{1} = zeros(in{:}); end	array of zeros	\matlab+zeros+ (if $0$ inputs: produces output $0$)
+XO	1	4	1	1	1	1	true	true	out{1} = datestr(in{:});	string representation of date	\matlab+datestr+
+YO	1	6	1	1	1	1	true	true	out{1} = datenum(in{:});	serial date number	\matlab+datenum+
+ZO	1	3	1	1	6	1	true	true	[out{:}] = datevec(in{:});	date components	\matlab+datevec+
+P	1	2	1	1	1	1	true	true	out{1} = flip(in{:});	flip the order of elements	\matlab+flip+					
+XP	1	2	1	1	1	1	true	true	out{1} = pdist(in{:});	pairwise distances between points	\matlab+pdist+
+YP	2	5	2	1	1	1	true	true	out{1} = pdist2(in{:});	pairwise distances between two sets of points	\matlab+pdist2+
+ZP	2	3	2	1	1	1	true	true	if numel(in)==2, out{1} = polyval(in{:}); else out{1} = polyval(in{1},in{2},[],in{3}); end	evaluate polynomial	If $2$ inputs \matlab+p+ and \matlab+x+: \matlab+y=polyval(p,x)+. If $3$ inputs \matlab+p+, \matlab+x+ and \matlab+mu+: \matlab+y=polyval(p,x,[],mu)+
+Q					
+XQ					
+YQ					
+ZQ					
+R	1	2	1	1	1	1	true	true	out{1} = triu(in{:});	upper triangular part	\matlab+triu+. \sa \matl+XR+.
+XR	1	1	1	1	1	1	true	true	out{1} = triu(in{1},1);	upper triangular part, above diagonal	\matlab+triu(..., 1)+. \sa \matl+R+.
+YR	1	2	1	1	1	1	true	true	out{1} = tril(in{:});	lower triangular part	\matlab+tril+. \sa \matl+ZR+.
+ZR	1	1	1	1	1	1	true	true	out{1} = tril(in{1},-1);	lower triangular part, without diagonal	\matlab+tril(..., -1)+. \sa \matl+YR+.
+S	1	3	1	1	2	1	true	true	if numel(in)==2 && in{2}<0, in{2}=-in{2}; in{3} = 'descend'; end, [out{:}] = sort(in{:});	sort	\matlab+sort+. If $2$ inputs: a negative value of the second input corresponds to descending order
+XS	1	2	1	1	2	1	true	true	[out{:}] = sortrows(in{:});	sort rows	\matlab+sortrows+				
+YS	2	3	2	1	1	1	true	true	out{1} = circshift(in{:});	circular shift	\matlab+circshift+
+ZS	1	2	1	1	1	1	true	true	out{1} = squareform(in{:});	reformat distance matrix between upper triangular and square form	\matlab+squareform+
+T					
+XT
+YT	1	2	2	1	1	1	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+					
+ZT					
+U
+XU					
+YU					
+ZU					
+V					
+XV					
+YV					
+ZV					
+W					
+XW					
+YW					
+ZW					
+X					
+XX	2	9	2	1	6	1	true	true	[out{:}] = regexp(in{:});	match regular expression	\matlab+regexp+
+YX	3	5	3	1	1	1	true	true	[out{:}] = regexprep(in{:});	replace string using regular expression	\matlab+regexprep+	
+ZX					
+Y					
+XY					
+YY	0	inf	0	1	1	1	true	true	out{1} = inf(in{:});	infinity	\matlab+inf+ function. If $0$ inputs: produces literal \matlab+inf+.
+ZY	1	1	1	1	1	1	true	true	out{1} = isinf(in{:});	true for infinite elements	\matlab+isinf+
+Z					
+XZ					
+YZ					
+ZZ					
+[					
+X[	2	2	2	1	inf	2	true	true	[out{:}] = ind2sub(in{:});	convert linear index into subscripts	\matlab+ind2sub+
+Y[	1	1	1	1	1	1	true	true	out{1} = floor(in{:});	round towards minus infinity	\matlab+floor+
+Z[					
+\	2	2	2	1	1	1	true	true	out{1} = bsxfun(@mod, in{1}, in{2});	modulus after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion
+X\	2	2	2	1	1	1	true	true	out{1} = bsxfun(@mod, in{1}-1, in{2})+1;	modulus with 0 replaced by divisor (element-wise, singleton expansion)	\matlab|mod(...-1)+1|, element-wise with singleton expansion
+Y\	2	2	2	1	1	1	true	true	out{1} = in{1}\in{2};	left matrix division	left matrix division, \matlab+\+ (\matlab+mldivide+)
+Z\					
+]					
+X]	3	inf	3	1	1	1	true	true	out{1} = sub2ind(in{:});	convert subscripts into linear index	\matlab+sub2ind+
+Y]	1	1	1	1	1	1	true	true	out{1} = ceil(in{:});	round towards infinity	\matlab+ceil+
+Z]					
+^	2	2	2	1	1	1	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
+X^	1	1	1	1	1	1	true	true	out{1} = sqrt(in{:});	square root	\matlab+sqrt+				
+Y^	2	2	2	1	1	1	true	true	out{1} = in{1}^in{2};	matrix power	\matlab+^+ (\matlab+mpower+)			
+Z^					
+_	1	1	1	1	1	1	true	true	out{1} = -in{1};	unary minus	unary \matlab+-+ (\matlab+uminus+)
+X_					
+Y_					
+Z_					
+`					
+X`	
+Y`	0	0	0	0	1	0	true	true	if numel(out)==1, out{1} = tic; else tic; end	start a stopwatch timer	\matlab+tic+
+Z`	0	1	0	0	1	1	true	true	if numel(in) && numel(out)==1, out{1} = toc(in{:});	read the stopwatch timer	\matlab+toc+
+									elseif numel(in) && numel(out)==0, toc(in{:});
+									elseif ~numel(in) && numel(out)==1, out{1} = toc;
+									elseif ~numel(in) && numel(out)==0, toc; end
+% Matlab R2015b hangs with tic; in = {}; t=toc(in{:}). That's why I distinguish here the no-input version
+a	1	2	1	1	1	1	true	true	out{1} = any(in{:});	any	\matlab+any+
+Xa					
+Ya					
+Za					
+b	0	inf	3	0	0	0	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
+Xb					
+Yb	1	inf	1	1	2	1	true	true	[out{:}] = strsplit(in{:});	split string at delimiter	\matlab+strsplit+
+Zb					
+c	1	inf	1	1	1	1	true	true	out{1} = char(in{:});	convert to character array	\matlab+char+
+Xc	3	inf	3	1	1	1	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
+Yc	2	inf	2	1	1	1	true	true	out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+
+Zc	1	2	1	1	1	1	true	true	out{1} = strjoin(in{:});	join cell array of strings into single string	\matlab+strjoin+
+d	1	3	1	1	1	1	true	true	out{1} = diff(in{:});	difference	\matlab+diff+
+Xd	1	2	1	1	1	1	true	true	out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	\matlab+diag+				
+Yd	1	inf	2	1	1	1	true	true	out{1} = blkdiag(in{:});	block diagonal concatenation	\matlab+blkdiag+
+Zd	2	2	2	1	3	1	true	true	[out{:}] = gcd(in{:});	greatest common divisor	\matlab+gcd+
+e	2	inf	3	1	1	1	true	true	out{1} = reshape(in{:});	reshape array	\matlab+reshape+
+Xe	2	2	2	1	1	1	true	true	out{1} = permute(in{:});	permute array dimensions	\matlab+permute+
+Ye	1	1	1	1	1	1	true	true	out{1} = squeeze(in{:});	remove singleton dimensions	\matlab+squeeze+
+Ze	1	1	1	1	1	1	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
+f	1	3	1	1	3	1	true	true	[out{:}] = find(in{:});	find	\matlab+find+
+Xf	2	4	2	1	1	1	true	true	out{1} = strfind(in{:});	find one string within another	\matlab+strfind+
+Yf	1	1	1	1	1	1	true	true	out{1} = factor(in{1});	prime factors	\matlab+factor+
+Zf					
+g	1	1	1	1	1	1	true	true	out{1} = logical(in{1});	convert to logical values	\matlab+logical+
+Xg	1	inf	2	1	inf	2	true	true	[out{:}] = ndgrid(in{:});	rectangular grid in N-D space	\matlab+ndgrid+				
+Yg					
+Zg	1	1	1	1	1	1	true	true	out{1} = gammaln(in{:});	logarithm of gamma function	\matlab+gammaln+				
+h	1	inf	2	1	1	1	true	true	out{1} = horzcat(in{:});	horizontal concatenation	\matlab+horzcat+
+Xh	0	inf	numel(STACK)	1	1	1	true	true	out{1} = in;	concatenate into cell array	concatenate into cell array (\matlab+{...,...}+)
+Yh	1	2	2	1	1	1	true	true	out{1} = hankel(in{:});	Hankel matrix	\matlab+hankel+
+Zh	3	3	3	1	1	1	true	true	y = hypergeom(in{:}); if any(cellfun(@ischar,in)), y = char(y); end; out{1} = y;	hypergeometric function	\matlab+hypergeom+. If any input is of type char: returns char output
+i	0	2	0	1	1	1	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input	\matlab+input+ with content checking. If $0$ inputs: uses default prompt string. \sa \matl+j+.
+									if numel(in)==1, out{1} = input(in{1},'s');
+									assert(isempty(regexp(out{1}, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')), 'MATL:runtime', 'MATL run-time error: input not allowed')
+									if isempty(out{1}), out{1} = []; else out{1} = eval(out{1}); end
+									else out{1} = input(in{:}); end
+Xi	1	5	1	1	2	1	true	true	[out{:}] = urlread(in{:});	read contents or a URL as a string	\matlab+urlread+
+Yi	1	inf	1	1	3	1	true	true	[out{:}] = imread(in{:});	read image from file	\matlab+imread+				
+Zi
+j	0	1	0	1	1	1	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input string	\matlab+input(..., 's')+. If $0$ inputs: uses default prompt string. \sa \matl+i+.
+									out{1} = input(in{1},'s');
+
+Xj	1	1	1	1	1	1	true	true	out{1} = real(in{:});	real part	\matlab+real+
+Yj	1	1	1	1	1	1	true	true	out{1} = imag(in{:});	imaginary part	\matlab+imag+
+Zj	1	1	1	1	1	1	true	true	out{1} = conj(in{:});	complex conjugate	\matlab+conj+
+k	1	1	1	1	1	1	true	true	out{1} = lower(in{1});	convert string to lowercase	\matlab+lower+
+Xk	1	1	1	1	1	1	true	true	out{1} = upper(in{1});	convert string to uppercase	\matlab+upper+
+Yk
+Zk
+l	0	inf	0	1	1	1	true	true	out{1} = ones(in{:});	array of ones	\matlab+ones+ (if $0$ inputs: produces output $1$)
+Xl	1	1	1	1	1	1	true	true	out{1} = abs(in{1});	absolute value	\matlab+abs+
+Yl	1	2	1	1	1	1	true	true	if numel(in)==1, out{1} = log(in{1}); else out{1} = log(in{1})/log(in{2}); end	logarithm	\matlab+log+. If two inputs: second input specifies logarithm base
+Zl	1	1	1	1	2	1	true	true	[out{:}] = log2(in{:});	base 2 logarithm	\matlab+log2+
+m	2	4	2	1	2	1	true	true	[out{:}] = ismember(in{:});	true for set member	\matlab+ismember+. \sa \matl+Xm+
+Xm	2	3	2	1	2	1	true	true	[out{:}] = ismember(in{1},in{2},'rows',in{3:end});	true for set member, row-wise	\matlab+ismember(..., 'rows', ...)+. \sa \matl+m+
+Ym	1	4	1	1	1	1	true	true	out{1} = mean(in{:});	mean value	\matlab+mean+
+Zm	2	2	2	1	1	1	true	true	out{1} = lcm(in{:});	least common multiple	\matlab+lcm+
+n	1	1	1	1	1	1	true	true	out{1} = numel(in{:});	number of elements in array	\matlab+numel+
+Xn	2	2	2	1	1	1	true	true	out{1} = nchoosek(in{:});	binomial coefficient or all combinations	\matlab+nchoosek+
+Yn	1	5	2	1	1	1	true	true	out{1} = interp1(in{:});	interpolation (table lookup)	\matlab+interp1+. \matlab+'pp'+ option not supported
+Zn
+o	1	1	1	1	1	1	true	true	out{1} = double(in{1});	convert to double precision	\matlab+double+
+Xo	0	0	0	1	1	1	true	true	out{1} = pi;	pi	\matlab+pi+
+Yo	1	3	1	1	1	1	true	true	out{1} = round(in{:});	round towards nearest decimal or integer	\matlab+round+
+Zo	1	1	1	1	1	1	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
+p	1	3	1	1	1	1	true	true	out{1} = prod(in{:});	product of elements	\matlab+prod+
+Xp	1	3	1	1	1	1	true	true	out{1} = cumprod(in{:});	cumulative product	\matlab+cumprod+
+Yp	1	1	1	1	1	1	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+
+Zp	1	1	1	1	1	1	true	true	out{1} = isprime(in{1});	true for prime numbers	\matlab+isprime+
+q	2	6	2	1	1	1	true	true	if numel(in)>=4, if in{4}(1)~='@' && any(in{4}=='('), in{4} = ['@(x)' in{4}]; end	construct array by accumulation	\matlab+accumarray+
+									in{4} = str2func(in{4}); end
+									out{1} = accumarray(in{:});
+Xq	2	3	2	1	1	1	true	true	out{1} = quantile(in{:});	quantiles of a sample	\matlab+quantile+
+Yq	1	1	1	1	1	1	true	true	N = max(in{1}(:)); p = primes(max(11,ceil(N*log(N*log(N))))); out{1} = reshape(p(in{1}), size(in{1})); clear N p	find n-th prime	Finds the $n$-th prime for each value $n$ in the input array
+Zq					
+r	0	inf	0	1	1	1	true	true	out{1} = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
+Xr	0	inf	0	1	1	1	true	true	if numel(in)==0, in{1} = 1; end; out{1} = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
+Yr	1	inf	1	1	1	1	true	true	if numel(in)==1, in{2} = 1; end; out{1} = randi(in{:});	pseudorandom integers from uniform discrete distribution	\matlab+randi+. If $1$ input: \matlab+randi(...,1)+
+Zr	2	4	2	1	1	1	true	true	out{1} = randsample(in{:});	random sample	\matlab+randsample+. Does not support stream specification
+s	1	4	1	1	1	1	true	true	out{1} = sum(in{:});	sum	\matlab+sum+
+Xs	1	3	1	1	1	1	true	true	out{1} = cumsum(in{:});	cumulative sum	\matlab+cumsum+
+Ys	1	2	1	1	1	1	true	true	out{1} = num2str(in{:});	convert numbers to a string	\matlab+num2str+
+Zs	1	4	1	1	1	1	true	true	out{1} = std(in{:});	standard deviation	\matlab+std+
+t	0	inf	1	0	0	0	false	true	out = in;	duplicate	duplicate elements in stack
+Xt	1	1	1	1	1	1	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
+Yt	1	1	1	1	2	1	true	true	assert(isempty(regexp(in{1}, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')), 'MATL:runtime', 'MATL run-time error: content not allowed')	convert string matrix to numeric array	\matlab+str2num+ with content checking
+									[out{:}] = str2num(in{:});
+Zt	3	3	3	1	1	1	true	true	[out{:}] = strrep(in{:});	replace substring with another	\matlab+strrep+
+u	1	4	1	1	3	1	true	true	[out{:}] = unique(in{:});	unique	\matlab+unique+. \sa \matl+Xu+.
+Xu	1	3	1	1	3	1	true	true	[out{:}] = unique(in{1},'rows',in{2:end});	unique rows	\matlab+unique(...,'rows',...)+. \sa \matl+u+.				
+Yu	
+Zu	1	2	1	1	1	1	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
+v	1	inf	2	1	1	1	true	true	out{1} = vertcat(in{:});	vertical concatenation	\matlab+vertcat+
+Xv					
+Yv	1	1	1	1	1	1	true	true	out{1} = strtrim(in{:});	remove insignificant whitespace	\matlab+strtrim+
+Zv	1	1	1	1	1	1	true	true	out{1} = deblank(in{:});	remove trailing blanks	\matlab+deblank+
+w	0	inf	2	0	0	0	false	true	if ~isempty(in), in([1 end]) = in([end 1]); STACK(end+nin) = in; end	swap elements in stack	swap elements in stack
+Xw					
+Yw					
+Zw					
+x	0	inf	1	0	0	0	true	true	;	delete	delete from stack		
+Xx	0	0	0	0	0	0	true	true	clc	clear window	\matlab+clc+				
+Yx					
+Zx
+y	1	2	1	1	inf	1	true	true	[out{:}] = size(in{:});	size	\matlab+size+
+Xy	1	4	1	1	1	1	true	true	out{1} = eye(in{:});	eye (matrix with ones on diagonal and zeros elsewhere)	\matlab+eye+
+Yy	2	2	2	1	1	1	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
+Zy					
+z	1	1	1	1	1	1	true	true	out{1} = nnz(in{:});	number of nonzero elements	\matlab+nnz+
+Xz	1	1	1	1	1	1	true	true	out{1} = nonzeros(in{:});	nonzero elements	\matlab+nonzeros+
+Yz	1	1	1	1	1	1	true	true	out{1} = isempty(in{:});	true for empty array	\matlab+isempty+
+Zz					
+{					
+X{	1	2	1	1	1	1	true	true	out{1} = num2cell(in{:});	convert numeric array into cell array	\matlab+num2cell+
+Y{	2	inf	3	1	1	1	true	true	out{1} = mat2cell(in{:});	break up array into cell array of subarrays	\matlab+mat2cell+
+Z{	1	1	1	1	1	1	true	true	sz = num2cell(size(in{1})); out{1} = mat2cell(in{1}, ones(sz{1},1), sz{2:end});	cell array of first-dimension slices from array	\matlab+mat2cell(x, ones(size(x,1),1), size(x,2),...,size(x,ndims(x)))+. It's a generalization of \matlab+cellstr+ that works for numeric, logical or char arrays of any number of dimensions
+
+|	2	2	2	1	1	1	true	true	out{1} = bsxfun(@or, in{1}, in{2});	logical 'or' (element-wise, singleton expansion)	\matlab+|+ (\matlab+or+), element-wise with singleton expansion
+X|	2	4	2	1	3	1	true	true	[out{:}] = union(in{:});	set union	\matlab+union+
+Y|	1	2	1	1	1	1	true	true	out{1} = norm(in{:});	matrix or vector norm	\matlab+norm+
+Z|	2	3	2	1	1	1	true	true	out{1} = bitor(in{:});	bit-wise logical 'or'	\matlab+bitor+
+}					
+X}					
+Y}	1	1	1	1	1	1	true	true	out{1} = cell2mat(in{:});	convert contents of cell array into single array	\matlab+cell2mat+
+Z}	1	1	1	0	inf	numel(in{1})	true	true	outall = mat2cell(in{1}(:), ones(1,numel(in{1}))).';	split array into elements	split array into its elements in linear order
+									out = outall(1:nout);
+~	1	1	1	1	1	1	true	true	out{1} = ~in{1};	logical 'not' (element-wise)	\matlab+~+ (\matlab+not+)
+X~	2	4	2	1	3	1	true	true	[out{:}] = setxor(in{:});	set exclusive-or	\matlab+setxor+
+Y~	2	2	2	1	1	1	true	true	out{1} = bsxfun(@xor, in{1}, in{2});	logical 'xor' (element-wise, singleton expansion)	\matlab+xor+, element-wise with singleton expansion
+Z~	2	3	2	1	1	1	true	true	out{1} = bitxor(in{:});	bit-wise logical 'xor'	\matlab+bixtor+
