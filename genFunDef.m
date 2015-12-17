@@ -1,7 +1,7 @@
 function F = genFunDef(masterFileName, fileName)
 %
 % Generates function definition struct array "F" from tab-separated text
-% file, and saves it in file "funDef.mat"
+% file, and saves it in file.
 %
 % The tab-separated file has one or more lines for each function.
 % The first line for each function contains its source code in the first
@@ -14,7 +14,7 @@ function F = genFunDef(masterFileName, fileName)
 % filled. In that case, this function collects all lines in a cell array of
 % strings.
 %
-% Luis Mendo.
+% Luis Mendo
 
 fieldNames = {'source' 'minIn' 'maxIn' 'defIn' 'minOut' 'maxOut' 'defOut' 'consumeInputs' 'wrap' 'body' 'comment' 'description'};
 fid = fopen(masterFileName, 'r');

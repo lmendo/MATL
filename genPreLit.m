@@ -1,4 +1,9 @@
 function L = genPreLit(masterFileName, fileName)
+%
+% Generates struct array "L" for predefined literals from tab-separated text
+% file, and saves it in file.
+%
+% Luis Mendo
 
 fid = fopen(masterFileName, 'r');
 p = reshape(fread(fid,inf,'*char'),1,[]);

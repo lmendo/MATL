@@ -46,7 +46,7 @@ while pos<=L
             (s(pos)=='.' && pos<L && any(s(pos+1)=='0123456789'))
         % It may be a number literal such as +3.4e-5j, or a two-number colon array such as
         % -2.3:.4e2, or three-number colon array such as 10:-2.5e-1:.5e-5
-        [ini, fin]   = regexp(s(pos:end), '([+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?[ij]?\s*:\s*){0,2}[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?[ij]?', 'once');
+        [ini, fin]   = regexp(s(pos:end), '([+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?\s*:\s*){0,2}[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?', 'once');
         if ~isempty(ini) && ini==1
             if any(s(pos:pos-1+fin)==':') % It's a colon array literal
                 S(n).type = 'literal.colonArray.numeric';
@@ -95,10 +95,10 @@ while pos<=L
         n = n + 1;
     elseif s(pos)=='''' % It's a string. Consume until next single ' (duplicated ' symbols don't close the string).
         % Or it may be a char colon array. It has first and last operands char.
-        [ini, fin] = regexp(s(pos:end), '^''([^'']|'''')*?''(?!'')((:(''([^'']|'''')*?''(?!'')|[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?[ij]?))?:''([^'']|'''')*?''(?!''))?', 'once');
+        [ini, fin] = regexp(s(pos:end), '^''([^'']|'''')*?''(?!'')((:(''([^'']|'''')*?''(?!'')|[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?))?:''([^'']|'''')*?''(?!''))?', 'once');
         % The structure of this regular expresion is: 'c((:(c|n))?:c)?', where
         % `c` (`^''([^'']|'''')*?''(?!'')`) indicates string and 
-        % `n` (`[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?[ij]?`) indicates number
+        % `n` (`[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?`) indicates number
         assert(~isempty(ini), 'MATL:parser', 'MATL error while parsing: string literal not closed')
         assert(ini==1, 'MATL:parser:internal', 'MATL internal error while parsing string/colon array literal')
         if any(s(pos:pos-1+fin)==':') % It's a (char) colon array literal
