@@ -447,7 +447,8 @@ Zc	1	2	1	1	1	1	true	true	out{1} = strjoin(in{:});	join cell array of strings int
 d	1	3	1	1	1	1	true	true	out{1} = diff(in{:});	difference	\matlab+diff+
 Xd	1	2	1	1	1	1	true	true	out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	\matlab+diag+				
 Yd	1	inf	2	1	1	1	true	true	out{1} = blkdiag(in{:});	block diagonal concatenation	\matlab+blkdiag+
-Zd	2	2	2	1	3	1	true	true	[out{:}] = gcd(in{:});	greatest common divisor	\matlab+gcd+
+Zd	1	2	2	1	3	1	true	true	if numel(in)==1 && numel(out)==1, x=in{1}(1); for t=in{1}, x=gcd(x,t); end; out{1}=x;	greatest common divisor	\matlab+gcd+. With $1$ input and $1$ output, computes the greatest common divisor of all elements of the input
+									else [out{:}] = gcd(in{:}); end
 e	1	inf	3	1	1	1	true	true	if numel(in)>1, out{1} = reshape(in{:});	reshape array / remove singleton dimensions	With more than $1$ input: \matlab+reshape+. With $1$ input: \matlab+squeeze+.
 									else out{1} = squeeze(in{:}); end
 Xe
@@ -490,7 +491,8 @@ Zl	1	1	1	1	2	1	true	true	[out{:}] = log2(in{:});	base 2 logarithm	\matlab+log2+
 m	2	4	2	1	2	1	true	true	[out{:}] = ismember(in{:});	true for set member	\matlab+ismember+. \sa \matl+Xm+
 Xm	2	3	2	1	2	1	true	true	[out{:}] = ismember(in{1},in{2},'rows',in{3:end});	true for set member, row-wise	\matlab+ismember(..., 'rows', ...)+. \sa \matl+m+
 Ym	1	4	1	1	1	1	true	true	out{1} = mean(in{:});	mean value	\matlab+mean+
-Zm	2	2	2	1	1	1	true	true	out{1} = lcm(in{:});	least common multiple	\matlab+lcm+
+Zm	1	2	2	1	1	1	true	true	if numel(in)==1, x=1; for t=in{1}, x=lcm(x,t); end; out{1}=x;	least common multiple	\matlab+lcm+. With $1$ input, computes the least common multiple of all elements of the input
+									else out{1} = lcm(in{:}); end
 n	1	1	1	1	1	1	true	true	out{1} = numel(in{:});	number of elements in array	\matlab+numel+
 Xn	2	2	2	1	1	1	true	true	out{1} = nchoosek(in{:});	binomial coefficient or all combinations	\matlab+nchoosek+
 Yn	1	5	2	1	1	1	true	true	out{1} = interp1(in{:});	interpolation (table lookup)	\matlab+interp1+. \matlab+'pp'+ option not supported
