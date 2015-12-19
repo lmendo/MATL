@@ -273,6 +273,7 @@ YA	2	4	2	1	1	1	true	true	if numel(in{2})==1, out{1} = dec2base(in{:});	convert i
 									while any(d) && n >1, n = n - 1; d = floor(d/b); s(:,n) = rem(d,b); end
 									s = reshape(symbols(s + 1),size(s));
 									out{1} = s;
+									clear d n b s
 									end
 % Adapted from dec2base
 ZA	2	2	2	1	1	1	true	true	if numel(in{2})==1, out{1} = base2dec(in{:});	convert string in given base to decimal integer	\matlab+base2dec+. If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$
