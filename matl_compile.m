@@ -48,7 +48,11 @@ appendLines('', 0)
 appendLines('% Set initial conditions', 0)
 appendLines('warningState = warning;', 0);
 appendLines('format compact; format long; warning(''off'',''all'');', 0) % clc
-appendLines('rng(''shuffle'')', 0)
+if exist('rng', 'file') % in case an old Matlab version is used
+    appendLines('rng(''shuffle'')', 0)
+else
+    warning('MATL has not been able to seed random number generator')
+end
 appendLines('diary off; delete defout; diary defout', 0)
 % For arrays with brackets or curly braces: F = false; T = true;
 appendLines('F = false; T = true;', 0)

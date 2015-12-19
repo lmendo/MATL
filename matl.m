@@ -12,6 +12,7 @@ indentCommentSymbol = 6; % number of spaces before comment symbol. Default value
 indentCommentText = 1; % number of spaces before actual comment. Default value
 pOutFile = 'MATLp.txt'; % temporary file for parsed code
 cOutFile = 'MATLc.m'; % temporary file for compiled code
+ cOutFileNoExt = regexprep('MATLc.m', '\.m$', ''); % without extension. Needed to run file in olf Matlab versions
 funDefMasterFile = 'funDef.txt'; % function definition master file
 funDefMatFile = 'funDef.mat'; % function definition processed file
 preLitMasterFile = 'preLit.txt'; % master file that defines predefined strings with (key, value) pairs
@@ -246,7 +247,8 @@ if any(options=='r')
         %disp('--') %disp(repmat('-',size(str)))
         pause
     end
-    matl_run(S, pOutFile, cOutFile, [])
+    matl_run(S, pOutFile, cOutFileNoExt, []) % ...NoExt because a file name without extension is
+    % needed in old Matlab versions   
 end
 
 % Run compiled program in debug mode, if required
@@ -255,7 +257,8 @@ if any(options=='d')
         disp('Press any key to run MATL program in debug mode')
         pause
     end
-    matl_run(S, pOutFile, cOutFile, [S.compileLine])
+    matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine]) % ...NoExt because a file name without
+    % extension is needed in old Matlab versions
 end
 
 
