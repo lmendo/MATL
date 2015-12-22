@@ -229,7 +229,12 @@ Y9
 Z9					
 :	1	3	1	1	1	1	true	true	if numel(in)==1, out{1} = colon(1,in{1}); else out{1} = colon(in{:}); end	vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+
 X:
-Y:
+Y:	1	inf	2	1	inf	1	true	true	switch in{1}	Higham test matrices and other matrices	\matlab+gallery+. Also includes functions \matlab+magic+, \matlab+hilb+, \matlab+invhilb+, \matlab+hadamard+, \matlab+pascal+, \matlab+spiral+
+									case {'magic', 'hilb', 'invhilb', 'hadamard', 'pascal', 'spiral'}
+									[out{1}] = feval(in{1},in{2:end});
+									otherwise
+									[out{:}] = gallery(in{:});
+									end
 Z:	2	3	2	1	1	1	true	true	out{1} = bitset(in{:});	set bit	\matlab+bitset+
 ;
 X;	1	1	1	1	1	1	true	true	out{1} = acos(in{1});	inverse cosine (radians)	\matlab+acos+
@@ -254,9 +259,10 @@ X?
 Y?
 Z?	1	6	3	1	1	1	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
 @					
-X@	1	1	1	1	1	1	true	true	out{1} = spiral(in{:});	matrix with spiral pattern	\matlab+spiral+
+X@	
 Y@	1	1	1	1	1	1	true	true	out{1} = perms(in{:});	all possible permutations	\matlab+perms+
-Z@	1	2	1	1	1	1	true	true	out{1} = randperm(in{:});	random permutation	\matlab+randperm+
+Z@	1	3	1	1	1	1	true	true	if numel(in)~=3, out{1} = randperm(in{:});	random permutation	\matlab+randperm+ (produces a row vector as output). With $3$ outputs: third output indicates number of permutations, each in a different row.
+									else [~, p] = sort(rand(in{3},in{1}),2); p = p(:,1:in{2}); out{1} = p; clear p, end
 A	1	2	1	1	1	1	true	true	out{1} = all(in{:});	all	\matlab+all+
 XA					
 YA	2	4	2	1	1	1	true	true	if numel(in{2})==1, out{1} = dec2base(in{:});	convert integer to string representation in given base	\matlab+dec2base+. If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$
@@ -295,7 +301,7 @@ YB	1	2	1	1	1	1	true	true	out{1} = dec2bin(in{:});	convert decimal number to bina
 ZB	1	1	1	1	1	1	true	true	out{1} = bin2dec(in{1});	convert binary string to decimal number	\matlab|bin2dec|
 C					
 XC	1	7	2	1	3	1	true	true	[out{:}] = histcounts(in{:});	histogram bin counts	\matlab+histcounts+
-YC	1	inf	2	1	1	1	true	true	out{1} = cell(in{:});	create cell array	\matlab+cell+
+YC	2	4	2	1	1	1	true	true	out{1} = im2col(in{:});	rearrange array blocks into columns	\matlab+im2col+
 ZC
 D	0	inf	1	0	0	0	true	true	if numel(in)==1, data = in; fmt = {'%.16g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.16g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 									kk = cellfun(@iscell, data); 
@@ -375,7 +381,7 @@ ZR	1	1	1	1	1	1	true	true	out{1} = tril(in{1},-1);	lower triangular part, without
 S	1	3	1	1	2	1	true	true	if numel(in)==2 && in{2}<0, in{2}=-in{2}; in{3} = 'descend'; end, [out{:}] = sort(in{:});	sort	\matlab+sort+. If $2$ inputs: a negative value of the second input corresponds to descending order
 XS	1	2	1	1	2	1	true	true	[out{:}] = sortrows(in{:});	sort rows	\matlab+sortrows+				
 YS	2	3	2	1	1	1	true	true	out{1} = circshift(in{:});	circular shift	\matlab+circshift+
-ZS	1	4	1	1	1	1	true	true	out{1} = std(in{:});	standard deviation	\matlab+std+
+ZS	1	1	1	1	1	1	true	true	out{1} = sign(in{:});	sign function	\matlab+sign+
 T					
 XT
 YT	1	2	2	1	1	1	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+					
@@ -519,7 +525,7 @@ Zr	2	4	2	1	1	1	true	true	out{1} = randsample(in{:});	random sample	\matlab+rands
 s	1	4	1	1	1	1	true	true	out{1} = sum(in{:});	sum	\matlab+sum+. \sa \matl+Xs+
 Xs	1	3	1	1	1	1	true	true	out{1} = sum(in{1},1,in{2:end});	sum along first dimension	\matlab+sum(..., 1, ...)+. \sa \matl+s+
 Ys	1	3	1	1	1	1	true	true	out{1} = cumsum(in{:});	cumulative sum	\matlab+cumsum+
-Zs	
+Zs	1	4	1	1	1	1	true	true	out{1} = std(in{:});	standard deviation	\matlab+std+
 t	0	inf	1	0	0	0	false	true	out = in;	duplicate	duplicate elements in stack
 Xt
 Yt
