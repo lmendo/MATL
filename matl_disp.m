@@ -13,7 +13,8 @@ end
 fid = fopen(pOutFile,'w');
 if ~isempty(S)
     indentation = arrayfun(@(x) {blanks(x*indentStep)}, [S(:).nesting]).';
-    d = strcat(indentation, {S(:).source}.');
+    d = strcat(indentation, {S(:).source}.'); % indentation and source
+    d([S.implicit]) = []; % remove implicit source statements for parsed file
     for n = 1:numel(d)
         if ispc % Windows
             linebreak = '\r\n';
@@ -32,11 +33,17 @@ fclose(fid);
 % Display on command window
 if listing && ~isempty(S)
     indentation = arrayfun(@(x) {blanks(x*indentStep+indentBase)}, [S(:).nesting]).';
-    d = char(strcat(indentation, {S(:).source}.'));
+    d = strcat(indentation, {S(:).source}.'); % indentation and source
+    if commentTexts
+        d([S.implicit]) = indentation([S.implicit]); % remove implicit source statements but keep comment texts
+    else
+        d([S.implicit]) = []; % remove implicit source statements for display without comment texts
+    end
+    d = char(d);
     if commentSymbols
         d = [d, repmat([blanks(indentCommentSymbol) '%'],size(d,1),1)];
     end
-    if commentTexts % Changes done here should be don in `genHelp.m` too
+    if commentTexts % Changes done here should be done in `genHelp.m` too
         texts = cell(numel(S),1);
         Stype = {S.type};
         texts(ismember(Stype, {'literal.colonArray.numeric' 'literal.colonArray.char' 'literal.array'})) = {'array literal'};
@@ -58,6 +65,7 @@ if listing && ~isempty(S)
         ind = find(ismember(Stype, {'function'}));
         [val, indF] = ismember({S(ind).source}, {F.source}); % val equal to false indicates there's no comment (or perhaps no function)
         texts(ind(val)) = {F(indF(val)).comment};
+        texts([S.implicit]) = strcat({'(implicit) '}, texts([S.implicit])); % indicate which statements are implicit
         d = strcat(d, {blanks(indentCommentText)}, texts(:));
     end
     if verbose

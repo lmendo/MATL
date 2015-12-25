@@ -296,6 +296,31 @@ while pos<=L
     end
 end
 
+% Include implicit statements in source code
+
+% Mark existing statements as not implicit
+[S(:).implicit] = deal(false);
+
+% Implicit ]
+while parseNesting % While there is some loop or branch yet to be closed
+    m = parseControlStack(parseNesting); % innermost control structure that is open
+    S(m).end = n; % associate opening with this
+    S(n).from = m; % associate this with opening statement
+    parseControlStack(parseNesting) = 0; % this loop/conditional branch is closed
+    parseNesting = parseNesting - 1; % decrease nesting level
+    S(n).type = 'controlFlow.end';
+    S(n).source = ']' ;
+    S(n).nesting = parseNesting;
+    S(n).implicit = true;
+    n = n + 1;
+end
+
+% Implicit XD
+S(end+1).source = 'XD';
+S(end).type = 'function';
+S(end).nesting = 0;
+S(end).implicit = true;
+
 if isfield(S,'end') && any(cellfun(@(x) isequal(x,0), {S.end}))
     unclosed = find(cellfun(@(x) isequal(x,0), {S.end}), 1);
     error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> statement has no matching <strong>]</strong>', S(unclosed).source)

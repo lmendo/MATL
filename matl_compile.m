@@ -80,14 +80,6 @@ appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {
 % Read input file, if present
 appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)
 
-% Include implicit statements in source code
-
-[S(:).implicit] = deal(false); % mark existing statements as not implicit
-S(end+1).source = 'XD';
-S(end).type = 'function';
-S(end).nesting = 0;
-S(end).implicit = true;
-
 % Process each MATL statement. Precede with a commented line containing the MATL
 % statement. Add a field in S indicating the line of that MATL statement in
 % the compiled MATLAB file. Generate corresponding MATLAB code.
