@@ -299,7 +299,10 @@ end
 % Include implicit statements in source code
 
 % Mark existing statements as not implicit
-[S(:).implicit] = deal(false);
+%[S(:).implicit] = deal(false); % doesn't work in Octave (4.0.0)
+for s = 1:numel(S)
+    S(s).implicit = false;
+end
 
 % Implicit ]
 while parseNesting % While there is some loop or branch yet to be closed

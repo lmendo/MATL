@@ -1,4 +1,4 @@
-function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose)
+function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab)
 %
 % MATL compiler. Compiles into MATLAB code.
 % Input: struct array with parsed statements.
@@ -48,10 +48,11 @@ appendLines('', 0)
 appendLines('% Set initial conditions', 0)
 appendLines('warningState = warning;', 0);
 appendLines('format compact; format long; warning(''off'',''all'');', 0) % clc
-if exist('rng', 'file') % in case an old Matlab version is used
+if isMatlab && exist('rng', 'file') % recent Matlab version
     appendLines('rng(''shuffle'')', 0)
-else
-    warning('MATL has not been able to seed random number generator')
+elseif isMatlab % old Matlab version
+    appendLines('rand(''seed'',sum(clock)); randn(''seed'',sum(clock))');
+% else % Octave: seeds are set randomly automatically by Octave
 end
 appendLines('diary off; delete defout; diary defout', 0)
 % For arrays with brackets or curly braces: F = false; T = true;
@@ -182,6 +183,26 @@ end
 appendLines('', 0)
 appendLines('% Set final conditions', 0)
 appendLines('diary off; warning(warningState);', 0);
+appendLines('', 0)
+appendLines('end', 0) % close function, in case there are subfunctions
+
+% Define subfunctions
+if ~isMatlab
+    appendLines('', 0)
+    appendLines('% Define subfunctions', 0)
+    appendLines('', 0)
+    appendLines({...
+        'function y = num2str(varargin)';
+        'x = varargin{1}; x = reshape(x, size(x,1),[]);';
+        'if nargin==1 || ischar(varargin{1}) || isnumeric(varargin{2})'; % normal `num2str` function
+        'y = builtin(''num2str'', varargin{:});';
+        'else'; % interception
+        'fmt = varargin{2}; y = sprintf([fmt ''\n''], x.''); y = regexp(y, ''\n'', ''split''); y = y(1:end-1).'';';
+        'y = cellfun(@fliplr, y, ''uniformoutput'', false); y = char(y); y = fliplr(y);';
+        'y = reshape(y.'',[],size(x,1)).''; y = strtrim(y);';
+        'end';
+        'end'}, 0)
+end
 
 if verbose
     fprintf('  Writing to file ''%s''\n', cOutFile')

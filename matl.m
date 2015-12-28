@@ -20,6 +20,11 @@ preLitMatFile = 'preLit.mat'; % processed file file that defines predefined stri
 helpFile = 'help.mat';
 matlInputPrompt = ' > ';
 
+version = ver;
+indMainName = find(ismember({version.Name}, {'MATLAB','Octave'}));
+isMatlab = strcmp(version(indMainName).Name, 'MATLAB'); % 1 if Matlab, 0 if Octave
+verNum = version(indMainName).Version; % version number as a string
+
 if numel(varargin)==0
     options = 'r';
     inputNeeded = true;
@@ -233,7 +238,7 @@ if any(ismember(options,'csrd'))
     if verbose
         disp('Compiling program')
     end
-    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose);
+    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab);
     %if verbose
     %    disp('  Done.')
     %end
@@ -247,7 +252,7 @@ if any(options=='r')
         %disp('--') %disp(repmat('-',size(str)))
         pause
     end
-    matl_run(S, pOutFile, cOutFileNoExt, []) % ...NoExt because a file name without extension is
+    matl_run(S, pOutFile, cOutFileNoExt, [], isMatlab) % ...NoExt because a file name without extension is
     % needed in old Matlab versions   
 end
 
@@ -257,7 +262,7 @@ if any(options=='d')
         disp('Press any key to run MATL program in debug mode')
         pause
     end
-    matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine]) % ...NoExt because a file name without
+    matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine], isMatlab) % ...NoExt because a file name without
     % extension is needed in old Matlab versions
 end
 
