@@ -12,7 +12,7 @@ indentCommentSymbol = 6; % number of spaces before comment symbol. Default value
 indentCommentText = 1; % number of spaces before actual comment. Default value
 pOutFile = 'MATLp.txt'; % temporary file for parsed code
 cOutFile = 'MATLc.m'; % temporary file for compiled code
- cOutFileNoExt = regexprep('MATLc.m', '\.m$', ''); % without extension. Needed to run file in olf Matlab versions
+ cOutFileNoExt = regexprep('MATLc.m', '\.m$', ''); % without extension. Needed to run file in old Matlab versions
 funDefMasterFile = 'funDef.txt'; % function definition master file
 funDefMatFile = 'funDef.mat'; % function definition processed file
 preLitMasterFile = 'preLit.txt'; % master file that defines predefined strings with (key, value) pairs
@@ -24,6 +24,7 @@ version = ver;
 indMainName = find(ismember({version.Name}, {'MATLAB','Octave'}));
 isMatlab = strcmp(version(indMainName).Name, 'MATLAB'); % 1 if Matlab, 0 if Octave
 verNum = version(indMainName).Version; % version number as a string
+verNum = str2double(regexp(verNum, '\.', 'split')); % version number as a vector
 
 if numel(varargin)==0
     options = 'r';
@@ -201,9 +202,9 @@ end
 % Call help, if required, and quit
 if any(options=='h')
     if nargin>1
-        matl_help(H, s, verbose)
+        matl_help(H, s, verbose, isMatlab, verNum)
     else
-        matl_help(H, '', verbose)
+        matl_help(H, '', verbose, isMatlab, verNum)
     end
     return
 end

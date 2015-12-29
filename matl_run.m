@@ -39,7 +39,7 @@ else % non-debug mode
 end
 
 try
-    % run(cOutFileNoExt) % This doesn't seem to worl in Octave (4.0.0)
+    % run(cOutFileNoExt) % This doesn't seem to work in Octave (4.0.0)
     evalin('caller', [cOutFileNoExt ';']); 
 catch ME
     h = find(strcmp({ME.stack.name},cOutFileNoExt),1); % first error that refers to cOutFileNoExt

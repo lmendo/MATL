@@ -186,9 +186,9 @@ appendLines('diary off; warning(warningState);', 0);
 appendLines('', 0)
 appendLines('end', 0) % close function, in case there are subfunctions
 
-% Define subfunctions
+% Define subfunctions for compatibility with Octave
 if ~isMatlab
-    appendLines('', 0)
+    % num2str
     appendLines('% Define subfunctions', 0)
     appendLines('', 0)
     appendLines({...
@@ -202,6 +202,13 @@ if ~isMatlab
         'y = reshape(y.'',[],size(x,1)).''; y = strtrim(y);';
         'end';
         'end'}, 0)
+    % im2col
+    appendLines('', 0)
+    appendLines({...
+        'function y = im2col(varargin)';
+        'argin1 = varargin{1}; argin1 = reshape(argin1, size(argin1,1), []);';
+        'y = builtin(''im2col'', argin1, varargin{2:end});';
+        'end'}, 0)    
 end
 
 if verbose

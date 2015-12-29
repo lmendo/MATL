@@ -182,9 +182,13 @@ for n = 1:numel(descrFormatted)
     end
 end
 
+%
+descrNoTags = regexprep(descrFormatted,{'<strong>', '</strong>'}, '');
+
 H.source = sourceFormatted;
 H.comm = commFormatted;
-H.descr = descrFormatted;
+H.descr = descrFormatted; % description with format including tags
+H.descrNoTags = descrNoTags; % description with format but without tags
 H.in = inFormatted;
 H.out = outFormatted;
 H.sourcePlain = sourcePlain;

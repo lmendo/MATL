@@ -292,7 +292,7 @@ while pos<=L
     elseif any(s(pos)=='XYZ') && pos==L
         error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s(pos), pos)
     else
-        error('MATL:parser:internal', 'MATL internal error while parsing')
+        error('MATL:parser', 'MATL error while parsing: unknown character <strong>%s</strong> at position %d', s(pos), pos)
     end
 end
 

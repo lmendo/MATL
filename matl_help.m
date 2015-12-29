@@ -1,4 +1,4 @@
-function matl_help(H, strHelp, verbose)
+function matl_help(H, strHelp, verbose, isMatlab, verNum)
 %
 % MATL help.
 %
@@ -46,12 +46,19 @@ end
 if verbose && ~isempty(ind)
     disp(' ')
 end
+if isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13))
+    descrFieldName = 'descr';
+    sourceFieldName = 'source';
+else
+    descrFieldName = 'descrNoTags';
+    sourceFieldName = 'sourcePlain';
+end
 for n = ind
-    disp([H.source{n} repmat(' ',1,4-numel(H.sourcePlain{n})) H.comm{n}]) % one or two spaces for left margin, total four characters
+    disp([H.(sourceFieldName){n} repmat(' ',1,4-numel(H.sourcePlain{n})) H.comm{n}]) % one or two spaces for left margin, total four characters
     if ~isempty(H.in{n}) && ~isempty(H.in{n})
         disp(['    ' H.in{n}, ';  ' H.out{n}]) % four spaces for left margin
     end
-    disp(H.descr{n})
+    disp(H.(descrFieldName){n})
 end
 if verbose && ~isempty(ind)
     disp(' ')
