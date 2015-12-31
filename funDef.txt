@@ -24,10 +24,10 @@ Z!	1	1	1	1	1	1	true	true	out{1} = full(in{1});	convert sparse matrix to full mat
 X"	2	inf	3	1	1	1	true	true	out{1} = repmat(in{:});	replicate and tile array	\matlab+repmat+
 Y"	2	inf	2	1	1	1	true	true	out{1} = repelem(in{:});	replicate elements of array	\matlab+repelem+ (run-length decoding)
 Z"	1	1	1	1	1	1	true	true	out{1} = blanks(in{1});	string of blanks	\matlab+blanks+
-#	1	1	1	0	0	0	false	false	S_OUT = STACK{end}; STACK(end) = [];	output specification	specify outputs for next function
+#
 % The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
 X#	
-Y#	1	2	1	0	0	0	true	true	rng(in{:});	control the random number generator	\matlab+rng+
+Y#
 Z#	1	3	1	0	0	0	true	true	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Appends first input to file \comp{inout}, creating it if necessary. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether any previous contents of file should be kept.
 									sep = char(10);
 									if numel(in)>=2 && ~isempty(in{2}), file = in{2}; else file = 'inout'; end
@@ -38,7 +38,7 @@ Z#	1	3	1	0	0	0	true	true	data = in{1}; if ~iscell(data), data = {data}; end	writ
 									if n<numel(data), fwrite(fid, sep); end
 									end
 									fclose(fid);
-$	1	1	1	0	0	0	false	false	S_IN = STACK{end}; STACK(end) = [];	input specification	specify inputs for next function
+$
 % The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
 X$	1	inf	2	0	inf	1	true	true	[out{:}] = feval(in{:});	execute Matlab function	execute Matlab function specified by first input, using the rest of the inputs as arguments.
 Y$	1	2	1	1	1	1	true	true	out{1} = char(vpa(in{:}));	variable precision arithmetic	\matlab+char(vpa(...))+
@@ -309,7 +309,8 @@ YB	1	2	1	1	1	1	true	true	out{1} = dec2bin(in{:});	convert decimal number to bina
 ZB	1	1	1	1	1	1	true	true	out{1} = bin2dec(in{1});	convert binary string to decimal number	\matlab|bin2dec|
 C					
 XC	1	7	2	1	3	1	true	true	[out{:}] = histcounts(in{:});	histogram bin counts	\matlab+histcounts+
-YC	2	4	2	1	1	1	true	true	out{1} = im2col(in{:});	rearrange array blocks into columns	\matlab+im2col+
+YC	2	4	2	1	1	1	true	true	if numel(in{2})==1, if size(in{1},1)==1, in{2} = [1 in{2}]; else in{2} = [in{2} 1]; end; end	rearrange array blocks into columns	\matlab+im2col+. If the second input is a scalar n, it is transformed into [1 n] if the first input is a row vector, or to [n 1] otherwise
+									out{1} = im2col(in{:});
 ZC
 D	0	inf	1	0	0	0	true	true	if numel(in)==1, data = in; fmt = {'%.16g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.16g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 									kk = cellfun(@iscell, data); 

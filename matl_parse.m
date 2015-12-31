@@ -1,4 +1,4 @@
-function S = matl_parse(s)
+function S = matl_parse(s, useTags)
 %
 % MATL parser.
 %
@@ -16,6 +16,13 @@ end
 LF = char(10); % line feed in ASCII
 CR = char(13); % line feed in ASCII
 
+if useTags
+    strongBegin = '<strong>';
+    strongEnd = '</strong>';
+else
+    strongBegin = '';
+    strongEnd = '';
+end
 
 % Parse to separate into statements
 
@@ -72,9 +79,9 @@ while pos<=L
         % Consume until ]. There may be other [ and ] in between (although it would be a waste of characters),
         % so consume until the number of [ minus ] reaches 0
         [ini, fin] = regexp(s(pos:end), '^\[([^\[\]]*\[[^\[\]]*\])*[^\[\]]*\]', 'once');
-        assert(ini==1, 'MATL:parser:internal', 'MATL internal error while parsing array literal')
+        assert(isequal(ini,1), 'MATL:parser', 'MATL error while parsing: array literal not well formed')
         if ~validateArray(s(pos:pos-1+fin))
-            error('MATL:parser:internal', 'Content not allowed in MATL array literal')
+            error('MATL:parser', 'Content not allowed in MATL array literal')
         end
         S(n).type = 'literal.array';
         S(n).source = s(pos:pos-1+fin);
@@ -86,7 +93,7 @@ while pos<=L
         fin = find(~cumsum((s(pos:end)=='{')-(s(pos:end)=='}')),1);
         assert(~isempty(fin), 'MATL:parser', 'MATL error while parsing: cell array literal not closed')
         if ~validateArray(s(pos:pos-1+fin))
-            error('MATL:parser:internal', 'Content not allowed in MATL cell array literal')
+            error('MATL:parser', 'Content not allowed in MATL cell array literal')
         end
         S(n).type = 'literal.cellArray';
         S(n).source = s(pos:pos-1+fin);
@@ -100,7 +107,7 @@ while pos<=L
         % `c` (`^''([^'']|'''')*?''(?!'')`) indicates string and 
         % `n` (`[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?`) indicates number
         assert(~isempty(ini), 'MATL:parser', 'MATL error while parsing: string literal not closed')
-        assert(ini==1, 'MATL:parser:internal', 'MATL internal error while parsing string/colon array literal')
+        assert(isequal(ini,1), 'MATL:parser:internal', 'MATL internal error while parsing string/colon array literal')
         if any(s(pos:pos-1+fin)==':') % It's a (char) colon array literal
             S(n).type = 'literal.colonArray.char';
         else % It's a string
@@ -110,8 +117,20 @@ while pos<=L
         S(n).nesting = parseNesting;
         pos = pos + fin;
         n = n + 1;
-    elseif any(s(pos)==['!#$&()*+-/:;<=>\^_|~' 'A':'W' 'a':'z'])
+    elseif any(s(pos)==['!&()*+-/:;<=>\^_|~' 'A':'W' 'a':'z'])
         S(n).type = 'function';
+        S(n).source = s(pos);
+        S(n).nesting = parseNesting;
+        pos = pos + 1;
+        n = n + 1;
+    elseif s(pos)=='$'
+        S(n).type = 'metaFunction.inSpec';
+        S(n).source = s(pos);
+        S(n).nesting = parseNesting;
+        pos = pos + 1;
+        n = n + 1;
+    elseif s(pos)=='#'
+        S(n).type = 'metaFunction.outSpec';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         pos = pos + 1;
@@ -226,7 +245,7 @@ while pos<=L
         n = n + 1;
     elseif s(pos)=='%' % consume until LF or CR. Don't store in S
         [ini, fin] = regexp(s(pos:end),'^%[^\r\n]*[\r\n]?');
-        assert(ini==1, 'MATL:parser:internal', 'MATL internal error while parsing comment literal')
+        assert(isequal(ini,1), 'MATL:parser:internal', 'MATL internal error while parsing comment literal')
         pos = pos + fin;
         % There's no statement. Just move `pos` forward. Statement count n is not incremented
     elseif any(s(pos)==[', ' LF CR]) % do nothing, just consume (but that
@@ -259,7 +278,7 @@ while pos<=L
                 error('MATL:parser', 'MATL error while parsing: ''conditional continue'' is not within any ''for'' loop')
             end
         elseif any(s(pos+1)==' ') % Not currently used after X. We can filter here or leave it to the compiler
-            error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s([pos pos+1]), pos)
+            error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)
         else
             S(n).type = 'function';
             S(n).source = s([pos pos+1]);
@@ -269,7 +288,7 @@ while pos<=L
         n = n + 1;
     elseif s(pos)=='Y' && pos<L
         if any(s(pos+1)==' ') % Not used after Y
-            error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s([pos pos+1]), pos)
+            error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)
         else
             S(n).type = 'function';
             S(n).source = s([pos pos+1]);
@@ -279,7 +298,7 @@ while pos<=L
         n = n + 1;
     elseif s(pos)=='Z' && pos<L
         if any(s(pos+1)==' ') % Not used after Z.
-            error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s([pos pos+1]), pos)
+            error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)
         else
             S(n).type = 'function';
             S(n).source = s([pos pos+1]);
@@ -288,11 +307,11 @@ while pos<=L
         pos = pos + 2;
         n = n + 1;
     elseif any(s(pos)=='''') % Not allowed.
-        error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s(pos), pos)
+        error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s(pos), strongEnd, pos)
     elseif any(s(pos)=='XYZ') && pos==L
-        error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> not recognized at position %d', s(pos), pos)
+        error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s(pos), strongEnd, pos)
     else
-        error('MATL:parser', 'MATL error while parsing: unknown character <strong>%s</strong> at position %d', s(pos), pos)
+        error('MATL:parser', 'MATL error while parsing: unknown character %s%s%s at position %d', strongBegin, s(pos), strongEnd, pos)
     end
 end
 
@@ -326,7 +345,7 @@ S(end).implicit = true;
 
 if isfield(S,'end') && any(cellfun(@(x) isequal(x,0), {S.end}))
     unclosed = find(cellfun(@(x) isequal(x,0), {S.end}), 1);
-    error('MATL:parser', 'MATL error while parsing: <strong>%s</strong> statement has no matching <strong>]</strong>', S(unclosed).source)
+    error('MATL:parser', 'MATL error while parsing: %s%s%s statement has no matching <strong>]</strong>', strongBegin, S(unclosed).source, strongEnd)
 end
 
 end

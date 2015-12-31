@@ -51,6 +51,8 @@ if listing && ~isempty(S)
         texts(ismember(Stype, {'literal.logicalRowArray'})) = {'logical row array literal'};
         texts(ismember(Stype, {'literal.cellArray'})) = {'cell array literal'};
         texts(ismember(Stype, {'literal.string'})) = {'string literal'};
+        texts(strcmp(Stype, 'metaFunction.inSpec')) = {'input specification'};
+        texts(strcmp(Stype, 'metaFunction.outSpec')) = {'output specification'};
         texts(strcmp(Stype, 'controlFlow.for')) = {'for'};
         texts(strcmp(Stype, 'controlFlow.doWhile')) = {'do...while'};
         texts(strcmp(Stype, 'controlFlow.while')) = {'while'};

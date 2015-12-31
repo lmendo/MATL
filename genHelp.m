@@ -13,6 +13,14 @@ N = 65; % characters per line
 
 % Statements that are not functions. Changes done here to the comment field should be
 % done in `matl_disp.m` too.
+F(end+1).source = '$';
+F(end).comment = 'input specification';
+F(end).description = 'specify inputs for next function';
+
+F(end+1).source = '#';
+F(end).comment = 'otput specification';
+F(end).description = 'specify outputs for next function';
+
 F(end+1).source = '"';
 F(end).comment = 'for';
 F(end).description = '\matlab+for+ (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X}+, \matl+Y}+';

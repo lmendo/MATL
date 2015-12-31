@@ -1,4 +1,4 @@
-function matl_help(H, strHelp, verbose, isMatlab, verNum)
+function matl_help(H, strHelp, verbose, useTags)
 %
 % MATL help.
 %
@@ -9,35 +9,44 @@ function matl_help(H, strHelp, verbose, isMatlab, verNum)
 if verbose
     disp('MATL help:')
 end
+
+if useTags
+    strongBegin = '<strong>';
+    strongEnd = '</strong>';
+else
+    strongBegin = '';
+    strongEnd = '';
+end
+
 if isempty(strHelp) || strcmp(strHelp,'help') % empty string: show help usage and return
     if verbose
-        disp('  General help')
-        disp(' ')
+        fprintf('  General help\n')
+        fprintf('\n')
     end
-    disp('<strong>matl</strong> usage:')
-    disp('First input: options:')
-    disp('  <strong>-p</strong>: parse')
-    disp('  <strong>-l</strong>: listing. Numeric options specify format')
-    disp('  <strong>-e</strong>: listing with comments. Numeric options specify format')
-    disp('  <strong>-c</strong>: compile')
-    disp('  <strong>-r</strong>: run (default)')
-    disp('  <strong>-d</strong>: debug')
-    disp('  <strong>-f</strong>: use file')
-    disp('  <strong>-v</strong>: verbose')
-    disp('  <strong>-h</strong>: help.')
-    disp('Second input: string:')
-    disp('  Contains source code, file name or search text')
-    disp('  Source code or file name can be omitted. In that case they are introduced later')
-    disp('  Search text can be a name of function or statement, or a word.')
+    fprintf('%smatl%s usage:\n', strongBegin, strongEnd)
+    fprintf('First input: options:\n')
+    fprintf('  %s-p%s: parse\n', strongBegin, strongEnd)
+    fprintf('  %s-l%s: listing. Numeric options specify format\n', strongBegin, strongEnd)
+    fprintf('  %s-e%s: listing with comments. Numeric options specify format\n', strongBegin, strongEnd)
+    fprintf('  %s-c%s: compile\n', strongBegin, strongEnd)
+    fprintf('  %s-r%s: run (default)\n', strongBegin, strongEnd)
+    fprintf('  %s-d%s: debug\n', strongBegin, strongEnd)
+    fprintf('  %s-f%s: use file\n', strongBegin, strongEnd)
+    fprintf('  %s-v%s: verbose\n', strongBegin, strongEnd)
+    fprintf('  %s-h%s: help.\n', strongBegin, strongEnd)
+    fprintf('Second input: string:\n')
+    fprintf('  Contains source code, file name or search text\n')
+    fprintf('  Source code or file name can be omitted. In that case they are introduced later\n')
+    fprintf('  Search text can be a name of function or statement, or a word.\n')
     return
 elseif numel(strHelp)==1 || (numel(strHelp)==2 && any(strHelp(1)=='XYZ'))  % search in source
     if verbose
-        disp('  Searching for statement with exact matching')
+        fprintf('  Searching for statement with exact matching\n')
     end
     ind = find(strcmp(H.sourcePlain, strHelp)); % exact search in source
 elseif ~isempty(strHelp) % search in comment or description
     if verbose
-        disp('  Searching for text, case-insensitive, partial matching')
+        fprintf('  Searching for text, case-insensitive, partial matching\n')
     end
     ind = find(~cellfun(@isempty, strfind(lower(H.comm), lower(strHelp))) |...
         ~cellfun(@isempty, strfind(lower(H.descrPlain), lower(strHelp)))); % partial, case-insentive search in comment and description
@@ -46,7 +55,7 @@ end
 if verbose && ~isempty(ind)
     disp(' ')
 end
-if isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13))
+if useTags
     descrFieldName = 'descr';
     sourceFieldName = 'source';
 else

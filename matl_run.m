@@ -1,4 +1,4 @@
-function matl_run(S, pOutFile, cOutFileNoExt, dbstopLines, isMatlab)
+function matl_run(S, pOutFile, cOutFileNoExt, dbstopLines, isMatlab, useTags)
 %
 % MATL runner and debugger: runs MATL code that has been compiled into MATLAB code. Catches MATLAB
 % errors and references them to the MATL statement that caused them.
@@ -48,7 +48,11 @@ catch ME
     if ~isempty(ME.stack(h))
         k = ME.stack(h).line;
         n = find([S(:).compileLine]<=k, 1, 'last');
-        fprintf(2, 'MATL run-time error: The following MATLAB error refers to <a href="matlab: opentoline(''%s'', %i)">statement number %i:  %s</a>\n', pOutFile, n, n, S(n).source);
+        if useTags
+            fprintf(2, 'MATL run-time error: The following MATLAB error refers to <a href="matlab: opentoline(''%s'', %i)">statement number %i:  %s</a>\n', pOutFile, n, n, S(n).source);
+        else
+            fprintf(2, 'MATL run-time error: The following MATLAB error refers to statement number %i:  %s\n', n, S(n).source);
+        end
         fprintf(2, '---\n');
     else
         error('MATL:runner:internal', 'MATL internal error while running compiled file. More information follows');

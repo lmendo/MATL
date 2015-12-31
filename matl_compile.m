@@ -1,4 +1,4 @@
-function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab)
+function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags)
 %
 % MATL compiler. Compiles into MATLAB code.
 % Input: struct array with parsed statements.
@@ -21,10 +21,13 @@ function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab)
 %
 % Luis Mendo
 
-global indStepComp
-global C
+global indStepComp C implicitInputBlock
 
 indStepComp = 4;
+
+if verbose
+    disp('  Generating compiled code')
+end
 
 Fsource = {F.source}; % this field of `F` will be used often
 
@@ -32,9 +35,26 @@ Fsource = {F.source}; % this field of `F` will be used often
 % appendLines so that C doesn't dynamically grow
 C = {}; % Cell array of strings. Each cell contains a line of compiled (MATLAB) code
 
-if verbose
-    disp('  Generating compiled code')
+if useTags
+    strongBegin = '<strong>';
+    strongEnd = '</strong>';
+else
+    strongBegin = '';
+    strongEnd = '';
 end
+
+% Define blocks of code that will be reused
+implicitInputBlock = {...
+    'if ~isempty(nin) && (numel(STACK)+nin(1)<1)' ...
+    'implInput = {};' ...
+    'for k = 1:1-numel(STACK)-nin(1)' ...
+    'implInput{k} = input(implicitInputPrompt,''s'');' ...
+    'assert(isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-zA-Z]{2}'', ''once'')), ''MATL:runtime'', ''MATL run-time error: input not allowed'')' ...
+    'if isempty(implInput{k}), implInput{end} = []; else implInput{k} = eval(implInput{k}); end' ...
+    'end' ...
+    'STACK = [implInput STACK];' ...
+    'clear implInput k' ...
+    'end'};
 
 % Include function header
 [~, name] = fileparts(cOutFile);
@@ -61,6 +81,7 @@ appendLines('F = false; T = true;', 0)
 appendLines('P = pi; Y = inf; N = NaN; M = -1; G = -1j;', 0)
 % Constants to be used by function code
 appendLines('defaultInputPrompt = ''> '';', 0);
+appendLines('implicitInputPrompt = ''> '';', 0);
 % Predefine literals for functions
 if ~isempty(S)
     plf = cellstr(char(bsxfun(@plus, 'X0', [floor(0:.1:2.9).' repmat((0:9).',3,1)]))).'; % {'X0'...'Z9'}
@@ -101,8 +122,18 @@ for n = 1:numel(S)
         case 'literal.logicalRowArray'
             lit = strrep(strrep(S(n).source,'T','true,'),'F','false,');
             lit = ['[' lit(1:end-1) ']'];
-            appendLines(['STACK{end+1} = ' lit ';'], S(n).nesting)            
+            appendLines(['STACK{end+1} = ' lit ';'], S(n).nesting)
+        case 'metaFunction.inSpec'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
+            appendLines('S_IN = STACK{end}; STACK(end) = [];', S(n).nesting)
+        case 'metaFunction.outSpec'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
+            appendLines('S_OUT = STACK{end}; STACK(end) = [];', S(n).nesting)
         case 'controlFlow.for'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             newLines{1} = sprintf('in = STACK{end}; STACK(end) = []; indFor%i = 0;', S(n).nesting);
             newLines{2} = sprintf('for varFor%i = in', S(n).nesting);
             appendLines(newLines, S(n).nesting)
@@ -117,6 +148,8 @@ for n = 1:numel(S)
             newLines = sprintf('indDoWhile%i = indDoWhile%i+1;', S(n).nesting, S(n).nesting);
             appendLines(newLines, S(n).nesting+1)
         case 'controlFlow.while' % 'X`'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             newLines = { sprintf('indWhile%i = 0;', S(n).nesting) ...
                 sprintf('condWhile%i = STACK{end};', S(n).nesting) ...
                 'STACK(end) = [];' ... 
@@ -125,6 +158,8 @@ for n = 1:numel(S)
             newLines = sprintf('indWhile%i = indWhile%i+1;', S(n).nesting, S(n).nesting);
             appendLines(newLines, S(n).nesting+1)
         case 'controlFlow.if' % '?'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             newLines = { 'in = STACK{end}; STACK(end) = [];' ...
                 'if in' };
             appendLines(newLines, S(n).nesting);
@@ -132,12 +167,16 @@ for n = 1:numel(S)
             appendLines('else', S(n).nesting)
         case 'controlFlow.end' % ']'
             if strcmp(S(S(n).from).type, 'controlFlow.doWhile')
+                appendLines('nin = 0;', S(n).nesting);
+                appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
                 newLines = { sprintf('condDoWhile%i = STACK{end};', S(n).nesting) ...
                     'STACK(end) = [];' ...
                     'end' ...
                     sprintf('clear indDoWhile%i', S(n).nesting)};
                 appendLines(newLines, S(n).nesting)
             elseif strcmp(S(S(n).from).type, 'controlFlow.while')
+                appendLines('nin = 0;', S(n).nesting);
+                appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
                 newLines = { sprintf('condWhile%i = STACK{end};', S(n).nesting) ...
                     'STACK(end) = [];' ...
                     'end' ...
@@ -151,11 +190,15 @@ for n = 1:numel(S)
                 newLines = 'end';
                 appendLines(newLines, S(n).nesting);
             else
-                error('MATL:compiler:internal', 'MATL internal error while compiling statement <strong>%s</strong>', S(n).source)
+                error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s', strongBegin, S(n).source, strongEnd)
             end
         case 'controlFlow.conditionalBreak'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             appendLines('in = STACK{end}; STACK(end) = []; if in, break, end', S(n).nesting)
         case 'controlFlow.conditionalContinue'
+            appendLines('nin = 0;', S(n).nesting);
+            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             appendLines('in = STACK{end}; STACK(end) = []; if in, continue, end', S(n).nesting)
         case 'controlFlow.forValue'
             k = S(S(n).from).nesting;
@@ -169,13 +212,17 @@ for n = 1:numel(S)
         case 'function'
             k = find(strcmp(S(n).source, Fsource), 1); % Fsource is guaranteed to contain unique entries.
             if isempty(k)
-                error('MATL:compiler', 'MATL error while compiling: function <strong>%s</strong> in <a href="matlab: opentoline(''%s'', %i)">statement number %i</a> not defined in MATL', S(n).source, pOutFile, n, n)
+                if useTags
+                    error('MATL:compiler', 'MATL error while compiling: function %s%s%s in <a href="matlab: opentoline(''%s'', %i)">statement number %i</a> not defined in MATL', strongBegin, S(n).source, strongEnd, pOutFile, n, n)
+                else
+                    error('MATL:compiler', 'MATL error while compiling: function %s%s%s in statement number %i not defined in MATL', strongBegin, S(n).source, strongEnd, n)
+                end
             end
             appendLines(funWrap(F(k).minIn, F(k).maxIn, F(k).defIn, F(k).minOut, F(k).maxOut, F(k).defOut, ...
                 F(k).consumeInputs, F(k).wrap, F(k).body), S(n).nesting)
             C = [C strcat(blanks(indStepComp*S(n).nesting), newLines)];
         otherwise
-            error('MATL:compiler:internal', 'MATL internal error while compiling statement <strong>%s</strong>: unrecognized statement type', S(n).source)
+            error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s: unrecognized statement type', strongBegin, S(n).source, strongEnd)
     end
 end
 
@@ -192,22 +239,22 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     appendLines('', 0)
     appendLines({...
-        'function y = num2str(varargin)';
-        'x = varargin{1}; x = reshape(x, size(x,1),[]);';
-        'if nargin==1 || ischar(varargin{1}) || isnumeric(varargin{2})'; % normal `num2str` function
-        'y = builtin(''num2str'', varargin{:});';
-        'else'; % interception
-        'fmt = varargin{2}; y = sprintf([fmt ''\n''], x.''); y = regexp(y, ''\n'', ''split''); y = y(1:end-1).'';';
-        'y = cellfun(@fliplr, y, ''uniformoutput'', false); y = char(y); y = fliplr(y);';
-        'y = reshape(y.'',[],size(x,1)).''; y = strtrim(y);';
-        'end';
+        'function y = num2str(varargin)' ...
+        'x = varargin{1}; x = reshape(x, size(x,1),[]);'  ...
+        'if nargin==1 || ischar(varargin{1}) || isnumeric(varargin{2}) || any(imag(x(:)))' ... % normal `num2str` function
+        'y = builtin(''num2str'', varargin{:});' ...
+        'else' ... % interception
+        'fmt = varargin{2}; y = sprintf([fmt ''\n''], x.''); y = regexp(y, ''\n'', ''split''); y = y(1:end-1).'';'  ...
+        'y = cellfun(@fliplr, y, ''uniformoutput'', false); y = char(y); y = fliplr(y);' ...
+        'y = reshape(y.'',[],size(x,1)).''; y = strtrim(y);' ...
+        'end' ...
         'end'}, 0)
     % im2col
     appendLines('', 0)
     appendLines({...
-        'function y = im2col(varargin)';
-        'argin1 = varargin{1}; argin1 = reshape(argin1, size(argin1,1), []);';
-        'y = builtin(''im2col'', argin1, varargin{2:end});';
+        'function y = im2col(varargin)' ...
+        'argin1 = varargin{1}; argin1 = reshape(argin1, size(argin1,1), []);' ...
+        'y = builtin(''im2col'', argin1, varargin{2:end});' ...
         'end'}, 0)    
 end
 
@@ -239,19 +286,22 @@ function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume)
 % Code generated at the beginning of functions: check S_IN and S_OUT,
 % get inputs, prepare outputs, consume inputs if applicable.
 % `consume` indicates if inputs should be removed from the stack
+global implicitInputBlock
 newLines = { ...
     sprintf('if isempty(S_IN), S_IN = %s; end', defIn) ...
     sprintf('if isnumeric(S_IN) && numel(S_IN) == 1, if S_IN < %s || S_IN > %s, error(''MATL:runner'', ''MATL run-time error: incorrect input specification''), end', minIn, maxIn) ...
     sprintf('elseif islogical(S_IN), if nnz(S_IN) < %s || nnz(S_IN) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect input specification''), end', minIn, maxIn) ...
     'else error(''MATL:runner'', ''MATL run-time error: input specification not recognized''), end' ...
-    'if isnumeric(S_IN), nin = -S_IN+1:0; else nin = find(S_IN)-numel(S_IN); end' ...
+    'if isnumeric(S_IN), nin = -S_IN+1:0; else nin = find(S_IN)-numel(S_IN); end'};
+newLines = [newLines implicitInputBlock]; % code block for implicit input
+newLines = [newLines, {...
     'in = STACK(end+nin);' ...
     sprintf('if isempty(S_OUT), S_OUT = %s; end', defOut) ...
     sprintf('if isnumeric(S_OUT) && numel(S_OUT) == 1, if S_OUT < %s || S_OUT > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     sprintf('elseif islogical(S_OUT), if numel(S_OUT) < %s || numel(S_OUT) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     'else error(''MATL:runner'', ''MATL run-time error: output specification not recognized''), end' ...
     'if isnumeric(S_OUT), nout = S_OUT; else nout = numel(S_OUT); end' ...
-    'out = cell(1,nout);' };
+    'out = cell(1,nout);' }];
 % For logical S_IN we use nnz (the inputs are picked from the stack), but
 % for logical S_OUT we use numel (the function is called with that many outputs)
 if consume

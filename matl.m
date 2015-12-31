@@ -200,11 +200,12 @@ if any(options=='f')
 end
 
 % Call help, if required, and quit
+useTags = isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13));
 if any(options=='h')
     if nargin>1
-        matl_help(H, s, verbose, isMatlab, verNum)
+        matl_help(H, s, verbose, useTags)
     else
-        matl_help(H, '', verbose, isMatlab, verNum)
+        matl_help(H, '', verbose, useTags)
     end
     return
 end
@@ -214,7 +215,7 @@ if any(ismember(options,'plecrdfv'))
     if verbose
         disp('Parsing program')
     end
-    S = matl_parse(s);
+    S = matl_parse(s, useTags);
     if verbose
         if numel(S)~=1
             fprintf('  %i statements parsed\n', numel(S))
@@ -239,7 +240,7 @@ if any(ismember(options,'csrd'))
     if verbose
         disp('Compiling program')
     end
-    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab);
+    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags);
     %if verbose
     %    disp('  Done.')
     %end
@@ -253,7 +254,7 @@ if any(options=='r')
         %disp('--') %disp(repmat('-',size(str)))
         pause
     end
-    matl_run(S, pOutFile, cOutFileNoExt, [], isMatlab) % ...NoExt because a file name without extension is
+    matl_run(S, pOutFile, cOutFileNoExt, [], isMatlab, useTags) % ...NoExt because a file name without extension is
     % needed in old Matlab versions   
 end
 
@@ -263,7 +264,7 @@ if any(options=='d')
         disp('Press any key to run MATL program in debug mode')
         pause
     end
-    matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine], isMatlab) % ...NoExt because a file name without
+    matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine], isMatlab, useTags) % ...NoExt because a file name without
     % extension is needed in old Matlab versions
 end
 
