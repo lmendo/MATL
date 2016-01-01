@@ -304,3 +304,9 @@ Y3
 68	'uniformdata'
 69	'wathen'
 70	'wilk'
+
+
+Y4
+
+1	'\d+'
+2	'[+-]?\d+(\.\d*)?'

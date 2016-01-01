@@ -69,7 +69,9 @@ Y'	1	1	1	2	2	2	true	true	data = in{1}(:);	run-length encoding	run-length encodin
 									result = {data(ch(1:end-1)), diff(ch)};
 									if ndims(in{1})==2 && size(in{1},1)==1, result{1} = result{1}.'; result{2} = result{2}.'; end
 									[out{:}] = result{:};
-Z'	0	0	0	1	1	1	true	true	out{1} = now;	current date and time	\matlab+now+
+Z'	0	1	0	1	1	1	true	true	if numel(in)==0, out{1} = now;	current date and time	\matlab+now+. With $1$ input: the input should be numeric with values from 1 to 6, which are used as indices into the output of \matlab+clock+
+									elseif numel(in)==1, c = clock; out{1} = c(in{1});
+									else error('MATL:runtime', 'MATL run-time error: too many inputs'); end
 (	3	inf	3	1	1	1	true	true	arrayDestination = in{1};	assignment () indexing	assignment \matlab+( )+ indexing
 									arrayData = in{2};
 									indices = in(3:end);
@@ -455,7 +457,7 @@ Ya
 Za					
 b	0	inf	3	0	0	0	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb					
-Yb	1	inf	1	1	2	1	true	true	[out{:}] = strsplit(in{:});	split string at delimiter	\matlab+strsplit+
+Yb	1	inf	1	1	2	1	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; [out{:}] = strsplit(in{:});	split string at delimiter	\matlab+strsplit+. If second input is a numeric vector, it is converted to char
 Zb					
 c	1	inf	1	1	1	1	true	true	out{1} = char(in{:});	convert to character array	\matlab+char+
 Xc	3	inf	3	1	1	1	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
