@@ -132,6 +132,7 @@ for n = 1:numel(descrFormatted)
     maxOut = str2double(F(n).maxOut);
     defOut = str2double(F(n).defOut);
 
+    % Changes done here should be done in MATL_spec.tex too;
     if isnan(defIn) && ~isempty(F(n).defIn) % F(n).defIn contains a string that couldn't be converted to a number
         switch F(n).defIn
         case 'numel(STACK)'
@@ -158,7 +159,7 @@ for n = 1:numel(descrFormatted)
         inFormatted{n} = sprintf('%i', defIn);
     end
 
-    % Format output spec:
+    % Format output spec. Changes done here should be done in MATL_spec.tex too
     if isnan(defOut) && ~isempty(F(n).defOut) % F(n).defOut contains a string that couldn't be converted to a number
         switch F(n).defOut
         case {'numel(CB_H)' 'numel(CB_I)' 'numel(CB_J)' 'numel(CB_K)'}
@@ -167,6 +168,8 @@ for n = 1:numel(descrFormatted)
             defOutStr = 'number of elements in clipboard level';
         case 'numel(in{1})'
             defOutStr = 'number of elements of first input';
+        case 'prod(size(in{:}))' % Z}
+            defOutStr = 'number of elements or subarrays that will be produced';
         otherwise
             error('Unrecognized default number of outputs')
         end
