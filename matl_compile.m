@@ -53,8 +53,11 @@ implicitInputBlock = {...
     'if isempty(implInput{k}), implInput{end} = []; else implInput{k} = eval(implInput{k}); end' ...
     'end' ...
     'STACK = [implInput STACK];' ...
+    'CB_G = [CB_G implInput];' ...
     'clear implInput k' ...
     'end'};
+    % We don't update CB_M. This implicit input is not considered a
+    % function call, and would have 0 inputs anyway
 
 % Include function header
 [~, name] = fileparts(cOutFile);
@@ -99,8 +102,12 @@ appendLines('STACK = {};', 0)
 appendLines('S_IN = []; S_OUT = [];', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
-% "level". CB_L is initially an empty cell array.
+% "level".
 appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 2 0]} {[2 2 0]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[1 3 2]} {[3 1 2]} {3600} {86400} };', 0)
+% Initiallize automatic clipboards. Clipboard L is implemented as a cell
+% array, where each cell is one clipboard "level" containing one input. It
+% is initially empty.
+appendLines('CB_G = { }; CB_M = { {} {} {} };', 0)
 % Read input file, if present
 appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)
 
@@ -221,7 +228,7 @@ for n = 1:numel(S)
                 end
             end
             appendLines(funWrap(F(k).minIn, F(k).maxIn, F(k).defIn, F(k).minOut, F(k).maxOut, F(k).defOut, ...
-                F(k).consumeInputs, F(k).wrap, F(k).body), S(n).nesting)
+                F(k).consumeInputs, F(k).wrap, F(k).funInClipboard, F(k).body), S(n).nesting)
             C = [C strcat(blanks(indStepComp*S(n).nesting), newLines)];
         otherwise
             error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s: unrecognized statement type', strongBegin, S(n).source, strongEnd)
@@ -303,7 +310,7 @@ fclose(fid);
 clear(cOutFile)
 end
 
-function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume)
+function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume, funInClipboard)
 % Code generated at the beginning of functions: check S_IN and S_OUT,
 % get inputs, prepare outputs, consume inputs if applicable.
 % `consume` indicates if inputs should be removed from the stack
@@ -315,8 +322,11 @@ newLines = { ...
     'else error(''MATL:runner'', ''MATL run-time error: input specification not recognized''), end' ...
     'if isnumeric(S_IN), nin = -S_IN+1:0; else nin = find(S_IN)-numel(S_IN); end'};
 newLines = [newLines implicitInputBlock]; % code block for implicit input
+newLines = [newLines, {'in = STACK(end+nin);'} ];
+if funInClipboard
+    newLines = [newLines, {'if ~isempty(in), CB_M = [{in} CB_M(1:end-1)]; end'} ];
+end
 newLines = [newLines, {...
-    'in = STACK(end+nin);' ...
     sprintf('if isempty(S_OUT), S_OUT = %s; end', defOut) ...
     sprintf('if isnumeric(S_OUT) && numel(S_OUT) == 1, if S_OUT < %s || S_OUT > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     sprintf('elseif islogical(S_OUT), if numel(S_OUT) < %s || numel(S_OUT) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
@@ -340,16 +350,19 @@ newLines = { 'if islogical(S_OUT), out = out(S_OUT); end' ...
     'clear nin nout in out' };
 end
 
-function newLines = funWrap(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs, wrap, body)
+function newLines = funWrap(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs, wrap, funInClipboard, body)
 % Implements use of stack to get inputs and outputs and realizes function body.
 % Specifically, it packs `funPre`, function body and `funPost`.
 % This is used for normal, stack-rearranging and clipboard functions.
 % Meta-functions don't have this; just the function body.
+if funInClipboard & ~wrap
+    error('MATL:compiler:internal', 'MATL internal error while compiling: funInClipboard==true with wrap==false not implemented in the compiler. funInClipboard is only handled by funPre, which is only called if wrap==true')
+end
 if ~iscell(body)
     body = {body}; % convert to 1x1 cell array containing a string
 end
 if wrap
-    newLines = [ funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs) body funPost ];
+    newLines = [ funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs, funInClipboard) body funPost ];
 else
     newLines = body;
 end

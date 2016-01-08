@@ -64,8 +64,11 @@ else
 end
 for n = ind
     disp([H.(sourceFieldName){n} repmat(' ',1,4-numel(H.sourcePlain{n})) H.comm{n}]) % one or two spaces for left margin, total four characters
-    if ~isempty(H.in{n}) && ~isempty(H.in{n})
+    if H.inOutTogether{n}
         disp(['    ' H.in{n}, ';  ' H.out{n}]) % four spaces for left margin
+    else
+        disp(['    ' H.in{n}, ';'])
+        disp(['    ' H.out{n}])
     end
     disp(H.(descrFieldName){n})
 end

@@ -16,7 +16,7 @@ if ~isempty(dbstopLines) % debug mode
         end
         openvar('STACK')
         openvar('S_IN'), openvar('S_OUT')
-        openvar('CB_H'), openvar('CB_I'), openvar('CB_J'), openvar('CB_K'), openvar('CB_L')
+        openvar('CB_G'), openvar('CB_H'), openvar('CB_I'), openvar('CB_J'), openvar('CB_K'), openvar('CB_L'), openvar('CB_M')
         openvar('STACK') % This is to bring this variable to front
     else % Octave
         for line = dbstopLines

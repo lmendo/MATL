@@ -83,6 +83,7 @@ descrFormatted = regexprep(descrFormatted, '\$(.*?)\$', '$1');
 descrPlain = cell(1,numel(descrFormatted));
 inFormatted = cell(1,numel(descrFormatted));
 outFormatted = cell(1,numel(descrFormatted));
+inOutTogether = cell(1,numel(descrFormatted));
 sourceFormatted = cell(1,numel(descrFormatted));
 sourcePlain = {F.source};
 
@@ -137,6 +138,8 @@ for n = 1:numel(descrFormatted)
         switch F(n).defIn
         case 'numel(STACK)'
             defInStr = 'number of elements in stack';
+        case 'double(numel(CB_G)>1)'
+            defInStr = '0 if clipboard currently has 0 or 1 levels; 1 otherwise';
         otherwise
             error('Unrecognized default number of inputs')
         end
@@ -164,12 +167,14 @@ for n = 1:numel(descrFormatted)
         switch F(n).defOut
         case {'numel(CB_H)' 'numel(CB_I)' 'numel(CB_J)' 'numel(CB_K)'}
             defOutStr = 'number of elements in clipboard';
-        case 'numel(CB_L{in{1}})'
+        case {'numel(CB_L{in{1}})' 'numel(CB_M{in{1}})'}
             defOutStr = 'number of elements in clipboard level';
         case 'numel(in{1})'
             defOutStr = 'number of elements of first input';
         case 'prod(size(in{:}))' % Z}
             defOutStr = 'number of elements or subarrays that will be produced';
+        case '1+(numel(CB_G)-1)*(numel(in)==0)'
+            defOutStr = 'number of levels addressed according to input specification';%'if 0 inputs: current number of clipboard levels; if 1 input: 1';
         otherwise
             error('Unrecognized default number of outputs')
         end
@@ -191,6 +196,13 @@ for n = 1:numel(descrFormatted)
         end
         outFormatted{n} = sprintf('%i', defOut);
     end
+    
+    % Flag depending of length of input spec plus output spec
+    if numel(inFormatted{n})+numel(outFormatted{n}) <= N*1.1 % same line
+        inOutTogether{n} = true;
+    else % two separate lines
+        inOutTogether{n} = false;
+    end
 end
 
 %
@@ -202,6 +214,7 @@ H.descr = descrFormatted; % description with format including tags
 H.descrNoTags = descrNoTags; % description with format but without tags
 H.in = inFormatted;
 H.out = outFormatted;
+H.inOutTogether = inOutTogether;
 H.sourcePlain = sourcePlain;
 H.descrPlain = descrPlain;
 save help H

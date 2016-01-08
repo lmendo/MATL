@@ -16,7 +16,11 @@ function F = genFunDef(masterFileName, fileName)
 %
 % Luis Mendo
 
-fieldNames = {'source' 'minIn' 'maxIn' 'defIn' 'minOut' 'maxOut' 'defOut' 'consumeInputs' 'wrap' 'body' 'comment' 'description'};
+fieldNames = {'source' 'minIn' 'maxIn' 'defIn' 'minOut' 'maxOut' 'defOut' 'consumeInputs' 'wrap' 'funInClipboard' 'body' 'comment' 'description'};
+nCol_consumeInputs = find(strcmp(fieldNames, 'consumeInputs'));
+nCol_wrap = find(strcmp(fieldNames, 'wrap'));
+nCol_funInClipboard = find(strcmp(fieldNames, 'funInClipboard'));
+nCol_body = find(strcmp(fieldNames, 'body'));
 fid = fopen(masterFileName, 'r');
 F = reshape(fread(fid,inf,'*char'),1,[]);
 fclose(fid);
@@ -27,12 +31,12 @@ F = regexp(F, ' *\t *', 'split');
 n = numel(fieldNames);
 F = cellfun(@(s) [ s(1:min(n,end)) repmat({''},1,max(n-numel(s),0)) ], F, 'uniform', 0); % fill if empty columns
 F = vertcat(F{:});
-F = F(~cellfun(@isempty, F(:,10)),:); % remove functions that have a line in
+F = F(~cellfun(@isempty, F(:,11)),:); % remove functions that have a line in
 % the file but are not actually defined. These are identified because "body"
 % column is empty.
 
-% Transform 'consumeInputs' and 'wrap' fields into logical values:
-for c = [8 9]
+% Transform 'consumeInputs', 'wrap', 'funInClipboard' fields into logical values:
+for c = [nCol_consumeInputs nCol_wrap nCol_funInClipboard]
     for r = 1:size(F,1)
         F{r,c} = logical(str2num(F{r,c})); %#ok
     end
@@ -44,7 +48,7 @@ d = [~cellfun('isempty', F(:,1)); true];
 starts = find(d(1:end-1));
 ends = find(d(2:end));
 for n = numel(starts):-1:1 % process from end because F will be shrunk along the way
-    F{starts(n),10} = F(starts(n):ends(n),10).';
+    F{starts(n),nCol_body} = F(starts(n):ends(n),nCol_body).';
     F(starts(n)+1:ends(n),:) = [];
 end
 
