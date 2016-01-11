@@ -355,7 +355,11 @@ YG	2	inf	2	0	0	0	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, images
 										elseif in{end}, imagesc(in{1:end-1});
 										else image(in{1:end-1}); end
 										axis ij, axis image, drawnow
-ZG	1	1	1	0	1	0	true	true	true	[out{:}] = colormap(in{:}); if isempty(out), drawnow, end	color look-up table	\matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately
+ZG	1	inf	2	0	1	0	true	true	true	switch in{1}	control appearance of graphics	Depending on numeric first input, calls a graphic function with the remaining inputs.  $1$: \matlab+axis+.  $2$: \matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
+										case 1, axis(in{2:end});
+										case 2, [out{:}] = colormap(in{2:end}); if isempty(out), drawnow, end
+										case 3, hold(in{2:end})
+										otherwise error('MATL:runtime', 'MATL run-time error: unrecognized first input'); end
 H	0	0	0	0	inf	numel(CB_H)	true	true	false	out = CB_H(1:nout);	paste from clipboard H	paste from clipboard H
 XH	0	inf	1	0	0	0	false	true	false	CB_H = in;	copy to clipboard H	copy to clipboard H
 YH	
@@ -563,7 +567,7 @@ q	2	6	2	1	1	1	true	true	true	if numel(in)>=4, if in{4}(1)~='@' && any(in{4}=='('
 										in{4} = str2func(in{4}); end
 										out{1} = accumarray(in{:});
 Xq	2	3	2	1	1	1	true	true	true	out{1} = quantile(in{:});	quantiles of a sample	\matlab+quantile+
-Yq	1	2	1	1	1	1	true	true	true	if numel(in)==1 || in{2}==1%	n-th prime / other related functions	With $1$ input: $n$-th prime for each value $n$ in the input array. With $2$ inputs: second input specifies function. $1$: $n$-th prime function. $2$: Euler's totient function applied element-wise to first input. $3$: next-prime function applied element-wise to first input
+Yq	1	2	1	1	1	1	true	true	true	if numel(in)==1 || in{2}==1%	n-th prime / other related functions	With $1$ input: $n$-th prime for each value $n$ in the input array. With $2$ inputs: second input specifies function.  $1$: $n$-th prime function.  $2$: Euler's totient function applied element-wise to first input.  $3$: next-prime function applied element-wise to first input
 										N = max(in{1}(:)); p = primes(max(11,ceil(N*log(N*log(N))))); out{1} = reshape(p(in{1}), size(in{1})); clear N p
 										elseif in{2}==2
 										tot = NaN(size(in{1})); for n = 1:numel(in{1}), tot(n) = sum(gcd(in{1}(n),1:in{1}(n))==1); end, out{1} = tot;
