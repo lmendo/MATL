@@ -426,8 +426,11 @@ XW
 YW					
 ZW					
 X					
-XX	2	9	2	1	6	1	true	true	true	if numel(in)==2, in{3} = 'match'; end, [out{:}] = regexp(in{:});	match regular expression	\matlab+regexp+. With $2$ inputs: \matlab+regexp(..., ..., 'match')+
-YX	3	5	3	1	1	1	true	true	true	[out{:}] = regexprep(in{:});	replace string using regular expression	\matlab+regexprep+	
+XX	2	9	2	1	6	max(1,sum(ismember(in(3:end), {'start' 'end' 'tokenExtents' 'match' 'tokens' 'names' 'split'})))	true	true	true	if numel(in)==2, in{3} = 'match'; end	match regular expression	\matlab+regexp+. With $2$ inputs: \matlab+regexp(..., ..., 'match')+. If first or second inputs are numeric they are converted to char
+										if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end
+										[out{:}] = regexp(in{:});
+YX	3	5	3	1	1	1	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end; if isnumeric(in{3}), in{3}=char(in{3}); end 	replace string using regular expression	\matlab+regexprep+. If first, second or third inputs are numeric they are converted to char
+										[out{:}] = regexprep(in{:});
 ZX					
 Y					
 XY					

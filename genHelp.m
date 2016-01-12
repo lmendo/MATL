@@ -175,6 +175,8 @@ for n = 1:numel(descrFormatted)
             defOutStr = 'number of elements or subarrays that will be produced';
         case '1+(numel(CB_G)-1)*(numel(in)==0)'
             defOutStr = 'number of levels addressed according to input specification';%'if 0 inputs: current number of clipboard levels; if 1 input: 1';
+        case 'max(1,sum(ismember(in(3:end), {''start'' ''end'' ''tokenExtents'' ''match'' ''tokens'' ''names'' ''split''})))'
+            defOutStr = 'according to specified keywords';
         otherwise
             error('Unrecognized default number of outputs')
         end
