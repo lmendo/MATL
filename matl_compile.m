@@ -249,7 +249,7 @@ appendLines('end', 0) % close function, in case there are subfunctions
 if ~isMatlab
     appendLines('', 0)
     appendLines('% Define subfunctions', 0)
-    fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' 'triu' 'tril'};
+    fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' 'triu' 'tril' 'randsample'};
     for n = 1:numel(fnames)
         fname = fnames{n};
         if any(~cellfun(@isempty,strfind(C,fname))) % This may give false positives, but that's not a problem

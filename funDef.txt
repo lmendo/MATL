@@ -322,7 +322,7 @@ XC	1	7	2	1	3	1	true	true	true	[out{:}] = histcounts(in{:});	histogram bin counts
 YC	2	4	2	1	1	1	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in{2} = [1 in{2}]; else in{2} = [in{2} 1]; end; end	rearrange array blocks into columns	\matlab+im2col+. If the second input is a scalar n, it is transformed into [1 n] if the first input is a row vector, or to [n 1] otherwise
 										out{1} = im2col(in{:});
 ZC
-D	0	inf	1	0	0	0	true	true	true	if numel(in)==1, data = in; fmt = {'%.16g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.16g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+D	0	inf	1	0	0	0	true	true	true	if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 										kk = cellfun(@iscell, data); 
 										while any(kk)
 										data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
@@ -330,13 +330,13 @@ D	0	inf	1	0	0	0	true	true	true	if numel(in)==1, data = in; fmt = {'%.16g '}; els
 										data = vertcat(data{:}); kk = cellfun(@iscell, data); end
 										for k = 1:numel(data), disp(num2str(data{k}, fmt{:})), end
 										clear data kk k
-XD	0	inf	numel(STACK)	0	0	0	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.16g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+D+, \matl+YD+, \matl+ZD+
+XD	0	inf	numel(STACK)	0	0	0	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+D+, \matl+YD+, \matl+ZD+
 										kk = cellfun(@iscell, data); 
 										while any(kk)
 										data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
 										for k = find(kk), data{k} = data{k}(:); end
 										data = vertcat(data{:}); kk = cellfun(@iscell, data); end
-										for k = 1:numel(data), disp(num2str(data{k}, '%.16g ')), end
+										for k = 1:numel(data), disp(num2str(data{k}, '%.15g ')), end
 										clear data kk k
 YD	1	inf	2	0	2	1	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+ (without file identifier). \sa \matl+D+, \matl+XD+, \matl+ZD+
 										else fprintf(in{:}); end					
@@ -580,7 +580,7 @@ Yq	1	2	1	1	1	1	true	true	true	if numel(in)==1 || in{2}==1%	n-th prime / other re
 Zq	1	1	1	1	1	1	true	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+
 r	0	inf	0	1	1	1	true	true	true	out{1} = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
 Xr	0	inf	0	1	1	1	true	true	true	if numel(in)==0, in{1} = 1; end; out{1} = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
-Yr	1	inf	1	1	1	1	true	true	true	if numel(in)==1, in{2} = 1; end; out{1} = randi(in{:});	pseudorandom integers from uniform discrete distribution	\matlab+randi+. If $1$ input: \matlab+randi(...,1)+
+Yr	1	inf	1	1	1	1	true	true	true	out{1} = randi(in{:});	pseudorandom integers from uniform discrete distribution	\matlab+randi+
 Zr	2	4	2	1	1	1	true	true	true	out{1} = randsample(in{:});	random sample	\matlab+randsample+. Does not support stream specification
 s	1	4	1	1	1	1	true	true	true	out{1} = sum(in{:});	sum	\matlab+sum+. \sa \matl+Xs+
 Xs	1	3	1	1	1	1	true	true	true	out{1} = sum(in{1},1,in{2:end});	sum along first dimension	\matlab+sum(..., 1, ...)+. \sa \matl+s+
