@@ -65,7 +65,12 @@ end
 if any(options=='h') && any(ismember(options, ['plecrdf' '0':'9' 'A':'Z']))
     error('MATL:main', 'MATL error while processing options: <strong>h</strong> is not compatible with specified options')
 end
-if ~all(ismember(options, ['plecrdfvh' '0':'9' 'A':'Z']))
+if any(options=='o')
+    online = true; % saffe mode, for online compiler
+else
+    online = false;
+end    
+if ~all(ismember(options, ['plecrdfvho' '0':'9' 'A':'Z']))
     error('MATL:main', 'MATL error: unrecognized option')
 end
 
@@ -240,7 +245,7 @@ if any(ismember(options,'csrd'))
     if verbose
         disp('Compiling program')
     end
-    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags);
+    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags, online);
     %if verbose
     %    disp('  Done.')
     %end

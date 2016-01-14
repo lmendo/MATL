@@ -1,4 +1,4 @@
-function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags)
+function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags, online)
 %
 % MATL compiler. Compiles into MATLAB code.
 % Input: struct array with parsed statements.
@@ -87,8 +87,13 @@ appendLines('F = false; T = true;', 0)
 % Constants to be used within literals only:
 appendLines('P = pi; Y = inf; N = NaN; M = -1; G = -1j;', 0)
 % Constants to be used by function code
-appendLines('defaultInputPrompt = ''> '';', 0);
-appendLines('implicitInputPrompt = ''> '';', 0);
+if online
+    appendLines('defaultInputPrompt = '''';', 0);
+    appendLines('implicitInputPrompt = '''';', 0);
+else
+    appendLines('defaultInputPrompt = ''> '';', 0);
+    appendLines('implicitInputPrompt = ''> '';', 0);
+end
 % Predefine literals for functions
 if ~isempty(S)
     plf = cellstr(char(bsxfun(@plus, 'X0', [floor(0:.1:2.9).' repmat((0:9).',3,1)]))).'; % {'X0'...'Z9'}
@@ -110,8 +115,10 @@ appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
 appendLines('CB_G = { }; CB_M = { {} {} {} };', 0)
-% Read input file, if present
-appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)
+% Read input file, if present. Don't do it in online compiler
+if ~online
+    appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)
+end
 
 % Process each MATL statement. Precede with a commented line containing the MATL
 % statement. Add a field in S indicating the line of that MATL statement in
@@ -261,6 +268,17 @@ if ~isMatlab
             appendLines('', 0)
         end
     end 
+end
+
+% Check safety if online
+if online
+    if verbose
+        fprintf('  Checking safety\n')
+    end
+    assert(all(cellfun(@isempty, strfind(C, 'fread'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
+    assert(all(cellfun(@isempty, strfind(C, 'urlead'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
+    assert(all(cellfun(@isempty, strfind(C, 'imread'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
+    % This gives strings containing that, in addition to functions.
 end
 
 if verbose

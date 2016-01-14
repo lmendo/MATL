@@ -1,5 +1,7 @@
 function y = num2str(varargin)
 % Fixes alignment in certain cases
+% http://stackoverflow.com/q/34483961/2586922
+% https://savannah.gnu.org/bugs/?46770
 x = varargin{1}; x = reshape(x, size(x,1),[]);
 if nargin==1 || ischar(varargin{1}) || isnumeric(varargin{2}) || any(imag(x(:)))
     y = builtin('num2str', varargin{:});
