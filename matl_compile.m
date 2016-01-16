@@ -81,7 +81,9 @@ elseif isMatlab % old Matlab version
     appendLines('rand(''seed'',sum(clock)); randn(''seed'',sum(clock))', 0);
 % else % Octave: seeds are set randomly automatically by Octave
 end
-appendLines('diary off; delete defout; diary defout', 0)
+if ~online
+    appendLines('diary off; delete defout; diary defout', 0)
+end
 % For arrays with brackets or curly braces: F = false; T = true;
 appendLines('F = false; T = true;', 0)
 % Constants to be used within literals only:
@@ -236,6 +238,9 @@ for n = 1:numel(S)
                     error('MATL:compiler', 'MATL error while compiling: function %s%s%s in statement number %i not defined in MATL', strongBegin, S(n).source, strongEnd, n)
                 end
             end
+            if online && ~F(k).allowedOnline
+                error('MATL:compiler', 'MATL compiler error: function %s not allowed in online compiler', F(k).source)
+            end
             appendLines(funWrap(F(k).minIn, F(k).maxIn, F(k).defIn, F(k).minOut, F(k).maxOut, F(k).defOut, ...
                 F(k).consumeInputs, F(k).wrap, F(k).funInClipboard, F(k).body), S(n).nesting)
             C = [C strcat(blanks(indStepComp*S(n).nesting), newLines)];
@@ -268,17 +273,6 @@ if ~isMatlab
             appendLines('', 0)
         end
     end 
-end
-
-% Check safety if online
-if online
-    if verbose
-        fprintf('  Checking safety\n')
-    end
-    assert(all(cellfun(@isempty, strfind(C, 'fread'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
-    assert(all(cellfun(@isempty, strfind(C, 'urlead'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
-    assert(all(cellfun(@isempty, strfind(C, 'imread'))), 'MATL:compiler' ,'MATL compiler error: function not allowed in online compiler')
-    % This gives strings containing that, in addition to functions.
 end
 
 if verbose
