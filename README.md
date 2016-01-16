@@ -7,4 +7,4 @@ Installation: unpack the compressed file to a folder, and make that folder part 
 
 Test: running `matl 10:t!*` from the command window should produce a decimal multiplication table.
 
-Usage: see [specification document](https://github.com/lmendo/MATL/blob/master/MATL_spec.pdf).
+Usage: see [specification document](https://github.com/lmendo/MATL/blob/master/doc/MATL_spec.pdf).
