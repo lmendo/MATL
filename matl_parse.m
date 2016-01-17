@@ -213,9 +213,9 @@ while pos<=L
         end
         pos = pos + 1;
         n = n + 1;
-    elseif s(pos) =='.' % conditional break
-        assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''conditional break'' found outside any control flow structure')
-        S(n).type = 'controlFlow.conditionalBreak';
+    elseif s(pos) =='.' % break
+        assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''break'' found outside any control flow structure')
+        S(n).type = 'controlFlow.break';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         success = false;
@@ -227,7 +227,7 @@ while pos<=L
             end
         end
         if ~success
-            error('MATL:parser', 'MATL error while parsing: ''conditional break'' is not within any ''for'', ''do...while'' or ''while'' loop')
+            error('MATL:parser', 'MATL error while parsing: ''break'' is not within any ''for'', ''do...while'' or ''while'' loop')
         end
         pos = pos + 1;
         n = n + 1;  
@@ -261,9 +261,9 @@ while pos<=L
             S(n).end = 0; % will be filled when a matching "end" is found
             parseNesting = parseNesting + 1; % increase nesting level
             parseControlStack(parseNesting) = n; % take note of opening statement
-        elseif s(pos+1)=='.' % conditional continue
-            assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''conditional continue'' found outside any control flow structure')
-            S(n).type = 'controlFlow.conditionalContinue';
+        elseif s(pos+1)=='.' % continue
+            assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''continue'' found outside any control flow structure')
+            S(n).type = 'controlFlow.continue';
             S(n).source = s([pos pos+1]);
             S(n).nesting = parseNesting;
             success = false;
@@ -275,7 +275,7 @@ while pos<=L
                 end
             end
             if ~success
-                error('MATL:parser', 'MATL error while parsing: ''conditional continue'' is not within any ''for'' loop')
+                error('MATL:parser', 'MATL error while parsing: ''continue'' is not within any ''for'' loop')
             end
         elseif any(s(pos+1)==' ') % Not currently used after X. We can filter here or leave it to the compiler
             error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)

@@ -50,12 +50,12 @@ F(end).comment = 'end';
 F(end).description = '\matlab+end+ (control flow). End loop or conditional branch. \sa \matl+"+, \matl+`+, \matl+?+';
 
 F(end+1).source = '.';
-F(end).comment = 'conditional break';
-F(end).description = 'conditional \matlab+break+ (control flow: loop). Consume the top of the stack and, if it evaluates to ''true'' acccording to \matlab+if+ rules, terminate execution of innermost loop. \sa \matl+"+, \matl+`+';
+F(end).comment = 'break';
+F(end).description = '\matlab+break+ (control flow: loop). Terminate execution of innermost loop. \sa \matl+"+, \matl+`+';
 
 F(end+1).source = 'X.';
 F(end).comment = 'conditional continue';
-F(end).description = 'conditional \matlab+continue+ (control flow: loop). Consume the top of the stack and, if it evaluates to ''true'' acccording to \matlab+if+ rules, pass control to next iteration of innermost loop. \sa \matl+"+, \matl+`+';
+F(end).description = 'conditional \matlab+continue+ (control flow: loop). Pass control to next iteration of innermost loop. \sa \matl+"+, \matl+`+';
 
 F(end+1).source = '''';
 F(end).comment = 'string delimiter';
@@ -167,8 +167,10 @@ for n = 1:numel(descrFormatted)
         switch F(n).defOut
         case {'numel(CB_H)' 'numel(CB_I)' 'numel(CB_J)' 'numel(CB_K)'}
             defOutStr = 'number of elements in clipboard';
-        case {'numel(CB_L{in{1}})' 'numel(CB_M{in{1}})'}
+        case 'numel(CB_L{in{1}})'
             defOutStr = 'number of elements in clipboard level';
+        case '1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)'
+            defOutStr = '1 or number of elements in clipboard level';
         case 'numel(in{1})'
             defOutStr = 'number of elements of first input';
         case 'prod(size(in{:}))' % Z}

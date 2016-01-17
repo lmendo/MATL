@@ -89,6 +89,7 @@ appendLines('F = false; T = true;', 0)
 % Constants to be used within literals only:
 appendLines('P = pi; Y = inf; N = NaN; M = -1; G = -1j;', 0)
 % Constants to be used by function code
+appendLines('numCbM = 4;', 0); % number of levels in clipboard M
 if online
     appendLines('defaultInputPrompt = '''';', 0);
     appendLines('implicitInputPrompt = '''';', 0);
@@ -116,7 +117,7 @@ appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
-appendLines('CB_G = { }; CB_M = { {} {} {} };', 0)
+appendLines('CB_G = { }; CB_M = repmat({{}},1,numCbM);', 0)
 % Read input file, if present. Don't do it in online compiler
 if ~online
     appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)
@@ -212,14 +213,10 @@ for n = 1:numel(S)
             else
                 error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s', strongBegin, S(n).source, strongEnd)
             end
-        case 'controlFlow.conditionalBreak'
-            appendLines('nin = 0;', S(n).nesting);
-            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
-            appendLines('in = STACK{end}; STACK(end) = []; if in, break, end', S(n).nesting)
-        case 'controlFlow.conditionalContinue'
-            appendLines('nin = 0;', S(n).nesting);
-            appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
-            appendLines('in = STACK{end}; STACK(end) = []; if in, continue, end', S(n).nesting)
+        case 'controlFlow.break'
+            appendLines('break', S(n).nesting)
+        case 'controlFlow.continue'
+            appendLines('continue', S(n).nesting)
         case 'controlFlow.forValue'
             k = S(S(n).from).nesting;
             appendLines(sprintf('STACK{end+1} = varFor%i;', k), S(n).nesting)
