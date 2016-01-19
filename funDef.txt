@@ -283,7 +283,7 @@ Y@	1	1	1	1	1	1	true	true	true	true	out{1} = perms(in{:});	all possible permutati
 Z@	1	3	1	1	1	1	true	true	true	true	if numel(in)~=3, out{1} = randperm(in{:});	random permutation	\matlab+randperm+ (produces a row vector as output). With $3$ outputs: third output indicates number of permutations, each in a different row.
 											else [~, p] = sort(rand(in{3},in{1}),2); p = p(:,1:in{2}); out{1} = p; clear p, end
 A	1	2	1	1	1	1	true	true	true	true	out{1} = all(in{:});	all	\matlab+all+
-XA					
+XA	1	1	1	1	1	1	true	true	true	true	out{1} = all(in{:},1);	all, along first dimension	\matlab+all(...,1)+
 YA	2	4	2	1	1	1	true	true	true	true	if numel(in{2})==1, out{1} = dec2base(in{:});	convert integer to string representation in given base	\matlab+dec2base+. If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$
 											else d = in{1}(:); symbols = in{2}(:).'; b = numel(symbols);
 											if ~(isnumeric(d) || ischar(d)) || any(d ~= floor(d)) || any(d < 0) || any(d > 1/eps)
@@ -485,7 +485,7 @@ Z`	0	1	0	0	1	1	true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc(i
 											elseif ~numel(in) && numel(out)==0, toc; end
 % Matlab R2015b hangs with tic; in = {}; t=toc(in{:}). That's why I distinguish here the no-input version
 a	1	2	1	1	1	1	true	true	true	true	out{1} = any(in{:});	any	\matlab+any+
-Xa					
+Xa	1	1	1	1	1	1	true	true	true	true	out{1} = any(in{:},1);	any, along first dimension	\matlab+any(...,1)+
 Ya					
 Za					
 b	0	inf	3	0	0	0	false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
@@ -637,7 +637,7 @@ Zz
 X{	1	2	1	1	1	1	true	true	true	true	out{1} = num2cell(in{:});	convert numeric array into cell array	\matlab+num2cell+
 Y{	2	inf	3	1	1	1	true	true	true	true	out{1} = mat2cell(in{:});	break up array into cell array of subarrays	\matlab+mat2cell+
 Z{	1	1	1	1	1	1	true	true	true	true	sz = num2cell(size(in{1})); out{1} = mat2cell(in{1}, ones(sz{1},1), sz{2:end});	cell array of first-dimension slices from array	\matlab+mat2cell(x, ones(size(x,1),1), size(x,2),...,size(x,ndims(x)))+. It's a generalization of \matlab+cellstr+ that works for numeric, logical or char arrays of any number of dimensions
-|
+|	3	3	3	1	1	1	true	true	true	true	if(in{2}), out{1}=in{1}; else, out{1}=in{3}; end	ternary 'if' with literals	if second input produce first input, else produce third input
 X|	2	4	2	1	3	1	true	true	true	true	if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end	set union	\matlab+union+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char
 											if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 											if numel(in)==2 || (numel(in)==3 && strcmp(in{3},'rows')), in{end+1}='stable'; end, [out{:}] = union(in{:});

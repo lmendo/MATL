@@ -258,7 +258,7 @@ appendLines('end', 0) % close function, in case there are subfunctions
 if ~isMatlab
     appendLines('', 0)
     appendLines('% Define subfunctions', 0)
-    fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' 'triu' 'tril' 'randsample' 'nchoosek' 'vpa'};
+    fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' 'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean'};
     for n = 1:numel(fnames)
         fname = fnames{n};
         if any(~cellfun(@isempty,strfind(C,fname))) % This may give false positives, but that's not a problem
@@ -341,7 +341,7 @@ function newLines = funWrap(minIn, maxIn, defIn, minOut, maxOut, defOut, consume
 % Specifically, it packs `funPre`, function body and `funPost`.
 % This is used for normal, stack-rearranging and clipboard functions.
 % Meta-functions don't have this; just the function body.
-if funInClipboard & ~wrap
+if funInClipboard && ~wrap
     error('MATL:compiler:internal', 'MATL internal error while compiling: funInClipboard==true with wrap==false not implemented in the compiler. funInClipboard is only handled by funPre, which is only called if wrap==true')
 end
 if ~iscell(body)
