@@ -12,7 +12,9 @@ indentCommentSymbol = 6; % number of spaces before comment symbol. Default value
 indentCommentText = 1; % number of spaces before actual comment. Default value
 pOutFile = 'MATLp.txt'; % temporary file for parsed code
 cOutFile = 'MATLc.m'; % temporary file for compiled code
- cOutFileNoExt = regexprep('MATLc.m', '\.m$', ''); % without extension. Needed to run file in old Matlab versions
+ cOutFileNoExt = cOutFile(1:end-2); % same without extension. Needed to run file in old Matlab versions
+ % cOutFileNoExt = regexprep(cOutFile, '\.m$', ''); % Old Octave versions
+ % (before 3.8 apparently) don't recognize '\.'  as an escaped dot symbol
 funDefMasterFile = 'funDef.txt'; % function definition master file
 funDefMatFile = 'funDef.mat'; % function definition processed file
 preLitMasterFile = 'preLit.txt'; % master file that defines predefined strings with (key, value) pairs

@@ -340,7 +340,7 @@ XD	0	inf	numel(STACK)	0	0	0	true	true	true	true	data = in;	convert to string and
 											data = vertcat(data{:}); kk = cellfun(@iscell, data); end
 											for k = 1:numel(data), disp(num2str(data{k}, '%.15g ')), end
 											clear data kk k
-YD	1	inf	2	0	2	1	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+ (without file identifier). \sa \matl+D+, \matl+XD+, \matl+ZD+
+YD	1	inf	2	0	2	1	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
 											else fprintf(in{:}); end					
 ZD	0	inf	1	0	0	0	true	true	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
 E
@@ -351,7 +351,7 @@ F
 XF					
 YF	0	1	1	0	0	0	true	true	true	true	format(in{:})	set output format	\matlab+format+				
 ZF					
-G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out = CB_G(in{1}); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
+G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out{1} = CB_G(real(in{1}) + (numel(CB_G)+imag(in{1})).*~real(in{1})); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
 XG	1	inf	1	0	0	0	true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
 YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imagesc(in{:});	display image	\matlab+imagesc+ or \matlab+image+. If last input is a scalar that evaluates to \matlab+true+ / \matlab+false+: \matlab+imagesc+ / \matlab+image+ is respectively called with remaining inputs. If last input is not a scalar: \matlab+imagesc+ is called with all inputs. Afterwards, in all cases, this sets \matlab+axis ij, axis image+ and calls \matlab+drawnow+ to update figure immediately
 											elseif in{end}, imagesc(in{1:end-1});

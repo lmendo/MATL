@@ -34,6 +34,7 @@ if isempty(strHelp) || strcmp(strHelp,'help') % empty string: show help usage an
     fprintf('  %s-f%s: use file\n', strongBegin, strongEnd)
     fprintf('  %s-v%s: verbose\n', strongBegin, strongEnd)
     fprintf('  %s-h%s: help.\n', strongBegin, strongEnd)
+    fprintf('  %s-o%s: online mode.\n', strongBegin, strongEnd)
     fprintf('Second input: string:\n')
     fprintf('  Contains source code, file name or search text\n')
     fprintf('  Source code or file name can be omitted. In that case they are introduced later\n')
