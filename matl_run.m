@@ -32,8 +32,6 @@ else % non-debug mode
     else % Octave
         if exist(cOutFileNoExt,'file')
             dbclear(cOutFileNoExt);
-            delete([cOutFileNoExt '.m']) % Sometimes it looks like an old version of the file is run
-            % instead of the new compiled one. So I'm deleting the file just in case
         end
     end
 end
