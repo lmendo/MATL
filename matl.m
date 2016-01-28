@@ -28,6 +28,15 @@ isMatlab = strcmp(version(indMainName).Name, 'MATLAB'); % 1 if Matlab, 0 if Octa
 verNum = version(indMainName).Version; % version number as a string
 verNum = str2double(regexp(verNum, '\.', 'split')); % version number as a vector
 
+useTags = isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13));
+if useTags
+    strongBegin = '<strong>';
+    strongEnd = '</strong>';
+else
+    strongBegin = '';
+    strongEnd = '';
+end
+
 if numel(varargin)==0
     options = 'r';
     inputNeeded = true;
@@ -46,15 +55,15 @@ elseif numel(varargin)==2 && varargin{1}(1)=='-'
     s = varargin{2};
     inputNeeded = false;
 elseif numel(varargin)==2 && varargin{1}(1)~='-'
-    error('MATL:main', 'MATL error while processing options: two input strings have identified, but the first string does not begin with <strong>-</strong>')
+    error('MATL:main', 'MATL error while processing options: two input strings have identified, but the first string does not begin with %s-%s', strongBegin, strongEnd)
 else
     error('MATL:main', 'MATL error while processing options: the number of inputs cannot exceed 2')
 end
 if any(options=='r') && any(options=='d')
-    error('MATL:main', 'MATL error while processing options: incompatible options <strong>r</strong> and <strong>d</strong>')
+    error('MATL:main', 'MATL error while processing options: incompatible options %sr%s and %sd%s', strongBegin, strongEnd, strongBegin, strongEnd)
 end
 if any(options=='l') && any(options=='e')
-    error('MATL:main', 'MATL error while processing options: incompatible options <strong>l</strong> and <strong>e</strong>')
+    error('MATL:main', 'MATL error while processing options: incompatible options %sl%s and %se%s', strongBegin, strongEnd, strongBegin, strongEnd)
 end
 if ~ismember(options,'plecsrdh')
     options = [options 'r'];
@@ -65,7 +74,7 @@ else
     verbose = false;
 end
 if any(options=='h') && any(ismember(options, ['plecrdf' '0':'9' 'A':'Z']))
-    error('MATL:main', 'MATL error while processing options: <strong>h</strong> is not compatible with specified options')
+    error('MATL:main', 'MATL error while processing options: %sh%s is not compatible with specified options', strongBegin, strongEnd)
 end
 if any(options=='o')
     online = true; % saffe mode, for online compiler
@@ -207,7 +216,6 @@ if any(options=='f')
 end
 
 % Call help, if required, and quit
-useTags = isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13));
 if any(options=='h')
     if nargin>1
         matl_help(H, s, verbose, useTags)
