@@ -1,4 +1,4 @@
-function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags, online)
+function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, verNum, useTags, online)
 %
 % MATL compiler. Compiles into MATLAB code.
 % Input: struct array with parsed statements.
@@ -260,6 +260,10 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem'};
+    verNumTh = [4 0 1]; % first version in which the modified function is not needed
+    if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
+        fnames = [fnames {'colon'}];
+    end
     for n = 1:numel(fnames)
         fname = fnames{n};
         if any(~cellfun(@isempty,strfind(C,fname))) % This may give false positives, but that's not a problem

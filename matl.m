@@ -255,7 +255,7 @@ if any(ismember(options,'csrd'))
     if verbose
         disp('Compiling program')
     end
-    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, useTags, online);
+    S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, verNum, useTags, online);
     %if verbose
     %    disp('  Done.')
     %end
