@@ -260,7 +260,7 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem'};
-    verNumTh = [4 0 1]; % first version in which the modified function is not needed
+    verNumTh = [4 0 0]; % first version in which the modified function is not needed
     if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
         fnames = [fnames {'colon'}];
     end
