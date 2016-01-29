@@ -16,7 +16,7 @@
 %     - comment (for matl program)
 %     - description (for LaTeX)
 %						
-% src	minIn	maxIn	defIn	minOut	maxOut	defOut	consumeInputs	wrap	funInClipboard	body	Comment (for matl)	description (for LaTex)
+% src	minIn	maxIn	defIn	minOut	maxOut	defOut	consumeInputs	wrap	funInClipboard	allowedOnline	body	Comment (for matl)	description (for LaTex)
 !	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, if ndims(in{1})==2, out{1} = in{1}.'; else, out{1} = permute(in{1}, [2 1 3:ndims(in{1})]); end	transpose / permute array dimensions	With $1$ input: \matlab+.'+ (\matlab+transpose+), or \matlab+permute(..., [2 1 ...])+ for multidimensional arrrays. With $2$ inputs: \matlab+permute+
 											else out{1} = permute(in{:}); end
 X!	1	2	1	1	1	1	true	true	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
@@ -405,7 +405,7 @@ F
 XF					
 YF	0	1	1	0	0	0	true	true	true	true	format(in{:})	set output format	\matlab+format+				
 ZF					
-G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out{1} = CB_G(real(in{1}) + (numel(CB_G)+imag(in{1})).*~real(in{1})); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
+G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out = CB_G(real(in{1}) + (numel(CB_G)+imag(in{1})).*~real(in{1})); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
 XG	1	inf	1	0	0	0	true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
 YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imagesc(in{:});	display image	\matlab+imagesc+ or \matlab+image+. If last input is a scalar that evaluates to \matlab+true+ / \matlab+false+: \matlab+imagesc+ / \matlab+image+ is respectively called with remaining inputs. If last input is not a scalar: \matlab+imagesc+ is called with all inputs. Afterwards, in all cases, this sets \matlab+axis ij, axis image+ and calls \matlab+drawnow+ to update figure immediately
 											elseif in{end}, imagesc(in{1:end-1});
@@ -445,7 +445,7 @@ M	1	1	1	0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)	true	true
 											out = [CB_M{in{1}}(1:nout)];
 											elseif in{1}>=5
 											cbMflip = CB_M(end:-1:1); cbMIndivIn = [cbMflip{cellfun(@numel, cbMflip)>1}]; cbMIndivIn = cbMIndivIn(end:-1:1);
-											out{1} = cbMIndivIn(in{1}-numCbM);
+											out = cbMIndivIn(in{1}-numCbM);
 											clear cbMflip cbMIndivIn
 											else
 											error('MATL:runtime', 'MATL run-time error: incorrect input')
