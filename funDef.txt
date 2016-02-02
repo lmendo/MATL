@@ -553,7 +553,7 @@ Yb	1	inf	1	1	2	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} =
 Zb					
 c	1	inf	1	1	1	1	true	true	true	true	out{1} = char(in{:});	convert to character array	\matlab+char+
 Xc	3	inf	3	1	1	1	true	true	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
-Yc	1	inf	2	1	1	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. If second input is numeric it is converted to char
+Yc	1	inf	2	1	1	1	true	true	true	true	for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. Numeric inputs are converted to char
 Zc	1	2	1	1	1	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strjoin(in{:});	join cell array of strings into single string	\matlab+strjoin+. If second input is numeric it is converted to char
 d	1	3	1	1	1	1	true	true	true	true	out{1} = diff(in{:});	difference	\matlab+diff+
 Xd	1	2	1	1	1	1	true	true	true	true	out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	\matlab+diag+				
