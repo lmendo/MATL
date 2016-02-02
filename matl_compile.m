@@ -113,7 +113,7 @@ appendLines('S_IN = []; S_OUT = [];', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
 % "level".
-appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 2 0]} {[2 2 0]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[1 3 2]} {[3 1 2]} {3600} {86400} };', 0)
+appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 2 0]} {[2 2 0]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[1 3 2]} {[3 1 2]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {2*pi} {0.5772156649015328606} {(sqrt(5)+1)/2} };', 0)
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.

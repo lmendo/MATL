@@ -19,7 +19,7 @@
 % src	minIn	maxIn	defIn	minOut	maxOut	defOut	consumeInputs	wrap	funInClipboard	allowedOnline	body	Comment (for matl)	description (for LaTex)
 !	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, if ndims(in{1})==2, out{1} = in{1}.'; else, out{1} = permute(in{1}, [2 1 3:ndims(in{1})]); end	transpose / permute array dimensions	With $1$ input: \matlab+.'+ (\matlab+transpose+), or \matlab+permute(..., [2 1 ...])+ for multidimensional arrrays. With $2$ inputs: \matlab+permute+
 											else out{1} = permute(in{:}); end
-X!	1	2	1	1	1	1	true	true	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
+X!	1	2	2	1	1	1	true	true	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
 Y!	1	1	1	0	2	2	true	true	true	false	[out{:}] = system(in{:});	execute system command	\matlab+system+
 Z!	1	1	1	1	1	1	true	true	true	true	out{1} = full(in{1});	convert sparse matrix to full matrix	\matlab+full+
 "					
@@ -211,8 +211,8 @@ Z*	1	inf	2	1	1	1	true	true	true	true	n = numel(in); combs = cell(1,n);	Cartesian
 											out{1} = combs; clear combs n
 +	1	inf	2	1	1	1	true	true	true	true	y = in{1}; for n=2:numel(in), y = bsxfun(@plus, y, in{n}); end; out{1} = y; clear y n;	addition (element-wise, singleton expansion)	\matlab|+| (\matlab+plus+), element-wise with singleton expansion
 X+	2	3	2	1	1	1	true	true	true	true	out{1} = conv(double(in{1}), double(in{2}), in{3:end});	convolution	\matlab+conv+. Converts first two inputs to \matlab+double+.
-Y+	2	4	2	1	1	1	true	true	true	true	out{1} = conv2(in{:});	two-dimensional convolution	\matlab+conv2+
-Z+	2	3	2	1	1	1	true	true	true	true	out{1} = conv2(in{:}, 'valid');	two-dimensional convolution; part without zero-padded edges	\matlab+conv2(..., 'valid')+
+Y+	2	4	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end});	two-dimensional convolution	\matlab+conv2+. Converts first two inputs to \matlab+double+
+Z+	2	3	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end}, 'valid');	two-dimensional convolution; part without zero-padded edges	\matlab+conv2(..., 'valid')+. Converts first two inputs to \matlab+double+
 ,					
 X,	1	1	1	1	1	1	true	true	true	true	out{1} = cos(in{1});	cosine (radians)	\matlab+cos+
 Y,	1	1	1	1	1	1	true	true	true	true	out{1} = sin(in{1});	sine (radians)	\matlab+sin+
@@ -320,8 +320,8 @@ Y<	1	3	1	1	1	1	true	true	true	true	out{1} = cummin(in{:});	cumulative minimum	\m
 Z<					
 =	2	2	2	1	1	1	true	true	true	true	out{1} = bsxfun(@eq, in{1}, in{2});	is equal? (element-wise, singleton expansion)	\matlab+==+ (\matlab+eq+), element-wise with singleton expansion
 X=	2	inf	2	1	1	1	true	true	true	true	out{1} = isequal(in{:});	true if arrays are numerically equal	\matlab+isequal+
-Y=	2	2	2	1	1	1	true	true	true	true	out{1} = strcmp(in{:});	compare strings	\matlab+strcmp+
-Z=	3	3	3	1	1	1	true	true	true	true	out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+
+Y=	2	2	2	1	1	1	true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strcmp(in{:});	compare strings	\matlab+strcmp+. If first or second inputs are numeric they are converted to char
+Z=	3	3	3	1	1	1	true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+. If first or second inputs are numeric they are converted to char
 >	2	2	2	1	1	1	true	true	true	true	out{1} = bsxfun(@gt, in{1}, in{2});	is greater than? (element-wise, singleton expansion)	\matlab+>+ (\matlab+gt+), element-wise with singleton expansion
 X>	1	3	1	1	2	1	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion
 											else [out{:}] = max(in{:}); end
@@ -553,8 +553,8 @@ Yb	1	inf	1	1	2	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} =
 Zb					
 c	1	inf	1	1	1	1	true	true	true	true	out{1} = char(in{:});	convert to character array	\matlab+char+
 Xc	3	inf	3	1	1	1	true	true	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
-Yc	2	inf	2	1	1	1	true	true	true	true	out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+
-Zc	1	2	1	1	1	1	true	true	true	true	out{1} = strjoin(in{:});	join cell array of strings into single string	\matlab+strjoin+
+Yc	1	inf	2	1	1	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. If second input is numeric it is converted to char
+Zc	1	2	1	1	1	1	true	true	true	true	if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strjoin(in{:});	join cell array of strings into single string	\matlab+strjoin+. If second input is numeric it is converted to char
 d	1	3	1	1	1	1	true	true	true	true	out{1} = diff(in{:});	difference	\matlab+diff+
 Xd	1	2	1	1	1	1	true	true	true	true	out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	\matlab+diag+				
 Yd	1	inf	2	1	1	1	true	true	true	true	out{1} = blkdiag(in{:});	block diagonal concatenation	\matlab+blkdiag+
@@ -576,8 +576,32 @@ Xe
 Ye
 Ze	1	1	1	1	1	1	true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
 f	1	3	1	1	3	1	true	true	true	true	[out{:}] = find(in{:});	find	\matlab+find+
-Xf	2	4	2	1	1	1	true	true	true	true	out{1} = strfind(in{:});	find one string within another	\matlab+strfind+
-Yf	1	1	1	1	1	1	true	true	true	true	out{1} = factor(in{1});	prime factors	\matlab+factor+
+Xf	2	4	2	1	1	1	true	true	true	true	if ischar(in{1}) || (iscell(in{1})&&ischar(in{1}{1}))	find one string within another	\matlab+strfind+. Works also with numeric arrays or cell arrays of numeric arrays. In this case each numeric array is linearized, and results are row vectors
+											out{1} = strfind(in{:});
+											else
+											if ~iscell(in{1})
+											t = in{1}(:); p = in{2}(:); n = numel(p);
+											y = [];
+											for k = 1:numel(t)-n+1
+											if t(k:k+n-1)==p, y = [y k]; end
+											end
+											if numel(in)>2 && strcmp(in{3},'ForceCellOutput') && in{4}, y = {y}; end
+											else
+											y = cell(size(in{1}));
+											for c = 1:numel(in{1})
+											t = in{1}{c}(:); p = in{2}(:); n = numel(p);
+											y{c} = [];
+											for k = 1:numel(t)-n+1
+											if t(k:k+n-1)==p, y{c} = [y{c} k]; end
+											end
+											end
+											end
+											out{1} = y;
+											end
+Yf	1	1	1	1	1	1	true	true	true	true	if in{1}>=0, out{1} = factor(in{1});	prime factors	\matlab+factor+. For negative input, it computes the factors of the abolute value and removes $1$ from result.
+											else in{1}=-in{1};
+											if in{1}==1, out{1} = []; else out{1} = factor(in{1}); end
+											end
 Zf					
 g	1	1	1	1	1	1	true	true	true	true	out{1} = logical(in{1});	convert to logical values	\matlab+logical+
 Xg	1	inf	2	1	inf	2	true	true	true	true	[out{:}] = ndgrid(in{:});	rectangular grid in N-D space	\matlab+ndgrid+				
@@ -667,7 +691,17 @@ Zs	1	4	1	1	1	1	true	true	true	true	out{1} = std(in{:});	standard deviation	\matl
 t	0	inf	1	0	0	0	false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
 Yt
-Zt	3	3	3	1	1	1	true	true	true	true	[out{:}] = strrep(in{:});	replace substring with another	\matlab+strrep+
+Zt	3	3	3	1	1	1	true	true	true	true	if ~isnumeric(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric array (not a cell array of numeric arrays). In this case the other inputs can be char or numeric (not cell); each input array is linearized; result is a row vector; and result is char if third input is, even if not substitutions have been actually done
+											out{1} = strrep(in{:});
+											else
+											t = in{1}(:).'; p = in{2}(:).'; r = in{3}(:).'; n = numel(p);
+											y = t;
+											for k = numel(t)-n+1:-1:1
+											if t(k:k+n-1)==p, y = [y(1:k-1) r y(k+n:end)]; end
+											end
+											if ischar(in{3}), y = char(y); end
+											out{1} = y;
+											end
 u	1	4	1	1	3	1	true	true	true	true	[out{:}] = unique(in{:});	unique	\matlab+unique+. \sa \matl+Xu+.
 Xu	1	3	1	1	3	1	true	true	true	true	[out{:}] = unique(in{1},'rows',in{2:end});	unique rows	\matlab+unique(..., 'rows', ...)+. \sa \matl+u+.				
 Yu	
