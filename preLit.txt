@@ -5,9 +5,11 @@ X0
 3	'rows'
 4	'last'
 5	'reverse'
+6	'descend'
 10	'first'
 11	'forward'
 12	'legacy'
+13	'ascend'
 
 
 X1
@@ -98,6 +100,10 @@ X6
 1	'get'
 2	'post'
 3	'Timeout'
+4	'png'
+5	'ppm'
+6	'gif'
+7	'bmp'
 9	'none'
 11	'Frames'
 12	'BackgroundColor'
@@ -105,7 +111,13 @@ X6
 14	'Info'
 15	'ReductionLevel'
 16	'PixelRegion'
-17	'V79Compatible'	
+17	'V79Compatible'
+20	'Border'
+21	'Colormap'
+22	'DisplayRange'
+23	'InitialMagnification'
+24	'Parent'
+25	'Reduce'
 
 
 X7

@@ -76,7 +76,7 @@ F = F(ind);
 commFormatted = {F.comment};
 descrFormatted = {F.description};
 descrFormatted = regexprep(descrFormatted, '\\matlab(.)(.*?)(\1)', '<strong>$2</strong>');
-descrFormatted = regexprep(descrFormatted, '\\matl\+(.*?)\+', '<strong>$1</strong>'); %***make delimiter arbitrary here too
+descrFormatted = regexprep(descrFormatted, '\\matl(.)(.*?)\1', '<strong>$2</strong>'); % delimiter can be any
 descrFormatted = regexprep(descrFormatted, '\\comp{(.*?)}', '<strong>$1</strong>');
 descrFormatted = regexprep(descrFormatted, '\\sa', 'See also');
 descrFormatted = regexprep(descrFormatted, '\$(.*?)\$', '$1');
@@ -179,6 +179,8 @@ for n = 1:numel(descrFormatted)
             defOutStr = 'number of levels addressed according to input specification';%'if 0 inputs: current number of clipboard levels; if 1 input: 1';
         case 'max(1,sum(ismember(in(3:end), {''start'' ''end'' ''tokenExtents'' ''match'' ''tokens'' ''names'' ''split''})))'
             defOutStr = 'according to specified keywords';
+        case 'numel(in)'
+            defOutStr = 'number of inputs';
         otherwise
             error('Unrecognized default number of outputs')
         end

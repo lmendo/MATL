@@ -69,15 +69,18 @@ Z&	2	3	2	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end	
 '													
 X'
 Y'	1	1	1	2	2	2	true	true	true	true	data = in{1}(:);	run-length encoding	run-length encoding (inverse of \matlab+repelem+). Input may be an array or cell array. Numeric values must be finite
+											if isempty(in{1}), if iscell(in{1}), out={{} []}; else, out{1}={[] []}; end;
+											else
 											if ~iscell(in{1}), ch = [1; find(diff(data))+1; numel(data)+1];
-											else ch = [1 find(arrayfun(@(n) data{n}~=data{n+1}, 1:numel(data)-1))+1 numel(data)+1].'; end
+											else ch = 1; for n=2:numel(data), if ~isequal(data{n-1},data{n}), ch = [ch; n]; end; end; ch = [ch; numel(data)+1]; end
 											result = {data(ch(1:end-1)), diff(ch)};
 											if ndims(in{1})==2 && size(in{1},1)==1, result{1} = result{1}.'; result{2} = result{2}.'; end
 											[out{:}] = result{:};
+											end
 Z'	0	1	0	1	1	1	true	true	true	true	if numel(in)==0, out{1} = now;	current date and time	\matlab+now+. With $1$ input: the input should be numeric with values from 1 to 6, which are used as indices into the output of \matlab+clock+
 											elseif numel(in)==1, c = clock; out{1} = c(in{1});
 											else error('MATL:runtime', 'MATL run-time error: too many inputs'); end
-(	3	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () indexing	assignment \matlab+( )+ indexing. Null assignment (\matlab+x(...) = []+) can only be done with a single index
+(	3	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment ( ) indexing	assignment \matlab+( )+ indexing. Null assignment (\matlab+x(...) = []+) can only be done with a single index
 											arrayData = in{2};
 											indices = in(3:end);
 											Ni = numel(indices);
@@ -116,7 +119,7 @@ X(	3	inf	3	1	1	1	true	true	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{en
 % This code above was based on that for (.
 % An added difficulty is that `[arrayDestination{indices{:}}] = deal(data{:})` doesn't work (but explicitly writing the indices does work!: [arrayDestination{1:2, 3:4}] = deal(data{:}) ). So I had to use () indexing on the LHS and reshape on the RHS
 % nnz works for numeric, logical or char indices
-Y(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () indexing with final colon	assignment \matlab+(..., :)+ indexing. Null assignment (\matlab+x(..., :) = []+) can only be done with a single index (in addition to the colon)
+Y(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment ( ) indexing with final colon	assignment \matlab+(..., :)+ indexing. Null assignment (\matlab+x(..., :) = []+) can only be done with a single index (in addition to the colon)
 											arrayData = in{2};
 											indices = [in(3:end) {':'}];
 											Ni = numel(indices);
@@ -133,7 +136,7 @@ Y(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () ind
 											end
 											out{1} = arrayDestination;
 % The code for Y( is the same as for ( except fot the `indices = ...` line
-Z(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () indexing with initial colon	assignment \matlab+(:, ...)+ indexing. Null assignment (\matlab+x(:, ...) = []+) can only be done with a single index (in addition to the colon)
+Z(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment ( ) indexing with initial colon	assignment \matlab+(:, ...)+ indexing. Null assignment (\matlab+x(:, ...) = []+) can only be done with a single index (in addition to the colon)
 											arrayData = in{2};
 											indices = [{':'} in(3:end)];
 											Ni = numel(indices);
@@ -150,7 +153,7 @@ Z(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () ind
 											end
 											out{1} = arrayDestination;
 % The code for Z( is the same as for ( except fot the `indices = ...` line
-)	2	inf	2	1	1	1	true	true	true	true	array = in{1};	reference () indexing	reference \matlab+( )+ indexing
+)	2	inf	2	1	2	1	true	true	true	true	array = in{1};	reference ( ) indexing / split array	reference \matlab+( )+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs
 											indices = in(2:end);
 											Ni = numel(indices);
 											sz = size(array);
@@ -162,6 +165,7 @@ Z(	2	inf	3	1	1	1	true	true	true	true	arrayDestination = in{1};	assignment () ind
 											end
 											end
 											out{1} = array(indices{:});
+											if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
 % This code above for ) indexing has been a little difficult. It had to correctly handle an arbitrary number of indices, possibly with partially linear indexing; and end-based indexing
 X)	2	inf	2	1	1	1	true	true	true	true	array = in{1};	reference {} indexing	reference \matlab+{ }+ indexing
 											assert(iscell(array), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
@@ -176,7 +180,7 @@ X)	2	inf	2	1	1	1	true	true	true	true	array = in{1};	reference {} indexing	refere
 											end
 											end
 											out = reshape(array(indices{:}),1,[]);
-Y)	1	inf	2	1	1	1	true	true	true	true	array = in{1};	reference () indexing with final colon	reference \matlab+(..., :)+ indexing
+Y)	1	inf	2	1	2	1	true	true	true	true	array = in{1};	reference ( ) indexing with final colon	reference \matlab+(..., :)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind,:)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs
 											indices = [in(2:end) {':'}];
 											Ni = numel(indices);
 											sz = size(array);
@@ -188,8 +192,9 @@ Y)	1	inf	2	1	1	1	true	true	true	true	array = in{1};	reference () indexing with f
 											end
 											end
 											out{1} = array(indices{:});
+											if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
 % Y) is the same as ) except for the `indices = ...` line
-Z)	1	inf	2	1	1	1	true	true	true	true	array = in{1};	reference () indexing with initial colon	reference \matlab+(:, ...)+ indexing
+Z)	1	inf	2	1	2	1	true	true	true	true	array = in{1};	reference ( ) indexing with initial colon	reference \matlab+(:, ...)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(:,ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs
 											indices = [{':'} in(2:end)];
 											Ni = numel(indices);
 											sz = size(array);
@@ -201,6 +206,7 @@ Z)	1	inf	2	1	1	1	true	true	true	true	array = in{1};	reference () indexing with i
 											end
 											end
 											out{1} = array(indices{:});
+											if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
 % Z) is the same as ) except for the `indices = ...` line
 *	1	inf	2	1	1	1	true	true	true	true	y = in{1}; for n=2:numel(in), y = bsxfun(@times, y, in{n}); end; out{1} = y; clear y n;	array product (element-wise, singleton expansion)	\matlab+.*+ (\matlab+times+), element-wise with singleton expansion
 X*	2	2	2	1	1	1	true	true	true	true	out{1} = kron(in{:});	Kronecker tensor product	\matlab+kron+
@@ -210,9 +216,9 @@ Z*	1	inf	2	1	1	1	true	true	true	true	n = numel(in); combs = cell(1,n);	Cartesian
 											combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 											out{1} = combs; clear combs n
 +	1	inf	2	1	1	1	true	true	true	true	y = in{1}; for n=2:numel(in), y = bsxfun(@plus, y, in{n}); end; out{1} = y; clear y n;	addition (element-wise, singleton expansion)	\matlab|+| (\matlab+plus+), element-wise with singleton expansion
-X+	2	3	2	1	1	1	true	true	true	true	out{1} = conv(double(in{1}), double(in{2}), in{3:end});	convolution	\matlab+conv+. Converts first two inputs to \matlab+double+.
-Y+	2	4	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end});	two-dimensional convolution	\matlab+conv2+. Converts first two inputs to \matlab+double+
-Z+	2	3	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end}, 'valid');	two-dimensional convolution; part without zero-padded edges	\matlab+conv2(..., 'valid')+. Converts first two inputs to \matlab+double+
+X+	2	3	2	1	1	1	true	true	true	true	out{1} = conv(double(in{1}), double(in{2}), in{3:end});	convolution	\matlab+conv+. Converts first two inputs to \matlab+double+. \sa \matl|Y+|, \matl|Z+|
+Y+	2	4	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end});	two-dimensional convolution	\matlab+conv2+. Converts first two inputs to \matlab+double+. \sa \matl|X+|, \matl|Z+|
+Z+	2	3	2	1	1	1	true	true	true	true	out{1} = conv2(double(in{1}), double(in{2}), in{3:end}, 'valid');	two-dimensional convolution; part without zero-padded edges	\matlab+conv2(..., 'valid')+. Converts first two inputs to \matlab+double+. \sa \matl|X+|, \matl|Y+|
 ,					
 X,	1	1	1	1	1	1	true	true	true	true	out{1} = cos(in{1});	cosine (radians)	\matlab+cos+
 Y,	1	1	1	1	1	1	true	true	true	true	out{1} = sin(in{1});	sine (radians)	\matlab+sin+
@@ -329,7 +335,7 @@ Y>	1	3	1	1	1	1	true	true	true	true	[out{1}] = cummax(in{:});	cumulative maximum	
 Z>					
 ?					
 X?					
-Y?
+Y?	0	0	0	1	1	1	true	true	true	true	x = { 'V=..90+r~/,~6=..90+~0/*p~J69,9~5+~0/~''6%' 'U*w+~=22~Q=*2=<w+~8=)2*p~U*w+~49=2/)+p~U*w+~6/2:507~19~<=;3}' 'Uw(9~+990~.,/7,=1+~%/)~.9/.29~''/)2:0w*~<9259(9' 'J69~.,/7,=119,~6=+~<990~:,503507r~0/*~19' 'U~:5:~5*~8/,~19p~U~2539:~5*p~U~''=+~7//:~=*~5*' 'E/)~4)+*~6=(90w*~9=,09:~5*~%9*r~<=<%' 'Q%~;/:9~5+~.,/<291=*5;' 'E/)~399.~)+507~*6=*~8)0;*5/0p~U~:/~0/*~*6503~5*~19=0+~''6=*~%/)~*6503~5*~19=0+' 'J65+~5+~/<(5/)+2%~+/19~+*,=079~)+9~/8~*69~8)0;*5/0~wE_w~*6=*~U~''=+0w*~.,9(5/)+2%~=''=,9~/8' 'N,/7,=1+~1=3507~.,/7,=1+~q~6/''~.9,(9,+9}' }; if ~numel(in), in{1} = randi(numel(x)); end; if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input not allowed'); end; out{1} = char(158-x{mod(in{1}-1,numel(x))+1}); clear x
 Z?	1	6	3	1	1	1	true	true	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
 @					
 X@	
@@ -407,10 +413,17 @@ YF	0	1	1	0	0	0	true	true	true	true	format(in{:})	set output format	\matlab+forma
 ZF					
 G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out = CB_G(real(in{1}) + (numel(CB_G)+imag(in{1})).*~real(in{1})); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
 XG	1	inf	1	0	0	0	true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imagesc(in{:});	display image	\matlab+imagesc+ or \matlab+image+. If last input is a scalar that evaluates to \matlab+true+ / \matlab+false+: \matlab+imagesc+ / \matlab+image+ is respectively called with remaining inputs. If last input is not a scalar: \matlab+imagesc+ is called with all inputs. Afterwards, in all cases, this sets \matlab+axis ij, axis image+ and calls \matlab+drawnow+ to update figure immediately
-											elseif in{end}, imagesc(in{1:end-1});
-											else image(in{1:end-1}); end
-											axis ij, axis image, drawnow
+YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imshow+ is called with all inputs. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imwhow+, \matlab+drawnow+ is called to update figure immediately
+											elseif ischar(in{end}), imwrite(in{:});
+											else switch(in{end})
+											case 0, imwrite(in{1:end-1});
+											case 1, imagesc(in{1:end-1}); axis ij, axis image
+											case 2, image(in{1:end-1}); axis ij, axis image
+											case 3, imshow(in{1:end-1});
+											otherwise error('MATL:runtime', 'MATL run-time error: unrecognized last input');
+											end
+											end
+											drawnow
 ZG	1	inf	2	0	1	0	true	true	true	true	switch in{1}	control appearance of graphics	Depending on numeric first input, calls a graphic function with the remaining inputs.  $1$: \matlab+axis+.  $2$: \matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
 											case 1, axis(in{2:end});
 											case 2, [out{:}] = colormap(in{2:end}); if isempty(out), drawnow, end
@@ -475,7 +488,13 @@ R	1	2	1	1	1	1	true	true	true	true	out{1} = triu(in{:});	upper triangular part	\m
 XR	1	1	1	1	1	1	true	true	true	true	out{1} = triu(in{1},1);	upper triangular part, above diagonal	\matlab+triu(..., 1)+. \sa \matl+R+.
 YR	1	2	1	1	1	1	true	true	true	true	out{1} = tril(in{:});	lower triangular part	\matlab+tril+. \sa \matl+ZR+.
 ZR	1	1	1	1	1	1	true	true	true	true	out{1} = tril(in{1},-1);	lower triangular part, without diagonal	\matlab+tril(..., -1)+. \sa \matl+YR+.
-S	1	3	1	1	2	1	true	true	true	true	if numel(in)==2 && in{2}<0, in{2}=-in{2}; in{3} = 'descend'; end, [out{:}] = sort(in{:});	sort	\matlab+sort+. If $2$ inputs: a negative value of the second input corresponds to descending order
+S	1	3	1	1	2	1	true	true	true	true	if numel(in)>1 && ~ischar(in{2}) && numel(in{2})>1 && isvector(in{1}) && isvector(in{2}) && isequal(numel(in{1}),numel(in{2}))	sort	sort an array (single-array mode: \matlab+sort+) / sort an array based on another (two-array mode). Single-array mode works like Matlab's \matlab+sort+. If $2$ inputs, a negative value of the second input corresponds to descending order. In two-array mode, this function takes first $2$ inputs as equal-length vectors where the second is not char. The second vector is sorted and its order is applied to the first; and an optional third input specifies direction as a string, or as a negative number in the non-singleton dimension of the second vector. The outputs are the two sorted arrays. (In two-array mode, if the two input arrays are scalar the result is the same as if the second input is interpreted as dimension, corresponding to single array mode)
+											if numel(in)==3 && isnumeric(in{3}) && in{3}<0, in{3}=-in{3}; in{4} = 'descend'; end
+											[y2, ind] = sort(in{2:end}); y1 = in{1}(ind); out = {y1, y2}; out = out(1:nout);
+											else
+											if numel(in)==2 && in{2}<0, in{2}=-in{2}; in{3} = 'descend'; end
+											[out{:}] = sort(in{:});
+											end
 XS	1	2	1	1	2	1	true	true	true	true	[out{:}] = sortrows(in{:});	sort rows	\matlab+sortrows+				
 YS	2	3	2	1	1	1	true	true	true	true	out{1} = circshift(in{:});	circular shift	\matlab+circshift+
 ZS	1	1	1	1	1	1	true	true	true	true	out{1} = sign(in{:});	sign function	\matlab+sign+
@@ -483,8 +502,9 @@ T
 XT
 YT	1	2	2	1	1	1	true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+					
 ZT					
-U	1	1	1	1	2	1	true	true	true	true	for r = 1:size(in{1},1), assert(isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')), 'MATL:runtime', 'MATL run-time error: content not allowed'), end	convert string matrix to numeric array	\matlab+str2num+ with content checking
-											[out{:}] = str2num(in{:}); clear r
+U	1	1	1	1	2	1	true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	convert string matrix to numeric array	\matlab+str2num+ with content checking. If input is not char, it is automatically converted to char
+											for r = 1:size(in{1},1), assert(isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')), 'MATL:runtime', 'MATL run-time error: content not allowed'), end; clear r
+											[out{:}] = str2num(in{:});
 XU	1	1	1	1	1	1	true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
 ZU					
@@ -604,7 +624,7 @@ Yf	1	1	1	1	1	1	true	true	true	true	if in{1}>=0, out{1} = factor(in{1});	prime fa
 											end
 Zf					
 g	1	1	1	1	1	1	true	true	true	true	out{1} = logical(in{1});	convert to logical values	\matlab+logical+
-Xg	1	inf	2	1	inf	2	true	true	true	true	[out{:}] = ndgrid(in{:});	rectangular grid in N-D space	\matlab+ndgrid+				
+Xg	1	inf	2	1	inf	numel(in)	true	true	true	true	[out{:}] = ndgrid(in{:});	rectangular grid in N-D space	\matlab+ndgrid+
 Yg					
 Zg	1	1	1	1	1	1	true	true	true	true	out{1} = gammaln(in{:});	logarithm of gamma function	\matlab+gammaln+				
 h	1	inf	2	1	1	1	true	true	true	true	out{1} = horzcat(in{:});	horizontal concatenation	\matlab+horzcat+
@@ -632,7 +652,7 @@ Yk
 Zk
 l	0	inf	0	1	1	1	true	true	true	true	out{1} = ones(in{:});	array of ones	\matlab+ones+ (if $0$ inputs: produces output $1$)
 Xl	1	1	1	1	1	1	true	true	true	true	out{1} = abs(in{1});	absolute value	\matlab+abs+
-Yl	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, out{1} = log(in{1}); else out{1} = log(in{1})/log(in{2}); end	logarithm	\matlab+log+. If two inputs: second input specifies logarithm base
+Yl	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, out{1} = log(in{1}); else out{1} = log(in{1})/log(in{2}); end	logarithm	\matlab+log+. If $2$ inputs: second input specifies logarithm base
 Zl	1	1	1	1	2	1	true	true	true	true	[out{:}] = log2(in{:});	base 2 logarithm	\matlab+log2+
 m	2	4	2	1	2	1	true	true	true	true	[out{:}] = ismember(in{:});	true for set member	\matlab+ismember+. \sa \matl+Xm+
 Xm	2	3	2	1	2	1	true	true	true	true	[out{:}] = ismember(in{1},in{2},'rows',in{3:end});	true for set member, row-wise	\matlab+ismember(..., 'rows', ...)+. \sa \matl+m+
@@ -707,7 +727,7 @@ Xu	1	3	1	1	3	1	true	true	true	true	[out{:}] = unique(in{1},'rows',in{2:end});	un
 Yu	
 Zu	1	2	1	1	1	1	true	true	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
 v	1	inf	2	1	1	1	true	true	true	true	out{1} = vertcat(in{:});	vertical concatenation	\matlab+vertcat+
-Xv					
+Xv	1	1	1	1	1	1	true	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; out{1} = regexprep(in{1}, '\s', '');	remove space	remove space from input string or cell array strings. If input is a numeric array, it is converted to char
 Yv	1	1	1	1	1	1	true	true	true	true	out{1} = strtrim(in{:});	remove insignificant whitespace	\matlab+strtrim+
 Zv	1	1	1	1	1	1	true	true	true	true	out{1} = deblank(in{:});	remove trailing blanks	\matlab+deblank+
 w	0	inf	2	0	0	0	false	true	false	true	if ~isempty(in), in([1 end]) = in([end 1]); STACK(end+nin) = in; end	swap elements in stack	swap elements in stack
