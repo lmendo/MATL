@@ -334,3 +334,12 @@ Y4
 4	'[a-z]'
 5	'[A-Za-z]'
 
+
+Y5
+
+1	'pre'
+2	'post'
+3	'both'
+4	'circular'
+5	'replicate'
+6	'symmetric'

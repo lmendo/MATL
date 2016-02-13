@@ -14,5 +14,8 @@ function y = vpa(varargin);
 % Both (i) and (ii) seem to be resolved by `pretty`:
 % `pretty(vpa('-3.4'))` gives the string
 %     '-3.4000000000000000000000000000000'
+% However, `pretty` formats the output string with spaces and newlines. These
+% characters are removed.
 y = pretty(builtin('vpa', varargin{:}));
+y = y(y>32); % remove spaces and newlines produced by `pretty`
 end
