@@ -1,7 +1,7 @@
 function y = vpa(varargin);
 % (1) vpa in Octave produces a lot of unwanted displayed text. It's directly displayed, not part of the
 % function  output. I didn't found a way to removed (I tried changing
-% PAGER). But Dennis uses a clever trick to remove that output in the
+% PAGER). But Dennis uses a clever trick (with "tail") to remove that output in the
 % online compiler
 % (2) (i) After converting to char, the result is different from Matlab. For
 % example, char(vpa(pi^pi)) produces the string
@@ -18,4 +18,11 @@ function y = vpa(varargin);
 % characters are removed.
 y = pretty(builtin('vpa', varargin{:}));
 y = y(y>32); % remove spaces and newlines produced by `pretty`
+% In Octave `pretty(vpa('765.0908',20))` gives '765.09080000000000000'. In Matlab it gives '765.0908', and 765 gives '765.0'.
+% To remove surplus zeros in Octave, the following seems to work. It
+% doesn't work for complex values, but the complex case seems to have
+% precision loss anyway
+if ~ismember('I',y) % complex case not covered
+    y = regexprep(y,'(?<=\.\d*)0+(?=(e|$))','0');
+end
 end

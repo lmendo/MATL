@@ -98,7 +98,7 @@ Z'	0	1	0	1	1	1	true	true	true	true	if numel(in)==0, out{1} = now;	current date a
 											out{1} = arrayDestination;
 % This code above was easy, after the code for ) had been done
 % shiftdim is needed to preserve end-index shape (the colon operation gives a row vector both for say [1 0] and [1;0]). I realized this here, with assignment indexing. For referencing indexing and for curly-brace indexing it probably doesn't matter, but I also add the shiftdim operation there just case
-% `data = []; x=[5 4 7]; x([1 3]) = data;` doesn't work. It's has to be `data = []; x=[5 4 7]; x([1 3]) = [];`. In addition, for indexing with various indices, all of them except for one should be `:`. But MATL doesn't have `:`. So assignment with [] only works with one index
+% `data = []; x=[5 4 7]; x([1 3]) = data;` doesn't work. It has to be `data = []; x=[5 4 7]; x([1 3]) = [];`. In addition, for indexing with various indices, all of them except for one should be `:`. But MATL doesn't have `:`. So assignment with [] only works with one index
 X(	3	inf	3	1	1	1	true	true	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{end};	assignment {} indexing	assignment \matlab+{ }+ indexing
 											indices = in(end-Ni:end-1);
 											data = in(2:end-Ni-1); 
@@ -344,8 +344,8 @@ X@
 Y@	1	1	1	1	1	1	true	true	true	true	out{1} = perms(in{:});	all possible permutations	\matlab+perms+
 Z@	1	3	1	1	1	1	true	true	true	true	if numel(in)~=3, out{1} = randperm(in{:});	random permutation	\matlab+randperm+ (produces a row vector as output). With $3$ outputs: third output indicates number of permutations, each in a different row.
 											else [~, p] = sort(rand(in{3},in{1}),2); p = p(:,1:in{2}); out{1} = p; clear p, end
-A	1	2	1	1	1	1	true	true	true	true	out{1} = all(in{:});	all	\matlab+all+
-XA	1	1	1	1	1	1	true	true	true	true	out{1} = all(in{:},1);	all, along first dimension	\matlab+all(..., 1)+
+A	1	2	1	1	1	1	true	true	true	true	out{1} = all(in{:});	all	\matlab+all+. \sa \matl|XA|
+XA	1	1	1	1	1	1	true	true	true	true	out{1} = all(in{:},1);	all, along first dimension	\matlab+all(..., 1)+. \sa \matl|A|
 YA	2	4	2	1	1	1	true	true	true	true	if numel(in{2})==1, out{1} = dec2base(in{:});	convert integer to string representation in given base	\matlab+dec2base+. If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$
 											else d = in{1}(:); symbols = in{2}(:).'; b = numel(symbols);
 											if ~(isnumeric(d) || ischar(d)) || any(d ~= floor(d)) || any(d < 0) || any(d > 1/eps)
@@ -405,7 +405,7 @@ XD	0	inf	numel(STACK)	0	0	0	true	true	true	true	data = in;	convert to string and
 YD	1	inf	2	0	2	1	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
 											else fprintf(in{:}); end					
 ZD	0	inf	1	0	0	0	true	true	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
-E
+E	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}*2;	multiply by 2	\matlab|(...)*2|
 XE	3	3	3	1	1	1	true	true	true	true	[ii, jj] = ismember(in{1}, in{2}); y = in{1}; y(ii) = in{3}(jj(ii)); out{1} = y; clear ii jj y	replace elements in numeric or char array	replace in first input all occurrences of each element of the second input by the corresponding element of the third input. Output has the same class and size as the first input
 YE					
 ZE					
@@ -481,7 +481,7 @@ XP	1	1	1	1	1	1	true	true	true	true	out{1} = flipud(in{:});	flip array in up-down
 YP	0	0	0	1	1	1	true	true	true	true	out{1} = pi;	pi	\matlab+pi+
 ZP	2	5	2	1	1	1	true	true	true	true	out{1} = pdist2(in{:});	pairwise distances between two sets of points	\matlab+pdist2+. Only predefined distance functions are allowed
 Q	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}+1;	increment by 1	\matlab|(...)+1|
-XQ	2	6	2	1	1	1	true	true	true	true	if numel(in)>=4, if in{4}(1)~='@' && any(in{4}=='('), in{4} = ['@(x)' in{4}]; end	construct array by accumulation	\matlab+accumarray+
+XQ	2	6	2	1	1	1	true	true	true	true	if numel(in)>=4, if in{4}(1)~='@' && any(in{4}=='('), in{4} = ['@(x)' in{4}]; end	construct array by accumulation	\matlab+accumarray+. Optional fourth argument is a function string, which will be transformed into function handle. Function strings can be of the form \matlab+'max'+ (name of a function), \matlab+'@(x)max(x)'+ (anonymous function defined in terms of \matlab+x+), or \matlab+'max(x)'+ (if the string contains \matlab+(+ and doesn't begin by \matlab+@+, \matlab+'@(x)'+ is automatically prepended)
 											in{4} = str2func(in{4}); end
 											out{1} = accumarray(in{:});
 YQ					
@@ -498,7 +498,13 @@ S	1	3	1	1	2	1	true	true	true	true	if numel(in)>1 && ~ischar(in{2}) && numel(in{2
 											[out{:}] = sort(in{:});
 											end
 XS	1	2	1	1	2	1	true	true	true	true	[out{:}] = sortrows(in{:});	sort rows	\matlab+sortrows+				
-YS	2	3	2	1	1	1	true	true	true	true	out{1} = circshift(in{:});	circular shift	\matlab+circshift+
+YS	2	3	2	1	1	1	true	true	true	true	if numel(in{2})==1 && numel(in)==2	circular shift	\matlab+circshift+. If second input is a scalar and there's no third input, the shift is applied along the first non-singleton dimension
+											d = find(size(in{1})>1,1); if isempty(d), d = 1; end
+											y = circshift(in{:}, d);
+											else
+											y = circshift(in{:});
+											end
+											out{1} = y;
 ZS	1	1	1	1	1	1	true	true	true	true	out{1} = sign(in{:});	sign function	\matlab+sign+
 T					
 XT
@@ -565,9 +571,13 @@ Z`	0	1	0	0	1	1	true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc(i
 											elseif ~numel(in) && numel(out)==1, out{1} = toc;
 											elseif ~numel(in) && numel(out)==0, toc; end
 % Matlab R2015b hangs with tic; in = {}; t=toc(in{:}). That's why I distinguish here the no-input version
-a	1	2	1	1	1	1	true	true	true	true	out{1} = any(in{:});	any	\matlab+any+
-Xa	1	1	1	1	1	1	true	true	true	true	out{1} = any(in{:},1);	any, along first dimension	\matlab+any(..., 1)+
-Ya	2	4	2	1	1	1	true	true	true	true	out{1} = padarray(in{:});	pad array	\matlab+padarray+
+a	1	2	1	1	1	1	true	true	true	true	out{1} = any(in{:});	any	\matlab+any+. \sa \matl|Xa|
+Xa	1	1	1	1	1	1	true	true	true	true	out{1} = any(in{:},1);	any, along first dimension	\matlab+any(..., 1)+. \sa \matl|a|
+Ya	2	4	2	1	1	1	true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in{1}); end	pad array	\matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+
+											if numel(in)>=3 && ischar(in{3}) && numel(in{3})==1, in{3} = double(in{3}); end
+											if islogical(in{2}), in{2} = double(in{2}); end
+											out{1} = padarray(in{:});
+											if c, out{1} = char(out{1}); end; clear c
 Za					
 b	0	inf	3	0	0	0	false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb					
@@ -679,8 +689,8 @@ o	1	1	1	1	1	1	true	true	true	true	out{1} = double(in{1});	convert to double prec
 Xo	1	1	1	1	1	1	true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
 Yo	1	3	1	1	1	1	true	true	true	true	out{1} = round(in{:});	round towards nearest decimal or integer	\matlab+round+
 Zo	1	1	1	1	1	1	true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
-p	1	3	1	1	1	1	true	true	true	true	out{1} = prod(in{:});	product of elements	\matlab+prod+
-Xp	1	3	1	1	1	1	true	true	true	true	out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. \sa \matl+p+
+p	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{:});	product of elements	\matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl|Xp|
+Xp	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl+p+.
 Yp	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = cumprod(in{:});	cumulative product	\matlab+cumprod+. Allows char input
 Zp	1	1	1	1	1	1	true	true	true	true	if all(in{1}>0)	is prime / totient function	For input with positive entries: \matlab+isprime+. For input with non-positive entries: Euler's totient function for absolute value of each entry
 											out{1} = isprime(in{1});

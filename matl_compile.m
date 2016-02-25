@@ -255,12 +255,17 @@ appendLines('', 0)
 appendLines('end', 0) % close function, in case there are subfunctions
 
 % Define subfunctions for compatibility with Octave
+% If any of the names in `fnames` is found, the content of the file
+% '..._comp.m' will be included in the compiled file. That '..._comp.m' file may
+% contain one or several functions; each of those functions (even if there's only one) should
+% have an 'end' statement
 if ~isMatlab
     appendLines('', 0)
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
-        'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base'};
-    verNumTh = [4 0 0]; % first version in which the modified function is not needed
+        'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base' ...
+        'hypergeom' 'disp' 'str2func' 'logical' 'circshift'};
+    verNumTh = [4 0 0]; % first version in which a modified function is not needed:
     if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
         fnames = [fnames {'colon'}];
     end
