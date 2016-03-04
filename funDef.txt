@@ -406,7 +406,16 @@ YD	1	inf	2	0	2	1	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	w
 											else fprintf(in{:}); end					
 ZD	0	inf	1	0	0	0	true	true	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
 E	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}*2;	multiply by 2	\matlab|(...)*2|
-XE	3	3	3	1	1	1	true	true	true	true	[ii, jj] = ismember(in{1}, in{2}); y = in{1}; y(ii) = in{3}(jj(ii)); out{1} = y; clear ii jj y	replace elements in numeric or char array	replace in first input all occurrences of each element of the second input by the corresponding element of the third input. Output has the same class and size as the first input
+XE	3	3	3	1	1	1	true	true	true	true	if ~(iscell(in{1}) && ~iscell(in{2}) && ~iscell(in{3}))	replace elements in numeric or char array	With numeric or char inputs, replace in first input all occurrences of each element of the second input by the corresponding element of the third input. Output has the same class and size as the first input. If the three inputs inputs are cell arrays of strings (the second may also be a string instead of a cell array of strings), each string of the first input is considered atomic, that is, replacing is based on whole strings. If the first input is a cell array and the others are numeric or char, replacing is done on each cell's contents as if the cell's contents were the first input
+											[ii, jj] = ismember(in{1}, in{2}); y = in{1}; y(ii) = in{3}(jj(ii)); out{1} = y; clear ii jj y
+											else
+											z = cell(size(in{1}));
+											for k = 1:numel(in{1})
+											x = in{1}{k};
+											[ii, jj] = ismember(x, in{2}); y = x; y(ii) = in{3}(jj(ii)); z{k} = y;
+											end
+											out{1} = z; clear ii jj x y
+											end
 YE					
 ZE					
 F					
@@ -465,11 +474,14 @@ M	1	1	1	0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)	true	true
 											else
 											error('MATL:runtime', 'MATL run-time error: incorrect input')
 											end
-XM					
+XM	1	2	1	1	3	1	true	true	true	true	[out{:}] = mode(in{:});	mode (most frequent value)	\matlab+mode+
 YM					
 ZM					
 N	0	0	0	1	1	1	true	true	false	true	out{1} = numel(STACK);	number of elements in the stack	number of elements in the stack
-XN					
+XN	2	2	2	1	1	1	true	true	true	true	if numel(in{1})<in{2} || ~(in{2}>0)	all combinations	\matlab+nchoosek+. This interprets first input as an array (even if it is a single number). For inputs \matlab+x+ and \matlab+k+, if \matlab+x+ has less than \matlab+k+ elements or if \matlab+k+ is non-positive the result is an empty array
+											out{1} = [];
+											else out{1} = nchoosek(in{:});
+											end
 YN	0	inf	0	1	1	1	true	true	true	true	out{1} = NaN(in{:});	not-a-number	\matlab+NaN+ function. If $0$ inputs: produces literal \matlab+NaN+.
 ZN	1	1	1	1	1	1	true	true	true	true	out{1} = isnan(in{:});	true for not-a-number	\matlab+isnan+
 O	0	inf	0	1	1	1	true	true	true	true	if numel(in)==0, out{1} = 0; else out{1} = zeros(in{:}); end	array of zeros	\matlab+zeros+ (if $0$ inputs: produces output $0$)
@@ -479,7 +491,7 @@ ZO	1	3	1	1	6	1	true	true	true	true	[out{:}] = datevec(in{:});	date components	\m
 P	1	2	1	1	1	1	true	true	true	true	out{1} = flip(in{:});	flip the order of elements	\matlab+flip+. \sa \matl+XP+
 XP	1	1	1	1	1	1	true	true	true	true	out{1} = flipud(in{:});	flip array in up-down direction	\matlab+flipud+. \sa \matl+P+
 YP	0	0	0	1	1	1	true	true	true	true	out{1} = pi;	pi	\matlab+pi+
-ZP	2	5	2	1	1	1	true	true	true	true	out{1} = pdist2(in{:});	pairwise distances between two sets of points	\matlab+pdist2+. Only predefined distance functions are allowed
+ZP	2	5	2	1	2	1	true	true	true	true	[out{:}] = pdist2(in{:});	pairwise distances between two sets of points	\matlab+pdist2+. Only predefined distance functions are allowed
 Q	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}+1;	increment by 1	\matlab|(...)+1|
 XQ	2	6	2	1	1	1	true	true	true	true	if numel(in)>=4, if in{4}(1)~='@' && any(in{4}=='('), in{4} = ['@(x)' in{4}]; end	construct array by accumulation	\matlab+accumarray+. Optional fourth argument is a function string, which will be transformed into function handle. Function strings can be of the form \matlab+'max'+ (name of a function), \matlab+'@(x)max(x)'+ (anonymous function defined in terms of \matlab+x+), or \matlab+'max(x)'+ (if the string contains \matlab+(+ and doesn't begin by \matlab+@+, \matlab+'@(x)'+ is automatically prepended)
 											in{4} = str2func(in{4}); end
@@ -489,7 +501,7 @@ ZQ	2	3	2	1	1	1	true	true	true	true	if numel(in)==2, out{1} = polyval(in{:}); els
 R	1	2	1	1	1	1	true	true	true	true	out{1} = triu(in{:});	upper triangular part	\matlab+triu+. \sa \matl+XR+.
 XR	1	1	1	1	1	1	true	true	true	true	out{1} = triu(in{1},1);	upper triangular part, above diagonal	\matlab+triu(..., 1)+. \sa \matl+R+.
 YR	1	2	1	1	1	1	true	true	true	true	out{1} = tril(in{:});	lower triangular part	\matlab+tril+. \sa \matl+ZR+.
-ZR	1	1	1	1	1	1	true	true	true	true	out{1} = tril(in{1},-1);	lower triangular part, without diagonal	\matlab+tril(..., -1)+. \sa \matl+YR+.
+ZR	1	1	1	1	1	1	true	true	true	true	out{1} = tril(in{1},-1);	lower triangular part, below diagonal	\matlab+tril(..., -1)+. \sa \matl+YR+.
 S	1	3	1	1	2	1	true	true	true	true	if numel(in)>1 && ~ischar(in{2}) && numel(in{2})>1 && isvector(in{1}) && isvector(in{2}) && isequal(numel(in{1}),numel(in{2}))	sort	sort an array (single-array mode: \matlab+sort+) / sort an array based on another (two-array mode). Single-array mode works like Matlab's \matlab+sort+. If $2$ inputs, a negative value of the second input corresponds to descending order. In two-array mode, this function takes first $2$ inputs as equal-length vectors where the second is not char. The second vector is sorted and its order is applied to the first; and an optional third input specifies direction as a string, or as a negative number in the non-singleton dimension of the second vector. The outputs are the two sorted arrays. (In two-array mode, if the two input arrays are scalar the result is the same as if the second input is interpreted as dimension, corresponding to single array mode)
 											if numel(in)==3 && isnumeric(in{3}) && in{3}<0, in{3}=-in{3}; in{4} = 'descend'; end
 											[y2, ind] = sort(in{2:end}); y1 = in{1}(ind); out = {y1, y2}; out = out(1:nout);
@@ -555,7 +567,7 @@ Z]
 ^	2	2	2	1	1	1	true	true	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
 X^	1	1	1	1	1	1	true	true	true	true	out{1} = sqrt(in{:});	square root	\matlab+sqrt+				
 Y^	2	2	2	1	1	1	true	true	true	true	out{1} = in{1}^in{2};	matrix power	\matlab+^+ (\matlab+mpower+)			
-Z^	2	2	2	1	1	1	true	true	true	true	n = in{2}; combs = cell(1,n);	Cartesian power	Cartesian power. Given a number $n$ and an arrays, computes the Cartesian power of the array times itself $n$ times. \sa \matl+Z*+
+Z^	2	2	2	1	1	1	true	true	true	true	n = in{2}; combs = cell(1,n);	Cartesian power	Cartesian power. Given an array and a number $n$, computes the Cartesian power of the array times itself $n$ times. \sa \matl+Z*+
 											[combs{end:-1:1}] = ndgrid(in{1});
 											combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 											out{1} = combs; clear combs n
@@ -682,7 +694,13 @@ Zm	1	2	2	1	1	1	true	true	true	true	if numel(in)==1, x=1; for t=in{1}(:).', x=lcm
 											end
 											end
 n	1	1	1	1	1	1	true	true	true	true	out{1} = numel(in{:});	number of elements in array	\matlab+numel+
-Xn	2	2	2	1	1	1	true	true	true	true	out{1} = nchoosek(in{:});	binomial coefficient or all combinations	\matlab+nchoosek+
+Xn	2	2	2	1	1	1	true	true	true	true	nd = max(ndims(in{1}), ndims(in{2})); sz1 = arrayfun(@(n)size(in{1},n), 1:nd); sz2 = arrayfun(@(n)size(in{2},n), 1:nd);	binomial coefficient	\matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result \matlab+0+.
+											assert(all(sz1==sz2 | sz1==1 | sz2==1), 'MATL:runtime', 'MATL run-time error: inputs have incompatible sizes')
+											rm1 = ones(1,nd); rm1(sz1==1) = sz2(sz1==1); rm2 = ones(1,nd); rm2(sz2==1) = sz1(sz2==1);
+											insx1 = repmat(in{1}, rm1); insx2 = repmat(in{2}, rm2);
+											y = zeros(size(insx1)); ind = insx1>=insx2; y(ind) = arrayfun(@nchoosek, insx1(ind), insx2(ind));
+											out{1} = y; clear nd sz1 sz2 rm1 rm2 insx1 insx2
+% The code for implementing singleton expanstion (through repmat) is taken from the code for the bitand function
 Yn	1	5	2	1	1	1	true	true	true	true	out{1} = interp1(in{:});	interpolation (table lookup)	\matlab+interp1+. \matlab+'pp'+ option not supported
 Zn	1	2	1	1	1	1	true	true	true	true	out{1} = norm(in{:});	matrix or vector norm	\matlab+norm+
 o	1	1	1	1	1	1	true	true	true	true	out{1} = double(in{1});	convert to double precision	\matlab+double+
@@ -691,8 +709,23 @@ Yo	1	3	1	1	1	1	true	true	true	true	out{1} = round(in{:});	round towards nearest 
 Zo	1	1	1	1	1	1	true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
 p	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{:});	product of elements	\matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl|Xp|
 Xp	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl+p+.
-Yp	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = cumprod(in{:});	cumulative product	\matlab+cumprod+. Allows char input
-Zp	1	1	1	1	1	1	true	true	true	true	if all(in{1}>0)	is prime / totient function	For input with positive entries: \matlab+isprime+. For input with non-positive entries: Euler's totient function for absolute value of each entry
+Yp	1	4	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	cumulative product	\matlab+cumprod+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the product at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively
+											if numel(in)<=2 || (numel(in)==3 && ischar(in{3}))
+											out{1} = cumprod(in{:});
+											else
+											if numel(in)==3, in{4} = inf; end
+											x = permute(in{1}, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
+											indc = repmat({':'},1,ndims(in{1})-1);
+											y = x;
+											y(1,indc{:}) = min(max(y(1,indc{:}), in{3}), in{4});
+											for k = 2:size(x,1)
+											y(k,indc{:}) = y(k-1,indc{:}) .* x(k,indc{:});
+											y(k,indc{:}) = min(max(y(k,indc{:}), in{3}), in{4});
+											end
+											y = ipermute(y, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
+											[out{1}] = y;
+											end
+Zp	1	1	1	1	1	1	true	true	true	true	if all(in{1}>=0)	is prime / totient function	For input with non-negative entries: \matlab+isprime+. For input with non-positive entries: Euler's totient function for absolute value of each entry
 											out{1} = isprime(in{1});
 											elseif all(in{1}<=0)
 											in{1} = -in{1}; tot = NaN(size(in{1}));
@@ -707,7 +740,7 @@ Yq	1	1	1	1	1	1	true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For i
 											N = max(in{1}(:)); p = primes(max(11,ceil(N*log(N*log(N))))); out{1} = reshape(p(in{1}), size(in{1})); clear N p
 											elseif all(in{1}<=0)
 											in{1} = -in{1}; np = NaN(size(in{1}));
-											for k=1:numel(np), np(k) = in{1}(k)+1; while ~isprime(np(k)), np(k)=np(k)+1; out{1} = np; end, end, clear k np
+											for k=1:numel(np), np(k) = in{1}(k)+1; while ~isprime(np(k)), np(k)=np(k)+1; end, out{1} = np; end, clear k np
 											else
 											error('MATL:runtime', 'MATL run-time error: input should have all entries positive or all non-positive')
 											end
@@ -718,12 +751,27 @@ Yr	1	inf	1	1	1	1	true	true	true	true	out{1} = randi(in{:});	pseudorandom integer
 Zr	2	4	2	1	1	1	true	true	true	true	out{1} = randsample(in{:});	random sample	\matlab+randsample+. Does not support stream specification
 s	1	4	1	1	1	1	true	true	true	true	out{1} = sum(in{:});	sum	\matlab+sum+. \sa \matl+Xs+
 Xs	1	3	1	1	1	1	true	true	true	true	out{1} = sum(in{1},1,in{2:end});	sum along first dimension	\matlab+sum(..., 1, ...)+. \sa \matl+s+
-Ys	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = cumsum(in{:});	cumulative sum	\matlab+cumsum+. Allows char input
+Ys	1	4	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	cumulative sum	\matlab+cumsum+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the sum at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively
+											if numel(in)<=2 || (numel(in)==3 && ischar(in{3}))
+											out{1} = cumsum(in{:});
+											else
+											if numel(in)==3, in{4} = inf; end
+											x = permute(in{1}, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
+											indc = repmat({':'},1,ndims(in{1})-1);
+											y = x;
+											y(1,indc{:}) = min(max(y(1,indc{:}), in{3}), in{4});
+											for k = 2:size(x,1)
+											y(k,indc{:}) = y(k-1,indc{:}) + x(k,indc{:});
+											y(k,indc{:}) = min(max(y(k,indc{:}), in{3}), in{4});
+											end
+											y = ipermute(y, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
+											[out{1}] = y;
+											end
 Zs	1	4	1	1	1	1	true	true	true	true	out{1} = std(in{:});	standard deviation	\matlab+std+
 t	0	inf	1	0	0	0	false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
 Yt
-Zt	3	3	3	1	1	1	true	true	true	true	if ~isnumeric(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric array (not a cell array of numeric arrays). In this case the other inputs can be char or numeric (not cell); each input array is linearized; result is a row vector; and result is char if third input is, even if not substitutions have been actually done
+Zt	3	3	3	1	1	1	true	true	true	true	if ~isnumeric(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric array (not a cell array of numeric arrays). In this case the other inputs can be char or numeric (not cell); each input array is linearized; result is a row vector; and result is char if third input is, even if no substitutions have been actually done
 											out{1} = strrep(in{:});
 											else
 											t = in{1}(:).'; p = in{2}(:).'; r = in{3}(:).'; n = numel(p);

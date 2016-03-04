@@ -55,10 +55,13 @@ if nargin>=3 && strcmp(varargin{end},'stable')
     else
         z = [z; y];
     end
+    if size(varargin{1},1)==1 && size(varargin{2},1)==1 % row ouput if first two inputs are rows
+        z = reshape(z,1,[]);
+    end
     varargout{1} = z;    
 else
     if strcmp(varargin{end},'sorted'), varargin(end) = []; end
-    varargout = cell(1,nargout);
+    varargout = cell(1,max(nargout,1)); % if called without outputs, nargout will be zero. In that case we return one output
     [varargout{:}] = builtin('setxor', varargin{:});
 end
 end
