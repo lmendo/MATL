@@ -187,7 +187,7 @@ while pos<=L
         S(n).from = m; % associate this with opening statement
         pos = pos + 1;
         n = n + 1;
-    elseif s(pos)=='@' % index of for/do...while/while iteration
+    elseif s(pos)=='@' % value of for / index of do...while/while iteration
         assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''@'' found outside any control flow structure')
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
@@ -209,7 +209,7 @@ while pos<=L
             end
         end
         if ~success
-            error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'' or ''while'' loop')
+            error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'', ''while'' or ''do...while'' loop')
         end
         pos = pos + 1;
         n = n + 1;
@@ -276,6 +276,24 @@ while pos<=L
             end
             if ~success
                 error('MATL:parser', 'MATL error while parsing: ''continue'' is not within any ''for'' loop')
+            end
+        elseif s(pos+1)=='@' % index of for
+            assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''@'' found outside any control flow structure')
+            S(n).source = s([pos pos+1]);
+            S(n).nesting = parseNesting;
+            success = false;
+            for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
+                if strcmp(S(m).type,'controlFlow.for')
+                    S(n).type = 'controlFlow.forIndex';
+                    success = true;
+                end
+                if success
+                    S(n).from = m;
+                    break
+                end
+            end
+            if ~success
+                error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'' loop') %***change if I include while, do...while
             end
         elseif any(s(pos+1)==' ') % Not currently used after X. We can filter here or leave it to the compiler
             error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)

@@ -226,6 +226,9 @@ for n = 1:numel(S)
         case 'controlFlow.whileIndex'
             k = S(S(n).from).nesting;
             appendLines(sprintf('STACK{end+1} = indWhile%i;', k), S(n).nesting)
+        case 'controlFlow.forIndex'
+            k = S(S(n).from).nesting;
+            appendLines(sprintf('STACK{end+1} = indFor%i;', k), S(n).nesting)
         case 'function'
             k = find(strcmp(S(n).source, Fsource), 1); % Fsource is guaranteed to contain unique entries.
             if isempty(k)
@@ -264,7 +267,7 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base' ...
-        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2'};
+        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit'};
     verNumTh = [4 0 0]; % first version in which a modified function is not needed:
     if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
         fnames = [fnames {'colon'}];
