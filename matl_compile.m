@@ -319,9 +319,30 @@ clear(cOutFile)
 end
 
 function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume, funInClipboard)
-% Code generated at the beginning of functions: check S_IN and S_OUT,
-% get inputs, prepare outputs, consume inputs if applicable.
+% Code generated at the beginning of functions: check `S_IN` and `S_OUT`,
+% define `nout`, get inputs, prepare outputs, consume inputs if applicable.
 % `consume` indicates if inputs should be removed from the stack
+%   (1) If `nout` is a non-negative number (specified or by default), the function should
+% produce that number of outputs. For MATL functions that simply call a MATLAB function,
+% this implies calling the MATLAB function with that number of outputs. For MATL functions
+% that are implemented "manually", it's their responsibility to produce `nout` outputs.
+%   If `n_out` is a logical array, the number of outputs produced by the function
+% should be the number of elements in the logical array. At the end (funPost), the
+% outputs corresponding to false values will be discarded.
+%   (2) For functions for which the default value of S_OUT depends on the
+% inputs (cannot be computed at compile-time) and can be computed at
+% run-time at the beginning of the function, this default value is
+% specified in the function definition file as the appropriate code, in the form of
+% a string that will be evaluated at the beginning of the function call.
+% That result from string will be assigned to `nout`.
+%   (3) For functions for which the default value of S_OUT depends on the inputs
+% and is very difficult to compute even at run-time at the beginning of the function,
+% a negative number is specified as default value in the function definition file. A negative
+% number means "`nout` unspecified, the function will build the variable `out` with the default
+% number of outputs as defined by the function, or with `nout` outputs if `nout` is nonnegative".
+%   A negative value of the default number of outputs is translated into the appropriate text
+% in the help and documentation; different negative values can be used to select that text.
+%   If possible, it's probably safer to use method (2) than (3).
 global implicitInputBlock
 newLines = { ...
     sprintf('if isempty(S_IN), S_IN = %s; end', defIn) ...
@@ -336,12 +357,12 @@ if funInClipboard
 end
 newLines = [newLines, {...
     sprintf('if isempty(S_OUT), S_OUT = %s; end', defOut) ...
-    sprintf('if isnumeric(S_OUT) && numel(S_OUT) == 1, if S_OUT < %s || S_OUT > 2*(%s), error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
+    sprintf('if isnumeric(S_OUT) && numel(S_OUT) == 1, if S_OUT >= 0 && (S_OUT < %s || S_OUT > 2*(%s)), error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     sprintf('elseif islogical(S_OUT), if numel(S_OUT) < %s || numel(S_OUT) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     'else error(''MATL:runner'', ''MATL run-time error: output specification not recognized''), end' ...
     sprintf('if isnumeric(S_OUT) && S_OUT > %s, S_OUT = [false(1,S_OUT-(%s+1)) true]; end', maxOut, maxOut) ...
     'if isnumeric(S_OUT), nout = S_OUT; else nout = numel(S_OUT); end' ...
-    'out = cell(1,nout);' }];
+    'if nout>=0, out = cell(1,nout); end' }];
 % 2*(...) because a number in maxOut+1:2*maxOut corresponds to a logical vector with a single true value
 % For logical S_IN we use nnz (the inputs are picked from the stack), but
 % for logical S_OUT we use numel (the function is called with that many outputs)

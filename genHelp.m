@@ -162,8 +162,8 @@ for n = 1:numel(descrFormatted)
         inFormatted{n} = sprintf('%i', defIn);
     end
 
-    % Format output spec. Changes done here should be done in MATL_spec.tex too
-    if isnan(defOut) && ~isempty(F(n).defOut) % F(n).defOut contains a string that couldn't be converted to a number
+    % Format output spec. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex
+    if (isnan(defOut) || defOut<0) && ~isempty(F(n).defOut) % F(n).defOut contains a string that couldn't be converted to a number, or a negative number
         switch F(n).defOut
         case {'numel(CB_H)' 'numel(CB_I)' 'numel(CB_J)' 'numel(CB_K)'}
             defOutStr = 'number of elements in clipboard';
@@ -181,6 +181,10 @@ for n = 1:numel(descrFormatted)
             defOutStr = 'according to specified keywords';
         case 'numel(in)'
             defOutStr = 'number of inputs';
+        case '-1'
+            defOutStr = 'number of elements that will be produced';
+        case '-2'
+            defOutStr = 'number of subarrays that will be produced';
         otherwise
             error('Unrecognized default number of outputs')
         end
@@ -198,7 +202,7 @@ for n = 1:numel(descrFormatted)
         end
     else
         if maxOut ~= defOut
-            error('Incorrect specification of number of inputs')
+            error('Incorrect specification of number of outputs')
         end
         outFormatted{n} = sprintf('%i', defOut);
     end
