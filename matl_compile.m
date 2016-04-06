@@ -82,7 +82,7 @@ elseif isMatlab % old Matlab version
 % else % Octave: seeds are set randomly automatically by Octave
 end
 if ~online
-    appendLines('diary off; delete defout; diary defout', 0)
+    appendLines('delete inout; diary off; delete defout; diary defout', 0)
 end
 % For arrays with brackets or curly braces: F = false; T = true;
 appendLines('F = false; T = true;', 0)
@@ -113,7 +113,7 @@ appendLines('S_IN = []; S_OUT = [];', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
 % "level".
-appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 3 2]} {[3 1 2]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[2 -1j]} {[1 2 0]} {[2 2 0]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {2*pi} {0.5772156649015328606} {(sqrt(5)+1)/2} };', 0)
+appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[2 -1j]} {[2 3 1]} {[3 1 2]} {[1 2 0]} {[2 2 0]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {2*pi} {0.5772156649015328606} {(sqrt(5)+1)/2} };', 0)
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
@@ -181,7 +181,7 @@ for n = 1:numel(S)
         case 'controlFlow.if' % '?'
             appendLines('nin = 0;', S(n).nesting);
             appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
-            newLines = { 'in = STACK{end}; STACK(end) = [];' ...
+            newLines = { 'in = STACK{end}; STACK(end) = []; if ~isreal(in), in = real(in); end' ...
                 'if in' };
             appendLines(newLines, S(n).nesting);
         case 'controlFlow.else' % '}'
@@ -267,7 +267,7 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base' ...
-        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit'};
+        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit' 'max' 'min'};
     verNumTh = [4 0 0]; % first version in which a modified function is not needed:
     if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
         fnames = [fnames {'colon'}];

@@ -17,31 +17,37 @@
 %     - description (for LaTeX)
 %						
 % src	minIn	maxIn	defIn	minOut	maxOut	defOut	consumeInputs	wrap	funInClipboard	allowedOnline	body	Comment (for matl)	description (for LaTex)
-!	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, if ndims(in{1})==2, out{1} = in{1}.'; else, out{1} = permute(in{1}, [2 1 3:ndims(in{1})]); end	transpose / permute array dimensions	With $1$ input: \matlab+.'+ (\matlab+transpose+), or \matlab+permute(..., [2 1 ...])+ for multidimensional arrrays. With $2$ inputs: \matlab+permute+
-											else out{1} = permute(in{:}); end
+!	1	2	1	1	1	1	true	true	true	true	if numel(in)==1, if ndims(in{1})==2, out{1} = in{1}.'; else, out{1} = permute(in{1}, [2 1 3:ndims(in{1})]); end	transpose / permute array dimensions	If $1$ input: \matlab+.'+ (\matlab+transpose+), or \matlab+permute(..., [2 1 ...])+ for multidimensional arrrays. If $2$ inputs: \matlab+permute+. If the second input is 1, 2 or 3 it indicates which dimension is not permuted for a 3D array; that is, it corresponds to [1 3 2], [3 2 1] or [2 1 3] respectively
+											else
+											if isequal(in{2}, 1), in{2} = [1 3 2]; elseif isequal(in{2}, 2), in{2} = [3 2 1]; elseif isequal(in{2}, 3), in{2} = [2 1 3]; end
+											out{1} = permute(in{:});
+											end
 X!	1	2	2	1	1	1	true	true	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
 Y!	1	1	1	0	2	2	true	true	true	false	[out{:}] = system(in{:});	execute system command	\matlab+system+
 Z!	1	1	1	1	1	1	true	true	true	true	out{1} = full(in{1});	convert sparse matrix to full matrix	\matlab+full+
 "					
 X"	2	inf	3	1	1	1	true	true	true	true	out{1} = repmat(in{:});	replicate and tile array	\matlab+repmat+
 Y"	2	inf	2	1	1	1	true	true	true	true	out{1} = repelem(in{:});	replicate elements of array	\matlab+repelem+ (run-length decoding)
-Z"	1	1	1	1	1	1	true	true	true	true	out{1} = blanks(in{1});	string of blanks	\matlab+blanks+
+Z"	1	1	1	1	1	1	true	true	true	true	S = ' ';	string or array of blanks	\matlab+blanks+. It allows vector input, and in that case it produces a matrix or multidimensional array
+											if numel(in{1})<=1, y = S(ones(1,in{1}));
+											else, y = S(ones(in{1}));
+											end
+											out{1} = y; clear S
 #
-% The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
 X#	0	0	0	0	0	0	false	false	false	true	disp('--------'), celldisp(STACK), disp('--------')	display stack contents (for debugging)	display stack as a cell array (for debugging)	
 Y#
-Z#	1	3	1	0	0	0	true	true	true	false	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Appends first input to file \comp{inout}, creating it if necessary. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether any previous contents of file should be kept.
+Z#	1	3	1	0	0	0	true	true	true	false	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Appends first input to file \comp{inout}, creating it if necessary. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; it is converted to char is necessary; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether any previous contents of file should be kept. The file is guaranteed to be deleted at the beginning of the program
 											sep = char(10);
 											if numel(in)>=2 && ~isempty(in{2}), file = in{2}; else file = 'inout'; end
 											if numel(in)>=3 && ~in{3}, perm = 'w'; else perm = 'a'; end
+											if ~ischar(file), file = char(file); end
 											fid = fopen(file, perm);	
 											for n = 1:numel(data)
 											fwrite(fid, char(data{n}));
 											if n<numel(data), fwrite(fid, sep); end
 											end
-											fclose(fid);
+											fclose(fid); clear file sep
 $
-% The numbers of inputs and outputs for # are not used by the code, but are used for generating the help file
 X$	1	inf	2	0	inf	1	true	true	true	false	[out{:}] = feval(in{:});	execute Matlab function	execute Matlab function specified by first input, using the rest of the inputs as arguments.
 Y$	1	2	2	1	1	1	true	true	true	true	out{1} = char(vpa(in{:}));	variable precision arithmetic	\matlab+char(vpa(...))+
 Z$	0	1	0	1	1	1	true	true	true	false	if ~numel(in) || isempty(in{1}), in{1} = 'inout'; end; fid = fopen(in{1}, 'r');	read from file	Reads bytes from specifed file. The output is a row vector of char. If $0$ inputs or empty input: file name is \comp{inout}.
@@ -220,7 +226,9 @@ Z)	1	inf	2	1	2	1	true	true	true	true	array = in{1};	reference ( ) indexing with 
 % Z) is the same as ) except for the `indices = ...` line
 *	1	inf	2	1	1	1	true	true	true	true	y = in{1}; for n=2:numel(in), y = bsxfun(@times, y, in{n}); end; out{1} = y; clear y n;	array product (element-wise, singleton expansion)	\matlab+.*+ (\matlab+times+), element-wise with singleton expansion
 X*	2	2	2	1	1	1	true	true	true	true	out{1} = kron(in{:});	Kronecker tensor product	\matlab+kron+
-Y*	2	2	2	1	1	1	true	true	true	true	out{1} = in{1}*in{2};	matrix product	matrix product, \matlab+*+ (\matlab+mtimes+)
+Y*	2	2	2	1	1	1	true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix product	matrix product, \matlab+*+ (\matlab+mtimes+)
+											if islogical(in{2}), in{2} = double(in{2}); end
+											out{1} = in{1}*in{2};
 Z*	1	inf	2	1	1	1	true	true	true	true	n = numel(in); combs = cell(1,n);	Cartesian product	Cartesian product. Given a number $n$ of arrays of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those arrays
 											[combs{end:-1:1}] = ndgrid(in{end:-1:1});
 											combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
@@ -349,7 +357,7 @@ Y>	1	3	1	1	1	1	true	true	true	true	[out{1}] = cummax(in{:});	cumulative maximum	
 Z>					
 ?					
 X?					
-Y?	0	0	0	1	1	1	true	true	true	true	x = { 'V=..90+r~/,~6=..90+~0/*p~J69,9~5+~0/~''6%' 'U*w+~=22~Q=*2=<w+~8=)2*p~U*w+~49=2/)+p~U*w+~6/2:507~19~<=;3}' 'Uw(9~+990~.,/7,=1+~%/)~.9/.29~''/)2:0w*~<9259(9' 'J69~.,/7,=119,~6=+~<990~:,503507r~0/*~19' 'U~:5:~5*~8/,~19p~U~2539:~5*p~U~''=+~7//:~=*~5*' 'E/)~4)+*~6=(90w*~9=,09:~5*~%9*r~<=<%' 'Q%~;/:9~5+~.,/<291=*5;' 'E/)~399.~)+507~*6=*~8)0;*5/0p~U~:/~0/*~*6503~5*~19=0+~''6=*~%/)~*6503~5*~19=0+' 'J65+~5+~/<(5/)+2%~+/19~+*,=079~)+9~/8~*69~8)0;*5/0~wE_w~*6=*~U~''=+0w*~.,9(5/)+2%~=''=,9~/8' 'N,/7,=1+~1=3507~.,/7,=1+~q~6/''~.9,(9,+9}' }; if ~numel(in), in{1} = randi(numel(x)); end; if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input not allowed'); end; out{1} = char(158-x{mod(in{1}-1,numel(x))+1}); clear x
+Y?	0	0	0	1	1	1	true	true	true	true	x = { 'V=..90+r~/,~6=..90+~0/*p~J69,9~5+~0/~''6%' 'U*w+~=22~Q=*2=<w+~8=)2*p~U*w+~49=2/)+p~U*w+~6/2:507~19~<=;3}' 'Uw(9~+990~.,/7,=1+~%/)~.9/.29~''/)2:0w*~<9259(9' 'J69~.,/7,=119,~6=+~<990~:,503507r~0/*~19' 'U~:5:~5*~8/,~19p~U~2539:~5*p~U~''=+~7//:~=*~5*' 'E/)~4)+*~6=(90w*~9=,09:~5*~%9*r~<=<%' 'Q%~;/:9~5+~.,/<291=*5;' 'E/)~399.~)+507~*6=*~8)0;*5/0p~U~:/~0/*~*6503~5*~19=0+~''6=*~%/)~*6503~5*~19=0+' 'J65+~5+~/<(5/)+2%~+/19~+*,=079~)+9~/8~*69~8)0;*5/0~wE_w~*6=*~U~''=+0w*~.,9(5/)+2%~=''=,9~/8' 'N,/7,=1+~1=3507~.,/7,=1+~q~6/''~.9,(9,+9}' }; if ~numel(in), in{1} = randi(numel(x)); end; if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input not allowed'); end; out{1} = char(158-x{mod(in{1}-1,numel(x))+1}); clear x	answer why	answer why. Sort of
 Z?	1	6	3	1	1	1	true	true	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
 @					
 X@	
@@ -437,10 +445,10 @@ YF
 ZF					
 G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out = CB_G(real(in{1}) + (numel(CB_G)+imag(in{1})).*~real(in{1})); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
 XG	1	inf	1	0	0	0	true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imwrite+ is called with all inputs. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imwhow+, \matlab+drawnow+ is called to update figure immediately
-											elseif ischar(in{end}), imwrite(in{:});
+YG	2	inf	2	0	0	0	true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imwrite+ is called with all inputs. For \matlab+imwrite+, if the filename has no extension '.png' is added. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imwhow+, \matlab+drawnow+ is called to update figure immediately
+											elseif ischar(in{end}), if isempty(regexp(in{end}, '\..+$', 'once')), in{end} = [in{end} '.png']; end, imwrite(in{:});
 											else switch(in{end})
-											case 0, imwrite(in{1:end-1});
+											case 0, if isempty(regexp(in{end-1}, '\..+$', 'once')), in{end-1} = [in{end-1} '.png']; end, imwrite(in{1:end-1});
 											case 1, imagesc(in{1:end-1}); axis ij, axis image
 											case 2, image(in{1:end-1}); axis ij, axis image
 											case 3, imshow(in{1:end-1});
@@ -555,9 +563,18 @@ T
 XT
 YT	1	2	2	1	1	1	true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+					
 ZT					
-U	1	1	1	1	2	1	true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	convert string matrix to numeric array	\matlab+str2num+ with content checking. If input is not char, it is automatically converted to char
-											for r = 1:size(in{1},1), assert(isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')), 'MATL:runtime', 'MATL run-time error: content not allowed'), end; clear r
-											[out{:}] = str2num(in{:});
+U	1	1	1	1	1	1	true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	convert string matrix to numeric array, or to general array	\matlab+str2num+ with content checking. If input is not char, it is automatically converted to char. Then content checking is applied. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned
+											valid = true;
+											for r = 1:size(in{1},1), valid = valid && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once')); end
+											if valid
+											[y, ok] = str2num(in{1});
+											if ~ok && size(in{1},1)==1
+											try y = eval(in{1}); catch y = []; end
+											end
+											else
+											y = [];
+											end
+											out{1} = y; clear ok r
 XU	1	1	1	1	1	1	true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
 ZU					
@@ -599,7 +616,9 @@ Y]
 Z]					
 ^	2	2	2	1	1	1	true	true	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
 X^	1	1	1	1	1	1	true	true	true	true	out{1} = sqrt(in{:});	square root	\matlab+sqrt+				
-Y^	2	2	2	1	1	1	true	true	true	true	out{1} = in{1}^in{2};	matrix power	\matlab+^+ (\matlab+mpower+)			
+Y^	2	2	2	1	1	1	true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix power	\matlab+^+ (\matlab+mpower+)
+											if islogical(in{2}), in{2} = double(in{2}); end
+											out{1} = in{1}^in{2};
 Z^	2	2	2	1	1	1	true	true	true	true	if numel(in{1})==1 && numel(in{2})>1, in([1 2]) = in([2 1]); end	Cartesian power	(i) Given an array and a number $n$, computes the Cartesian power of the array times itself $n$ times. (ii) If the first input is a number and the second input is an array of at least two elements, the inputs are interpreted in reverse order. When using this mode, caution is needed in case the second input (array) may become a scalar, because then mode (i) will be used. \sa \matl+Z*+
 											n = in{2}; combs = cell(1,n);
 											[combs{end:-1:1}] = ndgrid(in{1});
@@ -624,7 +643,39 @@ Ya	2	4	2	1	1	1	true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in{1}
 											if islogical(in{2}), in{2} = double(in{2}); end
 											out{1} = padarray(in{:});
 											if c, out{1} = char(out{1}); end; clear c
-Za					
+Za	1	4	3	1	1	1	true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base represented specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
+											if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
+											if numel(in{2})>1, ax = in{2}; bx=numel(ax); else bx = in{2}; ax = 0:bx-1; end
+											if numel(in{3})>1, az = in{3}; bz=numel(az); else bz = in{3}; az = 0:bz-1; end
+											Z = cell(size(in{1}));
+											for c = 1:numel(in{1})
+											x = in{1}{c}; [valid, x] = ismember(x,ax); x = x(valid)-1;
+											z = NaN(1,ceil(numel(x)*log2(bx)/log2(bz))); done_outer = false;
+											n = 0;
+											while ~done_outer
+											n = n +1;
+											x = [0 x(find(x,1):end)];
+											y = NaN(size(x)); done_inner = false;
+											m = 0;
+											while ~done_inner
+											m = m + 1;
+											t = x(1)*bx+x(2);
+											r = mod(t, bz); q = (t-r)/bz;
+											y(m) = q; x = [r x(3:end)];
+											done_inner = numel(x) < 2;
+											end
+											y = y(1:m);
+											z(n) = r; x = y; done_outer = ~any(x);
+											end
+											z = z(n:-1:1);
+											if numel(in)>=4 && numel(z)<in{4}, z = [zeros(1,in{4}-numel(z)) z]; end
+											Z{c} = z;
+											end
+											L = max(cellfun(@numel, Z));
+											Z = cellfun(@(x) [zeros(1, L-numel(x)) x], Z, 'uniformoutput', false);
+											Z = vertcat(Z{:});
+											Z = az(Z+1);
+											out{1} = Z; clear x ax bx z Z az bz y t r q k m n c done_outer done_inner valid L
 b	0	inf	3	0	0	0	false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb					
 Yb	1	inf	1	1	2	1	true	true	true	true	if isnumeric(in{1})	split string or numeric array at delimiter	(i) \matlab+strsplit+. If second input is numeric it is converted to char. (ii) This function also allows first input to be numeric. In this mode the default delimiter is 0, and the parameter \matlab+'CollapseDelimiters'+ can be used. The second input (delimiter) can be a single number or a numeric array, and in the latter case each element is a possible delimiter. If the first input is a row array the output will contain row arrays; otherwise it will contain column arrays
@@ -655,7 +706,7 @@ c	1	inf	1	1	1	1	true	true	true	true	if ~iscell(in{1})	convert to character array
 											end
 Xc	3	inf	3	1	1	1	true	true	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
 Yc	1	inf	2	1	1	1	true	true	true	true	for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. Numeric inputs are converted to char
-Zc	1	2	1	1	1	1	true	true	true	true	if ischar(in{1}{1})	join cell array of strings or number into single string or numeric vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
+Zc	1	2	1	1	1	1	true	true	true	true	if ischar(in{1}{1})	join cell array of strings or numbers into single vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
 											for k = 1:numel(in{1}), if isnumeric(in{1}{k}), in{1}{k} = char(in{1}{k}); end;
  											in{1}{k} = in{1}{k}(:).'; end;
 											if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end;
@@ -680,12 +731,14 @@ Zc	1	2	1	1	1	1	true	true	true	true	if ischar(in{1}{1})	join cell array of string
 											out{1} = y; clear y singledelim delim
 											end
 d	1	3	1	1	1	1	true	true	true	true	out{1} = diff(in{:});	difference	\matlab+diff+
-Xd	1	4	2	1	2	1	true	true	true	true	if numel(in)==1 && numel(out)==1, out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	If $1$ input and $1$ output: \matlab+diag+. Otherwise: \matlab+spdiags+
+Xd	1	4	1	1	2	1	true	true	true	true	if numel(in)==1 && numel(out)==1, out{1} = diag(in{:});	diagonal matrices and diagonals of a matrix	If $1$ input and $1$ output: \matlab+diag+. Otherwise: \matlab+spdiags+, with char inputs automatically converted to double
 											elseif numel(in)==2 && numel(out)==1 && isrow(in{1})
 											y = zeros(size(in{2})); mask = (in{2}>=0) & (in{2}<=numel(in{1})-1);  y(mask) = in{1}(in{2}(mask)+1); out{1} = y; clear y
 											elseif numel(in)==2 && numel(out)==1 && iscolumn(in{1})
 											y = zeros(size(in{2})); mask = (in{2}<=0) & (in{2}>=1-numel(in{1}));  y(mask) = in{1}(1-in{2}(mask)); out{1} = y; clear y
-											else, [out{:}] = spdiags(in{:});
+											else
+											for k = 1:numel(in), if ischar(in{k}), in{k} = double(in{k}); end; end
+											[out{:}] = spdiags(in{:}); clear k
 											end
 Yd	1	inf	2	1	1	1	true	true	true	true	out{1} = blkdiag(in{:});	block diagonal concatenation	\matlab+blkdiag+
 Zd	1	2	2	1	3	1	true	true	true	true	if numel(in)==1 && numel(out)==1, x=in{1}(1); for t=in{1}(:).', x=gcd(x,t); end; out{1}=x;	greatest common divisor (element-wise, singleton expansion)	\matlab+gcd+, element-wise with singleton expansion. With $1$ input and $1$ output, computes the greatest common divisor of all elements of the input
@@ -754,12 +807,13 @@ Xf	2	4	2	1	1	1	true	true	true	true	if ischar(in{1}) || (iscell(in{1})&&ischar(in
 											end
 											out{1} = y;
 											end
-Yf	1	1	1	1	1	1	true	true	true	true	if in{1}>=0, out{1} = factor(in{1});	prime factors	\matlab+factor+. For negative input, it computes the factors of the abolute value and removes $1$ from result.
+Yf	1	1	1	1	1	1	true	true	true	true	if in{1}>=0, if in{1}==1, out{1} = []; else out{1} = factor(in{1}); end	prime factors	\matlab+factor+. For input $1$ it returns an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ produces $1$).
 											else in{1}=-in{1};
-											if in{1}==1, out{1} = []; else out{1} = factor(in{1}); end
+											out{1} = factor(in{1});
 											end
 Zf					
-g	1	1	1	1	1	1	true	true	true	true	out{1} = logical(in{1});	convert to logical values	\matlab+logical+
+g	1	1	1	1	1	1	true	true	true	true	if ~iscell(in{1}), out{1} = logical(in{1});	convert to logical, or from cell array to single array	\matlab+logical+ / \matlab+cell2mat+
+											else, out{1} = cell2mat(in{:}); end
 Xg	1	inf	2	1	inf	numel(in)	true	true	true	true	[out{:}] = ndgrid(in{:});	rectangular grid in N-D space	\matlab+ndgrid+
 Yg					
 Zg	1	1	1	1	1	1	true	true	true	true	out{1} = gammaln(in{:});	logarithm of gamma function	\matlab+gammaln+				
@@ -785,7 +839,7 @@ j	0	1	0	1	1	1	true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; en
 Xj	1	1	1	1	1	1	true	true	true	true	out{1} = real(in{:});	real part	\matlab+real+
 Yj	1	1	1	1	1	1	true	true	true	true	out{1} = imag(in{:});	imaginary part	\matlab+imag+
 Zj	1	1	1	1	1	1	true	true	true	true	out{1} = conj(in{:});	complex conjugate	\matlab+conj+
-k	1	1	1	1	1	1	true	true	true	true	if isnumeric(in{1}), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays of strings; \matlab+floor+ for numerical arrays
+k	1	1	1	1	1	1	true	true	true	true	if isnumeric(in{1}), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical arrays
 Xk	1	1	1	1	1	1	true	true	true	true	if isnumeric(in{1}), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical arrays
 Yk	2	2	2	1	3	1	true	true	true	true	x = in{1}(:).'; y = in{2}(:); [dmin, ind] = min(abs(bsxfun(@minus, x, y)),[],1);	closest value	closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements
 											out{1} = reshape(y(ind), size(in{1}));
@@ -833,13 +887,13 @@ Xn	2	2	2	1	1	1	true	true	true	true	nd = max(ndims(in{1}), ndims(in{2})); sz1 = a
 % The code for implementing singleton expanstion (through repmat) is taken from the code for the bitand function
 Yn	1	5	2	1	1	1	true	true	true	true	out{1} = interp1(in{:});	interpolation (table lookup)	\matlab+interp1+. \matlab+'pp'+ option not supported
 Zn	1	2	1	1	1	1	true	true	true	true	out{1} = norm(in{:});	matrix or vector norm	\matlab+norm+
-o	1	3	1	1	1	1	true	true	true	true	if ~iscell(in{1})	convert to double precision	\matlab+double+. For cell array input behaves analogously to \matlab+char+: linearizes cell array, converts cell contents to double and concatenates vertically, padding if needed. By default, padding is with zeros on the right. Second input specifies fill value, and third indicates fill side: 0 indicated left, 1 indicates right
+o	1	3	1	1	1	1	true	true	true	true	if ~iscell(in{1})	convert to double precision array	\matlab+double+. For cell array input behaves similarly to \matlab+char+: linearizes cell array, converts cell contents to double and concatenates vertically, padding if needed. By default, padding is with zeros on the left. Optional second input indicates fill side: left if it evaluates to \matlab+false+, right if it evaluates to \matlab+true+. Third optional input specifies fill value
 											out{1} = double(in{1});
 											else
 											in{1} = in{1}(:);
 											n = max(cellfun(@(c) size(c,2), in{1}));
-											if numel(in)>=2, fill = in{2}; else, fill = 0; end
-											if numel(in)>=3, lr = in{3}; else, lr = 1; end
+											if numel(in)>=2, lr = in{2}; else, lr = false; end
+											if numel(in)>=3, fill = in{3}; else, fill = 0; end
 											for k = 1:numel(in{1})
 											if lr in{1}{k} = [double(in{1}{k}) repmat(fill, size(in{1}{k},1), n-size(in{1}{k},2))];
 											else in{1}{k} = [repmat(fill, size(in{1}{k},1), n-size(in{1}{k},2)) double(in{1}{k})]; end
@@ -847,7 +901,19 @@ o	1	3	1	1	1	1	true	true	true	true	if ~iscell(in{1})	convert to double precision	
 											out{1} = vertcat(in{1}{:}); clear n fill lr
 											end
 Xo	1	1	1	1	1	1	true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
-Yo	1	3	1	1	1	1	true	true	true	true	out{1} = round(in{:});	round towards nearest decimal or integer	\matlab+round+
+Yo	1	3	1	1	1	1	true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	\matlab+round+ for numeric arrays; change case for strings or cell arrays
+											y = round(in{1});
+											elseif ~iscell(in{1})
+											x = in{1}; xlu = [lower(x); upper(x)];
+											[~, ind] = max(bsxfun(@ne, x, xlu)); y = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind));
+											else
+											y = cell(size(in{1}));
+											for n = 1:numel(in{1})
+											x = in{1}{n}; xlu = [lower(x); upper(x)];
+											[~, ind] = max(bsxfun(@ne, x, xlu)); y{n} = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind));
+											end
+											end
+											out{1} = y; clear x xlu ind
 Zo	1	1	1	1	1	1	true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
 p	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{:});	product of elements	\matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl|Xp|
 Xp	1	3	1	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl+p+.
@@ -981,7 +1047,7 @@ Z|	2	3	2	1	1	1	true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end	
 											end
 }					
 X}					
-Y}	1	1	1	1	1	1	true	true	true	true	out{1} = cell2mat(in{:});	convert contents of cell array into single array	\matlab+cell2mat+
+Y}
 Z}	1	2	1	0	inf	-2	true	true	true	true	if numel(in)==1, sz = size(in{1}); [~, d] = max(sz>1); in{2} = d; end;	split array	split array into subarrays along the first non-singleton dimension. With $2$ inputs: split into subarrays along the dimension indicated by the second input
 											d = num2cell(size(in{1})); d{in{2}} = ones(1,size(in{1},in{2})); out = mat2cell(in{1}, d{:}); out = out(:).'; clear d
 											if nout>=0, out = out(1:nout); end

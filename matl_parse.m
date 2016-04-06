@@ -53,7 +53,7 @@ while pos<=L
             (s(pos)=='.' && pos<L && any(s(pos+1)=='0123456789'))
         % It may be a number literal such as +3.4e-5j, or a two-number colon array such as
         % -2.3:.4e2, or three-number colon array such as 10:-2.5e-1:.5e-5
-        [ini, fin]   = regexp(s(pos:end), '([+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?\s*:\s*){0,2}[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?', 'once');
+        [ini, fin]   = regexp(s(pos:end), '([+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?:){0,2}[+-]?(\d+\.?\d*|\d*\.?\d+)(e[+-]?\d+)?j?', 'once');
         if ~isempty(ini) && ini==1
             if any(s(pos:pos-1+fin)==':') % It's a colon array literal
                 S(n).type = 'literal.colonArray.numeric';
@@ -117,7 +117,7 @@ while pos<=L
         S(n).nesting = parseNesting;
         pos = pos + fin;
         n = n + 1;
-    elseif any(s(pos)==['!&()*+-/:;<=>\^_|~' 'A':'W' 'a':'z'])
+    elseif any(s(pos)==['!&()*+,-/:;<=>\^_|~' 'A':'W' 'a':'z'])
         S(n).type = 'function';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
@@ -183,6 +183,7 @@ while pos<=L
         parseNesting = parseNesting + 1; % restore nesting level
         m = parseControlStack(parseNesting); % innermost control structure that is open
         assert(strcmp(S(m).type,'controlFlow.if'), 'MATL:parser', 'MATL error while parsing: ''else'' not associated with ''if''')
+        assert(~isfield(S(m),'else') || isempty(S(m).else), 'MATL:parser', 'MATL error while parsing: two ''else'' statements found associated to the same ''if''')
         S(m).else = n; % associate opening statement with this
         S(n).from = m; % associate this with opening statement
         pos = pos + 1;
@@ -248,7 +249,7 @@ while pos<=L
         assert(isequal(ini,1), 'MATL:parser:internal', 'MATL internal error while parsing comment literal')
         pos = pos + fin;
         % There's no statement. Just move `pos` forward. Statement count n is not incremented
-    elseif any(s(pos)==[', ' LF CR]) % do nothing, just consume (but that
+    elseif any(s(pos)==[' ' LF CR]) % do nothing, just consume (but that
         % doesn't mean these characters are useless. They are sometimes needed
         % as separators)
         pos = pos + 1;

@@ -254,7 +254,7 @@ Y2
 11	'aeiou'
 12	'AEIOU'
 13	'aeiouAEIOU'
-20	['Mon';'Tue';'Wed'; 'Thu';'Fri';'Sat'; 'Sun']
+20	['Mon';'Tue';'Wed';'Thu';'Fri';'Sat';'Sun']
 21	[298 302 288 305 289 296 310]
 
 
