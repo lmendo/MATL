@@ -74,6 +74,7 @@ X4
 5	'left'
 6	'local'
 10	'right'
+11	'simple'
 
 
 X5
@@ -222,27 +223,6 @@ Y0
 66	'winter'
 
 
-Y1
-
-1	'mean'
-2	'min'
-3	'max'
-4	'@(x){x}'
-5	'@(x){x.''}'
-6	'{sort(x)}'
-7	'{sort(x).''}'
-10	'sum'
-11	'x(end)'
-12	'{cumsum(x)}'
-13	'{cumsum(x).''}'
-14	'nansum'
-15	'nanmean'
-16	'nanmin'
-17	'nanmax'
-18	'{cummax(x)}'
-19	'{cummax(x).''}'
-
-
 Y2
 
 1	'A':'Z'
@@ -254,7 +234,7 @@ Y2
 11	'aeiou'
 12	'AEIOU'
 13	'aeiouAEIOU'
-20	['Mon';'Tue';'Wed';'Thu';'Fri';'Sat';'Sun']
+20	['Mon'; 'Tue'; 'Wed'; 'Thu'; 'Fri'; 'Sat'; 'Sun']
 21	[298 302 288 305 289 296 310]
 
 
@@ -340,12 +320,13 @@ Y4
 
 Y5
 
-1	'pre'
-2	'post'
-3	'both'
-4	'circular'
-5	'replicate'
-6	'symmetric'
+1	'circular'
+2	'replicate'
+3	'symmetric'
+4	'pre'
+5	'post'
+6	'both'
+
 
 
 Y6
