@@ -34,7 +34,7 @@ Z"	1	1	1	1	1	1	true	true	true	true	S = ' ';	string or array of blanks	\matlab+bl
 											end
 											out{1} = y; clear S
 #
-X#	0	0	0	0	0	0	false	false	false	true	disp('--------'), celldisp(STACK), disp('--------')	display stack contents (for debugging)	display stack as a cell array (for debugging)	
+X#	0	0	0	0	0	0	false	false	false	true	disp('/-------'), celldisp(STACK), disp('-------/')	display stack contents	display stack as a cell array
 Y#
 Z#	1	3	1	0	0	0	true	true	true	false	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Appends first input to file \comp{inout}, creating it if necessary. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; it is converted to char is necessary; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether any previous contents of file should be kept. The file is guaranteed to be deleted at the beginning of the program
 											sep = char(10);
@@ -367,7 +367,16 @@ Y?	0	0	0	1	1	1	true	true	true	true	x = { 'V=..90+r~/,~6=..90+~0/*p~J69,9~5+~0/~'
 Z?	1	6	3	1	1	1	true	true	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
 @					
 X@	
-Y@	1	1	1	1	1	1	true	true	true	true	out{1} = perms(in{:});	all possible permutations	\matlab+perms+
+Y@	1	2	1	1	1	1	true	true	true	true	if numel(in)==1	all possible permutations / variations	If $1$ input: \matlab+perms+. If $2$ inputs: variations (without repetition)
+											out{1} = perms(in{:});
+											else
+											n = in{2}; combs = cell(1,n);
+											[combs{end:-1:1}] = ndgrid(1:in{1});
+											combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
+											combs = combs(all(diff(sort(combs,2),[],2),2), :);
+											out{1} = combs; clear combs n
+											end
+% Variations are computed like Cartesian power (variations with repetitions), and then results with repetitions are removed
 Z@	1	3	1	1	1	1	true	true	true	true	if numel(in)~=3, out{1} = randperm(in{:});	random permutation	\matlab+randperm+ (produces a row vector as output). With $3$ outputs: third output indicates number of permutations, each in a different row.
 											else [~, p] = sort(rand(in{3},in{1}),2); p = p(:,1:in{2}); out{1} = p; clear p, end
 A	1	2	1	1	1	1	true	true	true	true	out{1} = all(in{:});	all	\matlab+all+. \sa \matl|XA|
@@ -433,7 +442,7 @@ YD	1	inf	2	0	2	1	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	w
 											else fprintf(in{:}); end					
 ZD	0	inf	1	0	0	0	true	true	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
 E	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}*2;	multiply by 2	\matlab|(...)*2|
-XE	3	3	3	1	1	1	true	true	true	true	if ~(iscell(in{1}) && ~iscell(in{2}) && ~iscell(in{3}))	replace elements in numeric or char array	With numeric or char inputs, replace in first input all occurrences of each element of the second input by the corresponding element of the third input. Output has the same class and size as the first input. If the three inputs are cell arrays of strings (the second may also be a string instead of a cell array of strings), each string of the first input is considered atomic, that is, replacing is based on whole strings. If the first input is a cell array and the others are numeric or char, replacing is done on each cell's contents as if the cell's contents were the first input
+XE	3	3	3	1	1	1	true	true	true	true	if ~(iscell(in{1}) && ~iscell(in{2}) && ~iscell(in{3}))	replace elements in numeric or char array	With numeric or char inputs, replace in first input all occurrences of each element of the second input by the corresponding element of the third input. The third input may be longer than the second, and then the extra elements are ignored. Output has the same class and size as the first input. If the three inputs are cell arrays of strings (the second may also be a string instead of a cell array of strings), each string of the first input is considered atomic, that is, replacing is based on whole strings. If the first input is a cell array and the others are numeric or char, replacing is done on each cell's contents as if the cell's contents were the first input
 											[ii, jj] = ismember(in{1}, in{2}); y = in{1}; y(ii) = in{3}(jj(ii)); out{1} = y; clear ii jj y
 											else
 											z = cell(size(in{1}));
@@ -525,7 +534,8 @@ ZP	2	5	2	1	2	1	true	true	true	true	str = {'cityblock' 'hamming' 'chebychev' 'cor
 											for k = 3:min(numel(in),3), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 											[out{:}] = pdist2(in{:});
 Q	1	1	1	1	1	1	true	true	true	true	out{1} = in{1}+1;	increment by 1	\matlab|(...)+1|
-XQ	2	6	2	1	1	1	true	true	true	true	str = {'@mean' '@(x){sort(x).''}' '@min' '@max' '@(x){x.''}' '@(x){x}' '@(x){sort(x)}' '@(x)x(1)' '@(x)x(end)' '@sum' '@(x){cumsum(x).''}' '@(x){cumsum(x)}' '@nansum' '@nanmean' '@nanmin' '@nanmax' '@(x){cummin(x).''}' '@(x){cummin(x)}' '@(x){cummax(x).''}' '@(x){cummax(x)}'};	construct array by accumulation	\matlab+accumarray+. Optional fourth argument specifies an anonymous function, as follows:  1: \matlab+'@mean'+, 2: \matlab+'@(x){sort(x).'}'+, 3: \matlab+'@min'+, 4: \matlab+'@max'+, 5: \matlab+'@(x){x.'}'+, 6: \matlab+'@(x){x}'+, 7: \matlab+'@(x){sort(x)}'+, 8: \matlab+'@(x)x(1)'+, 9: \matlab+'@(x)x(end)'+, 10: \matlab+'@sum'+, 11: \matlab+'@(x){cumsum(x).'}'+, 12: \matlab+'@(x){cumsum(x)}'+, 13: \matlab+'@nansum'+, 14: \matlab+'@nanmean'+, 15: \matlab+'@nanmin'+, 16: \matlab+'@nanmax'+, 17: \matlab+'@(x){cummin(x).'}'+, 18: \matlab+'@(x){cummin(x)}'+, 19: \matlab+'@(x){cummax(x).'}'+, 20: \matlab+'@(x){cummax(x)}'+
+XQ	2	6	3	1	1	1	true	true	true	true	str = {'@sum' '@mean' '@(x){sort(x).''}' '@max' '@min' '@prod' '@(x){x.''}' '@(x){x}' '@(x){sort(x)}' '@(x)x(1)' '@(x)x(end)' '@(x){cumsum(x).''}' '@(x){cumprod(x)}' '@nansum' '@nanmean' '@nanmax' '@nanmin' '@(x){cummax(x).''}' '@(x){cummin(x)}' '@(x){cummax(x).''}' '@(x){cummin(x)}'};	construct array by accumulation	\matlab+accumarray+. The third output may be omitted, and then it is interpreted as \matlab+[]+. Fourth/third argument specifies an anonymous function, as follows:  1: \matlab+'@sum'+, 2: \matlab+'@mean'+, 3: \matlab+'@(x){sort(x).'}'+, 4: \matlab+'@max'+, 5: \matlab+'@min'+, 6: \matlab+'@prod'+, 7: \matlab+'@(x){x.'}'+, 8: \matlab+'@(x){x}'+, 9: \matlab+'@(x){sort(x)}'+, 10: \matlab+'@(x)x(1)'+, 11: \matlab+'@(x)x(end)'+, 12: \matlab+'@(x){cumsum(x).'}'+, 13: \matlab+'@(x){cumprod(x)}'+, 14: \matlab+'@nansum'+, 15: \matlab+'@nanmean'+, 16: \matlab+'@nanmax'+, 17: \matlab+'@nanmin'+, 18: \matlab+'@(x){cummax(x).'}'+, 19: \matlab+'@(x){cummin(x)}'+, 20: \matlab+'@(x){cummax(x).'}'+, 21: \matlab+'@(x){cummin(x)}'+
+											if numel(in)>=3 && isscalar(in{3}), in = [in(1:2) {[]} in(3:end)]; end
 											if numel(in)>=4, in{4} = str2func(str{in{4}}); end; clear str
 											out{1} = accumarray(in{:});
 YQ					
@@ -800,7 +810,7 @@ e	1	inf	2	1	1	1	true	true	true	true	if numel(in)>1	reshape array / remove single
 											else
 											out{1} = squeeze(in{:});
 											end
-Xe	1	4	1	1	2	1	true	true	true	true	if numel(in)==1 && numel(out)==1, in{2} = 1-size(in{1},1):size(in{1},2)-1; end	(sparse) matrix formed by digaonals	\matlab+spdiags+. With $1$ input and $1$ output, extracts all diagonals from the input
+Xe	1	4	1	1	2	1	true	true	true	true	if numel(in)==1 && numel(out)==1, in{2} = 1-size(in{1},1):size(in{1},2)-1; end	(sparse) matrix formed by diagonals	\matlab+spdiags+. With $1$ input and $1$ output, extracts all diagonals from the input
 											[out{:}] = spdiags(in{:});
 Ye
 Ze	1	1	1	1	1	1	true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
@@ -1019,10 +1029,11 @@ Zt	3	3	3	1	1	1	true	true	true	true	if ~isnumeric(in{1})	replace substring with a
 											if ischar(in{3}), y = char(y); end
 											out{1} = y;
 											end
-u	1	4	1	1	3	1	true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'};	unique	\matlab+unique+. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl+Xu+
+u	1	4	1	1	3	1	true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'};	unique	\matlab+unique+, with \matlab+'stable'+ option by default. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl+Xu+
 											for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
+											if numel(in)==1 || (numel(in)==2 && strcmp(in{2}, 'rows')), in{end+1} = 'stable'; end
 											if iscell(in{1}) && ~ischar(in{1}{1})
-											if numel(in)==1 || (numel(in)>=2 && isequal(in{end},'sorted'))
+											if numel(in)>=2 && isequal(in{end},'sorted')
 % Sort lexicographically. This is taken from the code of `S`:
 											n = max(cellfun(@numel, in));
 											x = cellfun(@(t) [t(:).' -inf(1,n-numel(t))], in{1}, 'uniformoutput', 0);
@@ -1037,7 +1048,10 @@ u	1	4	1	1	3	1	true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'
 											else
 											[out{:}] = unique(in{:});
 											end
-Xu	1	3	1	1	3	1	true	true	true	true	[out{:}] = unique(in{1},'rows',in{2:end});	unique rows	\matlab+unique(..., 'rows', ...)+. \sa \matl+u+.				
+Xu	1	3	1	1	3	1	true	true	true	true	str = {'stable' 'sorted' 'last' 'first'};	unique rows	\matlab+unique(..., 'rows', ...)+, with \matlab+'stable'+ option by default. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+. \sa \matl+u+
+											for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
+											if numel(in)<=1, in{end+1} = 'stable'; end
+											[out{:}] = unique(in{1}, 'rows', in{2:end});
 Yu	
 Zu	1	2	1	1	1	1	true	true	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
 v	0	inf	numel(STACK)	1	1	1	true	true	true	true	if any(diff(cellfun(@(x) size(x,2), in)))	vertical concatenation	\matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized
