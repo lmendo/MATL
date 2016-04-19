@@ -28,7 +28,7 @@ isMatlab = strcmp(version(indMainName).Name, 'MATLAB'); % 1 if Matlab, 0 if Octa
 verNum = version(indMainName).Version; % version number as a string
 verNum = str2double(regexp(verNum, '\.', 'split')); % version number as a vector
 
-useTags = isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13));
+useTags = isMatlab && (verNum(1)>7 || (verNum(1)==7 && verNum(2)>=13)) && usejava('desktop');
 if useTags
     strongBegin = '<strong>';
     strongEnd = '</strong>';
