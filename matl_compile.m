@@ -51,7 +51,7 @@ implicitInputBlock = {...
     'implInput = {};' ...
     'for k = 1:1-numel(STACK)-nin(1)' ...
     'implInput{k} = input(implicitInputPrompt,''s'');' ...
-    'assert(isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-zA-Z]{2}'', ''once'')), ''MATL:runtime'', ''MATL run-time error: input not allowed'')' ...
+    'assert(isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-zA-Z]{2}'', ''once'')), ''MATL:runner'', ''MATL run-time error: input not allowed'')' ...
     'if isempty(implInput{k}), implInput{end} = []; else implInput{k} = eval(implInput{k}); end' ...
     'end' ...
     'STACK = [implInput STACK];' ...
@@ -109,11 +109,11 @@ end
 % Initiallize stack (empty)
 appendLines('STACK = {};', 0)
 % Initiallize function input and output specifications (to empty).
-appendLines('S_IN = []; S_OUT = [];', 0)
+appendLines('S_IN = ''def''; S_OUT = ''def'';', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
 % "level".
-appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 0]} {[0 -1 1]} {[1 -1j]} {[2 0]} {[1 -1j 0]} {[2 -1j]} {[2 3 1]} {[3 1 2]} {[1 2 0]} {[2 2 0]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {2*pi} {0.5772156649015328606} {(sqrt(5)+1)/2} };', 0)
+appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 1j]} {[1j -1 1]} {[1 1j-1]} {[2 1j]} {[1 0]} {[2 1j-1]} {[2 3 1]} {[3 1 2]} {[1 2 1j]} {[2 2 1j]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {2*pi} {0.5772156649015328606} {(sqrt(5)+1)/2} };', 0)
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
@@ -148,10 +148,14 @@ for n = 1:numel(S)
             appendLines('nin = 0;', S(n).nesting);
             appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             appendLines('S_IN = STACK{end}; STACK(end) = [];', S(n).nesting)
+            appendLines('if isempty(S_IN), S_IN = ''def''; end', S(n).nesting)
         case 'metaFunction.outSpec'
             appendLines('nin = 0;', S(n).nesting);
             appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             appendLines('S_OUT = STACK{end}; STACK(end) = [];', S(n).nesting)
+            appendLines('if isempty(S_OUT), S_OUT = ''def''; end', S(n).nesting)
+        case 'metaFunction.altInOut'
+            appendLines('S_IN = ''alt''; S_OUT = ''alt'';', S(n).nesting)
         case 'controlFlow.for'
             appendLines('nin = 0;', S(n).nesting);
             appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
@@ -241,7 +245,7 @@ for n = 1:numel(S)
             if online && ~F(k).allowedOnline
                 error('MATL:compiler', 'MATL compiler error: function %s not allowed in online compiler', F(k).source)
             end
-            appendLines(funWrap(F(k).minIn, F(k).maxIn, F(k).defIn, F(k).minOut, F(k).maxOut, F(k).defOut, ...
+            appendLines(funWrap(F(k).minIn, F(k).maxIn, F(k).defIn, F(k).altIn, F(k).minOut, F(k).maxOut, F(k).defOut, F(k).altOut, ...
                 F(k).consumeInputs, F(k).wrap, F(k).funInClipboard, F(k).body), S(n).nesting)
             C = [C strcat(blanks(indStepComp*S(n).nesting), newLines)];
         otherwise
@@ -267,7 +271,7 @@ if ~isMatlab
     appendLines('% Define subfunctions', 0)
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base' ...
-        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit' 'max' 'min' 'strncmp'};
+        'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit' 'max' 'min' 'strncmp' 'round'};
     verNumTh = [4 0 0]; % first version in which a modified function is not needed:
     if (verNum(1)<verNumTh(1)) || ((verNum(1)==verNumTh(1)) && (verNum(2)<verNumTh(2))) || ((verNum(1)==verNumTh(1)) && (verNum(2)==verNumTh(2)) && (verNum(3)<verNumTh(3)))
         fnames = [fnames {'colon'}];
@@ -318,7 +322,7 @@ fclose(fid);
 clear(cOutFile)
 end
 
-function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume, funInClipboard)
+function newLines = funPre(minIn, maxIn, defIn, altIn, minOut, maxOut, defOut, altOut, consume, funInClipboard)
 % Code generated at the beginning of functions: check `S_IN` and `S_OUT`,
 % define `nout`, get inputs, prepare outputs, consume inputs if applicable.
 % `consume` indicates if inputs should be removed from the stack
@@ -344,19 +348,33 @@ function newLines = funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consume,
 % in the help and documentation; different negative values can be used to select that text.
 %   If possible, it's probably safer to use method (2) than (3).
 global implicitInputBlock
-newLines = { ...
-    sprintf('if isempty(S_IN), S_IN = %s; end', defIn) ...
+newLines = { sprintf('if strcmp(S_IN,''def''), S_IN = %s; end', defIn) };
+if isempty(altIn) && isempty(altOut)
+    newLines{end+1} = 'if strcmp(S_IN,''alt''), error(''MATL:runner'', ''MATL run-time error: alternative input/output specification not defined for this function'' ), end';
+elseif ~isempty(altIn)
+    newLines{end+1} = sprintf('if strcmp(S_IN,''alt''), S_IN = %s; end', altIn);
+else
+    newLines{end+1} = sprintf('if strcmp(S_IN,''alt''), S_IN = %s; end', defIn);
+end
+newLines = [newLines, {...
     sprintf('if isnumeric(S_IN) && numel(S_IN) == 1, if S_IN < %s || S_IN > %s, error(''MATL:runner'', ''MATL run-time error: incorrect input specification''), end', minIn, maxIn) ...
     sprintf('elseif islogical(S_IN), if nnz(S_IN) < %s || nnz(S_IN) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect input specification''), end', minIn, maxIn) ...
     'else error(''MATL:runner'', ''MATL run-time error: input specification not recognized''), end' ...
-    'if isnumeric(S_IN), nin = -S_IN+1:0; else nin = find(S_IN)-numel(S_IN); end'};
+    'if isnumeric(S_IN), nin = -S_IN+1:0; else nin = find(S_IN)-numel(S_IN); end' }];
 newLines = [newLines implicitInputBlock]; % code block for implicit input
 newLines = [newLines, {'in = STACK(end+nin);'} ];
 if funInClipboard
     newLines = [newLines, {'if ~isempty(in), CB_M = [{in} CB_M(1:end-1)]; end'} ];
 end
+newLines = [newLines, { sprintf('if strcmp(S_OUT,''def''), S_OUT = %s; end', defOut) }];
+if isempty(altIn) && isempty(altOut)
+    newLines{end+1} = 'if strcmp(S_OUT,''alt''), error(''MATL:runner'', ''MATL run-time error: alternative input/output specification not defined for this function'' ), end';
+elseif ~isempty(altOut)
+    newLines{end+1} = sprintf('if strcmp(S_OUT,''alt''), S_OUT = %s; end', altOut);
+else
+    newLines{end+1} = sprintf('if strcmp(S_OUT,''alt''), S_OUT = %s; end', defOut);
+end
 newLines = [newLines, {...
-    sprintf('if isempty(S_OUT), S_OUT = %s; end', defOut) ...
     sprintf('if isnumeric(S_OUT) && numel(S_OUT) == 1, if S_OUT >= 0 && (S_OUT < %s || S_OUT > 2*(%s)), error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     sprintf('elseif islogical(S_OUT), if numel(S_OUT) < %s || numel(S_OUT) > %s, error(''MATL:runner'', ''MATL run-time error: incorrect output specification''), end', minOut, maxOut) ...
     'else error(''MATL:runner'', ''MATL run-time error: output specification not recognized''), end' ...
@@ -376,12 +394,12 @@ function newLines = funPost
 % outputs, delete S_IN and S_OUT. 
 newLines = { 'if islogical(S_OUT), out = out(S_OUT); end' ...
     'STACK = [STACK out];' ...
-    'S_IN = [];' ...
-    'S_OUT = [];' ...
+    'S_IN = ''def'';' ...
+    'S_OUT = ''def'';' ...
     'clear nin nout in out' };
 end
 
-function newLines = funWrap(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs, wrap, funInClipboard, body)
+function newLines = funWrap(minIn, maxIn, defIn, altIn, minOut, maxOut, defOut, altOut, consumeInputs, wrap, funInClipboard, body)
 % Implements use of stack to get inputs and outputs and realizes function body.
 % Specifically, it packs `funPre`, function body and `funPost`.
 % This is used for normal, stack-rearranging and clipboard functions.
@@ -393,7 +411,7 @@ if ~iscell(body)
     body = {body}; % convert to 1x1 cell array containing a string
 end
 if wrap
-    newLines = [ funPre(minIn, maxIn, defIn, minOut, maxOut, defOut, consumeInputs, funInClipboard) body funPost ];
+    newLines = [ funPre(minIn, maxIn, defIn, altIn, minOut, maxOut, defOut, altOut, consumeInputs, funInClipboard) body funPost ];
 else
     newLines = body;
 end

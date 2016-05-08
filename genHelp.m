@@ -9,8 +9,6 @@ function H = genHelp(F, L)
 
 N = 65; % characters per line
 
-% Non-functions. Changes done here should be don in `genHelp.m` too
-
 % Statements that are not functions. Changes done here to the comment field should be
 % done in `matl_disp.m` too.
 F(end+1).source = '$';
@@ -18,20 +16,24 @@ F(end).comment = 'input specification';
 F(end).description = 'specify inputs for next function';
 
 F(end+1).source = '#';
-F(end).comment = 'otput specification';
+F(end).comment = 'output specification';
 F(end).description = 'specify outputs for next function';
+
+F(end+1).source = '&';
+F(end).comment = 'alternative input/output specification';
+F(end).description = 'alternative specification of inputs and outputs for next function';
 
 F(end+1).source = '"';
 F(end).comment = 'for';
-F(end).description = '\matlab+for+ (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X}+, \matl+Y}+';
+F(end).description = '\matlab+for+ (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X@+, \matl+.+, \matl+X.+';
 
 F(end+1).source = '`';
 F(end).comment = 'do...while';
-F(end).description = 'do...while (control flow: loop). \sa \matl+X`+, \matl+]+, \matl+@+, \matl+X}+, \matl+Y}+';
+F(end).description = 'do...while (control flow: loop). \sa \matl+X`+, \matl+]+, \matl+@+, \matl+.+, \matl+X.+';
 
 F(end+1).source = 'X`';
 F(end).comment = 'while';
-F(end).description = '\matlab+while+ (control flow: loop). \sa \matl+`+, \matl+]+, \matl+@+, \matl+X}+, \matl+Y}+';
+F(end).description = '\matlab+while+ (control flow: loop). \sa \matl+`+, \matl+]+, \matl+@+, \matl+.+, \matl+X.+';
 
 F(end+1).source = '?';
 F(end).comment = 'if';
@@ -43,27 +45,31 @@ F(end).description = '\matlab+else+ (control flow: conditional branch). \sa \mat
 
 F(end+1).source = '@';
 F(end).comment = 'for loop variable or do...while / while loop iteration index';
-F(end).description = 'for loop variable, do...while loop iteration index or while loop iteration index of innermost loop';
+F(end).description = 'for loop variable, do...while loop iteration index or while loop iteration index of innermost loop. \sa \matl+X@+';
+
+F(end+1).source = 'X@';
+F(end).comment = 'for loop iteration index';
+F(end).description = 'for loop iteration index of innermost loop. \sa \matl+@+';
 
 F(end+1).source = ']';
 F(end).comment = 'end';
-F(end).description = '\matlab+end+ (control flow). End loop or conditional branch. \sa \matl+"+, \matl+`+, \matl+?+';
+F(end).description = '\matlab+end+ (control flow). End loop or conditional branch. \sa \matl+"+, \matl+`+, \matl+X`+, \matl+?+';
 
 F(end+1).source = '.';
 F(end).comment = 'break';
-F(end).description = '\matlab+break+ (control flow: loop). Terminate execution of innermost loop. \sa \matl+"+, \matl+`+';
+F(end).description = '\matlab+break+ (control flow: loop). Terminate execution of innermost loop. \sa \matl+"+, \matl+`+, \matl+X`+';
 
 F(end+1).source = 'X.';
-F(end).comment = 'conditional continue';
-F(end).description = 'conditional \matlab+continue+ (control flow: loop). Pass control to next iteration of innermost loop. \sa \matl+"+, \matl+`+';
+F(end).comment = 'continue';
+F(end).description = '\matlab+continue+ (control flow: loop). Pass control to next iteration of innermost loop. \sa \matl+"+, \matl+`+, \matl+X`+';
 
 F(end+1).source = '''';
 F(end).comment = 'string delimiter';
 F(end).description = 'string delimiter. Should be doubled when used within a string';
 
-F(end+1).source = ',';
-F(end).comment = 'separator';
-F(end).description = 'separator. Space and newline can be used as separators too';
+%F(end+1).source = ' ';
+%F(end).comment = 'separator';
+%F(end).description = 'separator. Newline can be used as separator too';
 
 F(end+1).source = '%';
 F(end).comment = 'comment';
@@ -125,21 +131,23 @@ for n = 1:numel(descrFormatted)
     d = sprintf('    %s\n', d{:}); % four spaces for left margin
     descrFormatted{n} = d(1:end-1); % remove last '\n'
     
-    % Format input spec:
+    % Values for formatting input and output specs
     minIn = str2double(F(n).minIn);
     maxIn = str2double(F(n).maxIn);
     defIn = str2double(F(n).defIn);
+    altIn = str2double(F(n).altIn);
     minOut = str2double(F(n).minOut);
     maxOut = str2double(F(n).maxOut);
     defOut = str2double(F(n).defOut);
+    altOut = str2double(F(n).altOut);
 
-    % Changes done here should be done in MATL_spec.tex too;
+    % Special strings for defIn. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex too.
     if isnan(defIn) && ~isempty(F(n).defIn) % F(n).defIn contains a string that couldn't be converted to a number
         switch F(n).defIn
         case 'numel(STACK)'
             defInStr = 'number of elements in stack';
         case 'double(numel(CB_G)>1)'
-            defInStr = '0 if clipboard currently has 0 or 1 levels; 1 otherwise';
+            defInStr = '0 if clipboard currently has 0 or 1 levels, 1 otherwise';
         otherwise
             error('Unrecognized default number of inputs')
         end
@@ -147,22 +155,45 @@ for n = 1:numel(descrFormatted)
         defInStr = sprintf('%i', defIn);
     end
     
+    % Special strings for altIn. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex too.
+    if isnan(altIn) && ~isempty(F(n).altIn) % F(n).altIn contains a string that couldn't be converted to a number
+        switch F(n).altIn
+        case 'numel(STACK)'
+            altInStr = 'number of elements in stack';
+        otherwise
+            error('Unrecognized alternative number of inputs')
+        end
+    elseif isempty(F(n).altIn)
+        altInStr = '';
+    else
+        altInStr = sprintf('%i', altIn);
+    end
+
+    % Format input spec
     if isempty(F(n).minIn) || isempty(F(n).maxIn)
         inFormatted{n} = [];
-    elseif minIn ~= maxIn
+    elseif (minIn ~= maxIn) && isempty(altInStr)
         if isfinite(maxIn)
             inFormatted{n} = sprintf('%i--%i (%s)', minIn, maxIn, defInStr);
         else
             inFormatted{n} = sprintf('%i-- (%s)', minIn, defInStr);
         end
+    elseif (minIn ~= maxIn) && ~isempty(altInStr)
+        if isfinite(maxIn)
+            inFormatted{n} = sprintf('%i--%i (%s / %s)', minIn, maxIn, defInStr, altInStr);
+        else
+            inFormatted{n} = sprintf('%i-- (%s / %s)', minIn, defInStr, altInStr);
+        end
+    elseif (minOut == maxOut) && ~isempty(altOutStr)
+        inFormatted{n} = sprintf('%i (%s / %s)', maxIn, defInStr, altInStr);
     else
-        if maxIn ~= defIn
+        if (maxIn ~= defIn) % || ~isempty(altInStr) % We removed this condition for the same reasons as for the output
             error('Incorrect specification of number of inputs')
         end
         inFormatted{n} = sprintf('%i', defIn);
     end
 
-    % Format output spec. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex
+    % Special strings for defOut. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex too.
     if (isnan(defOut) || defOut<0) && ~isempty(F(n).defOut) % F(n).defOut contains a string that couldn't be converted to a number, or a negative number
         switch F(n).defOut
         case {'numel(CB_H)' 'numel(CB_I)' 'numel(CB_J)' 'numel(CB_K)'}
@@ -175,8 +206,8 @@ for n = 1:numel(descrFormatted)
             defOutStr = 'number of elements of first input';
         case 'prod(size(in{:}))' % Z}
             defOutStr = 'number of elements or subarrays that will be produced';
-        case '1+(numel(CB_G)-1)*(numel(in)==0)'
-            defOutStr = 'number of levels addressed according to input specification';%'if 0 inputs: current number of clipboard levels; if 1 input: 1';
+        case '1+(max(numel(CB_G),1)-1)*(numel(in)==0)'
+            defOutStr = 'number of levels addressed according to input specification';
         case 'max(1,sum(ismember(cellfun(@num2str, in(3:end), ''uniformoutput'', false), {''start'' ''end'' ''tokenExtents'' ''match'' ''tokens'' ''split'' ''1'' ''2'' ''3'' ''5'' ''6'' ''7''})))'
             defOutStr = 'according to specified keywords';
         case 'numel(in)'
@@ -191,17 +222,40 @@ for n = 1:numel(descrFormatted)
     else
         defOutStr = sprintf('%i', defOut);
     end
-
+    
+    % Special strings for altOut. Changes done here should also be done in genFunDefTableLatex.m and in MATL_spec.tex too.
+    if isnan(altOut) && ~isempty(F(n).altOut) % F(n).altOut contains a string that couldn't be converted to a number
+        switch F(n).altOut
+        case {'[false true]' '[false,true]' '[false, true]'}
+            altOutStr = 'second';
+        otherwise
+            error('Unrecognized alternative number of outputs')
+        end
+    elseif isempty(F(n).altOut)
+        altOutStr = '';
+    else
+        altOutStr = sprintf('%i', altOut);        
+    end    
+    
+    % Format output spec
     if isempty(F(n).minOut) || isempty(F(n).maxOut)
         outFormatted{n} = [];
-    elseif minOut ~= maxOut
+    elseif (minOut ~= maxOut) && isempty(altOutStr)
         if isfinite(maxOut)
             outFormatted{n} = sprintf('%i--%i (%s)', minOut, maxOut, defOutStr);
         else
             outFormatted{n} = sprintf('%i-- (%s)', minOut, defOutStr);
         end
+    elseif (minOut ~= maxOut) && ~isempty(altOutStr)
+        if isfinite(maxOut)
+            outFormatted{n} = sprintf('%i--%i (%s / %s)', minOut, maxOut, defOutStr, altOutStr);
+        else
+            outFormatted{n} = sprintf('%i-- (%s / %s)', minOut, defOutStr, altOutStr);
+        end
+    elseif (minOut == maxOut) && ~isempty(altOutStr)
+        outFormatted{n} = sprintf('%i (%s / %s)', maxOut, defOutStr, altOutStr);
     else
-        if maxOut ~= defOut
+        if (maxOut ~= defOut) %|| ~isempty(altOutStr). % We remove the condition on altOutStr because there may be things like minOut==maxOut==defOut==2 and altOutStr = '[false true]'
             error('Incorrect specification of number of outputs')
         end
         outFormatted{n} = sprintf('%i', defOut);

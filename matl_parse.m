@@ -117,7 +117,7 @@ while pos<=L
         S(n).nesting = parseNesting;
         pos = pos + fin;
         n = n + 1;
-    elseif any(s(pos)==['!&()*+,-/:;<=>\^_|~' 'A':'W' 'a':'z'])
+    elseif any(s(pos)==['!()*+,-/:;<=>\^_|~' 'A':'W' 'a':'z'])
         S(n).type = 'function';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
@@ -131,6 +131,12 @@ while pos<=L
         n = n + 1;
     elseif s(pos)=='#'
         S(n).type = 'metaFunction.outSpec';
+        S(n).source = s(pos);
+        S(n).nesting = parseNesting;
+        pos = pos + 1;
+        n = n + 1;
+    elseif s(pos)=='&'
+        S(n).type = 'metaFunction.altInOut';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         pos = pos + 1;

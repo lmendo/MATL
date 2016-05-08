@@ -16,7 +16,7 @@ function F = genFunDef(masterFileName, fileName)
 %
 % Luis Mendo
 
-fieldNames = {'source' 'minIn' 'maxIn' 'defIn' 'minOut' 'maxOut' 'defOut' 'consumeInputs' 'wrap' 'funInClipboard' 'allowedOnline' 'body' 'comment' 'description'};
+fieldNames = {'source' 'minIn' 'maxIn' 'defIn' 'altIn' 'minOut' 'maxOut' 'defOut' 'altOut' 'consumeInputs' 'wrap' 'funInClipboard' 'allowedOnline' 'body' 'comment' 'description'};
 nCol_consumeInputs = find(strcmp(fieldNames, 'consumeInputs'));
 nCol_wrap = find(strcmp(fieldNames, 'wrap'));
 nCol_funInClipboard = find(strcmp(fieldNames, 'funInClipboard'));

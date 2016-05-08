@@ -53,6 +53,7 @@ if listing && ~isempty(S)
         texts(ismember(Stype, {'literal.string'})) = {'string literal'};
         texts(strcmp(Stype, 'metaFunction.inSpec')) = {'input specification'};
         texts(strcmp(Stype, 'metaFunction.outSpec')) = {'output specification'};
+        texts(strcmp(Stype, 'metaFunction.altInOut')) = {'alternative input/output specification'};
         texts(strcmp(Stype, 'controlFlow.for')) = {'for'};
         texts(strcmp(Stype, 'controlFlow.doWhile')) = {'do...while'};
         texts(strcmp(Stype, 'controlFlow.while')) = {'while'};
@@ -75,6 +76,8 @@ if listing && ~isempty(S)
         disp('MATL program listing:')
     end
     disp(' ')
-    disp(char(d))
+    for n=1:numel(d)
+        disp(d{n});
+    end
     disp(' ')
 end
