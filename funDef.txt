@@ -1032,21 +1032,31 @@ s	1	4	1	2	1	1	1		true	true	true	true	str = {'omitnan' 'includenan' 'double' 'nat
 Xs	1	3	1		1	1	1		true	true	true	true	str = {'omitnan' 'includenan' 'double' 'native' 'default'};	sum along first dimension.	\matlab+sum(..., 1, ...)+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+. \sa \matl+s+
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													out{1} = sum(in{1},1,in{2:end});
-Ys	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	cumulative sum	\matlab+cumsum+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the sum at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively
-													if numel(in)<=2 || (numel(in)==3 && ischar(in{3}))
+Ys	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	cumulative sum	\matlab+cumsum+. Allows first input to be char. Optional third and fourth numerical scalar inputs are interpreted as minimum and maximum values, which are applied after the sum at each position. These can be substituted by a 2-element numerical array as second or third input
+													if (numel(in)==1) || (numel(in)==2 && numel(in{2})==1) || (numel(in)==3 && ischar(in{3}))
 													out{1} = cumsum(in{:});
 													else
-													if numel(in)==3, in{4} = inf; end
-													x = permute(in{1}, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
+													if numel(in)==4
+													d = in{2}; m = in{3}; M = in{4};
+													elseif numel(in)==3 && numel(in{3})==2
+													d = in{2}; m = in{3}(1); M = in{3}(2);
+													elseif numel(in)==3 && numel(in{3})==1
+													d = in{2}; m = in{3}; M = inf;
+													elseif numel(in)==2 && numel(in{2})==2
+													[~, d] = max(size(in{1})-1); m = in{2}(1); M = in{2}(2);
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect input')
+													end
+													x = permute(in{1}, [d 1:d-1 d+1:ndims(in{1})]);
 													indc = repmat({':'},1,ndims(in{1})-1);
 													y = x;
-													y(1,indc{:}) = min(max(y(1,indc{:}), in{3}), in{4});
+													y(1,indc{:}) = min(max(y(1,indc{:}), m), M);
 													for k = 2:size(x,1)
 													y(k,indc{:}) = y(k-1,indc{:}) + x(k,indc{:});
-													y(k,indc{:}) = min(max(y(k,indc{:}), in{3}), in{4});
+													y(k,indc{:}) = min(max(y(k,indc{:}), m), M);
 													end
-													y = ipermute(y, [in{2} 1:in{2}-1 in{2}+1:ndims(in{1})]);
-													[out{1}] = y;
+													y = ipermute(y, [d 1:d-1 d+1:ndims(in{1})]);
+													out{1} = y; clear d m M x y
 													end
 Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = std(in{:});	standard deviation	\matlab+std+
 t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
