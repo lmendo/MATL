@@ -370,7 +370,7 @@ S(end).implicit = true;
 
 if isfield(S,'end') && any(cellfun(@(x) isequal(x,0), {S.end}))
     unclosed = find(cellfun(@(x) isequal(x,0), {S.end}), 1);
-    error('MATL:parser', 'MATL error while parsing: %s%s%s statement has no matching <strong>]</strong>', strongBegin, S(unclosed).source, strongEnd)
+    error('MATL:parser', 'MATL error while parsing: %s%s%s statement has no matching %s]%s', strongBegin, S(unclosed).source, strongEnd, strongBegin, strongEnd)
 end
 
 end
