@@ -100,8 +100,9 @@ for n = 1:numel(descrFormatted)
     % Add information on predefined literals, if applicable
     if ~isempty(regexp(F(n).source,'[XYZ]\d','once')) && isfield(L, (F(n).source)) % X0...Z9 that are defined
         aux = [num2cell(L.(F(n).source).key); L.(F(n).source).val];
-        descrFormatted{n} = [ descrFormatted{n} '. ' sprintf('%i: %s; ', aux{:})];
-    end        
+        descrFormatted{n} = [ descrFormatted{n} '. ' sprintf('%i: <strong>%s</strong>, ', aux{:})];
+    end
+    descrFormatted{n} = descrFormatted{n}(1:end-2); % remove final comma and space
     
     % Format description
     descrFormatted{n}(end+1) = ' '; % needed so that the "find" line always finds last index

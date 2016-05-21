@@ -171,7 +171,7 @@ if genHelpNeeded
     if verbose
         fprintf('Regenerating help file \n')
     end
-    H = genHelp(F, helpFile);
+    H = genHelp(F, L);
 else
     if verbose
         fprintf('Loading help file ''%s''\n', helpFile)

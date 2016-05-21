@@ -283,76 +283,76 @@ X/	1	1	1		1	1	1		true	true	true	true	out{1} = angle(in{1});	phase angle (radians
 Y/	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}/in{2};	right matrix division	right matrix division, \matlab+/+ (\matlab+mrdivide+)
 Z/	1	3	1		1	1	1		true	true	true	true	out{1} = unwrap(in{:});	unwrap phase angle	\matlab+unwrap+
 0
-X0	1	1	1		1	1	1		true	true	true	true	fn = 'X0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X0	1	1	1		1	1	1		true	true	true	true	fn = 'X0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y0	1	1	1		1	1	1		true	true	true	true	fn = 'Y0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y0	1	1	1		1	1	1		true	true	true	true	fn = 'Y0'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z0
 1
-X1	1	1	1		1	1	1		true	true	true	true	fn = 'X1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X1	1	1	1		1	1	1		true	true	true	true	fn = 'X1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y1	1	1	1		1	1	1		true	true	true	true	fn = 'Y1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y1	1	1	1		1	1	1		true	true	true	true	fn = 'Y1'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z1
 2
-X2	1	1	1		1	1	1		true	true	true	true	fn = 'X2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X2	1	1	1		1	1	1		true	true	true	true	fn = 'X2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y2	1	1	1		1	1	1		true	true	true	true	fn = 'Y2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y2	1	1	1		1	1	1		true	true	true	true	fn = 'Y2'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z2
 3
-X3	1	1	1		1	1	1		true	true	true	true	fn = 'X3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X3	1	1	1		1	1	1		true	true	true	true	fn = 'X3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y3	1	1	1		1	1	1		true	true	true	true	fn = 'Y3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y3	1	1	1		1	1	1		true	true	true	true	fn = 'Y3'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z3
 4
-X4	1	1	1		1	1	1		true	true	true	true	fn = 'X4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X4	1	1	1		1	1	1		true	true	true	true	fn = 'X4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y4	1	1	1		1	1	1		true	true	true	true	fn = 'Y4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y4	1	1	1		1	1	1		true	true	true	true	fn = 'Y4'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 
 Z4
 5
-X5	1	1	1		1	1	1		true	true	true	true	fn = 'X5'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X5	1	1	1		1	1	1		true	true	true	true	fn = 'X5'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y5	1	1	1		1	1	1		true	true	true	true	fn = 'Y5'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y5	1	1	1		1	1	1		true	true	true	true	fn = 'Y5'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z5
 6
-X6	1	1	1		1	1	1		true	true	true	true	fn = 'X6'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X6	1	1	1		1	1	1		true	true	true	true	fn = 'X6'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
-Y6	1	1	1		1	1	1		true	true	true	true	fn = 'Y6'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+Y6	1	1	1		1	1	1		true	true	true	true	fn = 'Y6'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Z6
 7
-X7	1	1	1		1	1	1		true	true	true	true	fn = 'X7'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X7	1	1	1		1	1	1		true	true	true	true	fn = 'X7'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Y7
 Z7
 8
-X8	1	1	1		1	1	1		true	true	true	true	fn = 'X8'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X8	1	1	1		1	1	1		true	true	true	true	fn = 'X8'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Y8
 Z8
 9
-X9	1	1	1		1	1	1		true	true	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1}, 1);	predefined literal	predefined literal depending on input
+X9	1	1	1		1	1	1		true	true	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1}, 1);	predefined literals	predefined literal depending on input
 													assert(~isempty(k), 'MATL:runtime', 'MATL run-time error: input not allowed in function %s', fn);
 													out{1} = preLit.(fn).val{k};
 Y9
