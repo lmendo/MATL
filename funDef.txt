@@ -368,8 +368,9 @@ X;	1	1	1		1	1	1		true	true	true	true	out{1} = acos(in{1});	inverse cosine (radia
 Y;	1	1	1		1	1	1		true	true	true	true	out{1} = asin(in{1});	inverse sine (radians)	\matlab+asin+
 Z;	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@atan2, in{1}, in{2});	four quadrant inverse tangent (radians; element-wise, singleton expansion)	\matlab+atan2+, element-wise with singleton expansion
 <	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@lt, in{1}, in{2});	is less than? (element-wise, singleton expansion)	\matlab+<+ (\matlab+lt+), element-wise with singleton expansion
-X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion
-													else [out{:}] = min(in{:}); end
+X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+
+													elseif numel(in)==1, [out{:}] = min(in{:});
+													else in{2} = []; [out{:}] = min(in{:}); end
 Y<	1	3	1	2	1	1	1		true	true	true	true	out{1} = cummin(in{:});	cumulative minimum	\matlab+cummin+
 Z<
 =	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@eq, in{1}, in{2});	is equal? (element-wise, singleton expansion)	\matlab+==+ (\matlab+eq+), element-wise with singleton expansion
@@ -377,8 +378,9 @@ X=	2	inf	2		1	1	1		true	true	true	true	out{1} = isequal(in{:});	true if arrays a
 Y=	2	2	2		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strcmp(in{:});	compare strings	\matlab+strcmp+. If first or second inputs are numeric they are converted to char
 Z=	3	3	3		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+. If first or second inputs are numeric they are converted to char
 >	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@gt, in{1}, in{2});	is greater than? (element-wise, singleton expansion)	\matlab+>+ (\matlab+gt+), element-wise with singleton expansion
-X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion
-													else [out{:}] = max(in{:}); end
+X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+
+													elseif numel(in)==1, [out{:}] = max(in{:});
+													else in{2} = []; [out{:}] = max(in{:}); end
 Y>	1	3	1	2	1	1	1		true	true	true	true	[out{1}] = cummax(in{:});	cumulative maximum	\matlab+cummax+
 Z>
 ?
@@ -864,7 +866,7 @@ Xe
 Ye
 Ze	1	1	1		1	1	1		true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
 f	1	3	1		1	3	1	2	true	true	true	true	[out{:}] = find(in{:});	find	\matlab+find+
-Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / all substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: cell array of all substrings. Works also for numeric or cell arrays
+Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / non-empty substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: cell array of all non-empty substrings. Works also for numeric or cell arrays
 													if ischar(in{1}) || (iscell(in{1})&&ischar(in{1}{1}))
 													out{1} = strfind(in{:});
 													else
@@ -1005,7 +1007,7 @@ o	1	3	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to double precisio
 													out{1} = vertcat(in{1}{:}); clear n fill lr
 													end
 Xo	1	1	1		1	1	1		true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
-Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'signiticant'+, 2: \matlab+'decimals'+. (ii) For strings or cell arrays: change case
+Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For strings or cell arrays: change case
 													str = {'significant' 'decimals'};
 													if numel(in)>=3 && isnumeric(in{3}), in(3) = str(in{3}); end; clear str
 													y = round(in{:});

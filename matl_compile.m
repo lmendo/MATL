@@ -176,7 +176,7 @@ for n = 1:numel(S)
             appendLines('nin = 0;', S(n).nesting);
             appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
             newLines = { sprintf('indWhile%i = 0;', S(n).nesting) ...
-                sprintf('condWhile%i = STACK{end};', S(n).nesting) ...
+                sprintf('condWhile%i = STACK{end}; if ~isreal(condWhile%i), condWhile%i = real(condWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
                 'STACK(end) = [];' ... 
                 sprintf('while condWhile%i', S(n).nesting) };
             appendLines(newLines, S(n).nesting)
@@ -190,23 +190,52 @@ for n = 1:numel(S)
             appendLines(newLines, S(n).nesting);
         case 'controlFlow.else' % '}'
             appendLines('else', S(n).nesting)
-        case 'controlFlow.end' % ']'
+        case 'controlFlow.finally' % '}'
             if strcmp(S(S(n).from).type, 'controlFlow.doWhile')
                 appendLines('nin = 0;', S(n).nesting);
                 appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
-                newLines = { sprintf('condDoWhile%i = STACK{end};', S(n).nesting) ...
+                newLines = { sprintf('condDoWhile%i = STACK{end}; if ~isreal(condDoWhile%i), condDoWhile%i = real(condDoWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
                     'STACK(end) = [];' ...
-                    'end' ...
-                    sprintf('clear indDoWhile%i', S(n).nesting)};
-                appendLines(newLines, S(n).nesting)
+                    sprintf('if condDoWhile%i, else', S(n).nesting) }; % We use 'if condDoWhile%i, else' rather than 'if ~condDoWhile%i'
+                    % so as to reproduce Matlab's behaviour when the condition is an array ('if ~condDoWhile%i' wouldn't do)
+                appendLines(newLines, S(n).nesting);
             elseif strcmp(S(S(n).from).type, 'controlFlow.while')
                 appendLines('nin = 0;', S(n).nesting);
                 appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
-                newLines = { sprintf('condWhile%i = STACK{end};', S(n).nesting) ...
+                newLines = { sprintf('condWhile%i = STACK{end}; if ~isreal(condWhile%i), condWhile%i = real(condWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
                     'STACK(end) = [];' ...
-                    'end' ...
-                    sprintf('clear indWhile%i', S(n).nesting)};
-                appendLines(newLines, S(n).nesting)
+                    sprintf('if condWhile%i, else', S(n).nesting) };
+                appendLines(newLines, S(n).nesting);
+            else
+                error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s: unrecognized loop type', strongBegin, S(n).source, strongEnd)
+            end
+        case 'controlFlow.end' % ']'
+            if strcmp(S(S(n).from).type, 'controlFlow.doWhile')
+                if ~isfield(S(S(n).from), 'finally') || isempty(S(S(n).from).finally)
+                    appendLines('nin = 0;', S(n).nesting);
+                    appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
+                    newLines = { sprintf('condDoWhile%i = STACK{end}; if ~isreal(condDoWhile%i), condDoWhile%i = real(condDoWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
+                        'STACK(end) = [];' ...
+                        'end' }; % end the "while"
+                    appendLines(newLines, S(n).nesting);
+                else % the condition was already obtained at the "finally" statement
+                    appendLines('end', S(n).nesting); % end the "if" that implements the "finally"
+                    appendLines('end', S(n).nesting); % end the "while"
+                end
+                appendLines(sprintf('clear indDoWhile%i', S(n).nesting), S(n).nesting)
+            elseif strcmp(S(S(n).from).type, 'controlFlow.while')
+                if ~isfield(S(S(n).from), 'finally') || isempty(S(S(n).from).finally)
+                    appendLines('nin = 0;', S(n).nesting);
+                    appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
+                    newLines = { sprintf('condWhile%i = STACK{end}; if ~isreal(condWhile%i), condWhile%i = real(condWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
+                        'STACK(end) = [];' ...
+                        'end' }; % end the "while"
+                    appendLines(newLines, S(n).nesting);
+                else % the condition was already obtained at the "finally" statement
+                    appendLines('end', S(n).nesting); % end the "if" that implements the "finally"
+                    appendLines('end', S(n).nesting); % end the "while"
+                end
+                appendLines(sprintf('clear indWhile%i', S(n).nesting), S(n).nesting)
             elseif strcmp(S(S(n).from).type, 'controlFlow.for')
                 newLines = { 'end' ...
                     sprintf('clear indFor%i', S(n).nesting) };

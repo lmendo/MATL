@@ -59,6 +59,7 @@ if listing && ~isempty(S)
         texts(strcmp(Stype, 'controlFlow.while')) = {'while'};
         texts(strcmp(Stype, 'controlFlow.if')) = {'if'};
         texts(strcmp(Stype, 'controlFlow.else')) = {'else'};
+        texts(strcmp(Stype, 'controlFlow.finally')) = {'finally'};
         texts(strcmp(Stype, 'controlFlow.forValue')) = {'for loop variable'};
         texts(strcmp(Stype, 'controlFlow.forIndex')) = {'for loop index'};
         texts(strcmp(Stype, 'controlFlow.doWhileIndex')) = {'do...while loop iteration index'};

@@ -146,10 +146,10 @@ while pos<=L
         % structure of loops and conditional branches.
         %    parsingControlStack contains the indices of "for", "do...while" "while", "if"
         % statements found during parsing that have not been closed yet.
-        %    When an "else" is found it's marked as associated with the most
-        % recent statement in parsingControlStack (which should be an "if"),
-        % by means of fields "else" (in the "if" statement) and "from" (in the
-        % "else" statement)
+        %    When an "else / finally" is found it's marked as associated with the most
+        % recent statement in parsingControlStack (which should be an "if", "while" or
+        % "do...while"), by means of fields "else" / "finally" (in the "if" / "(do) while"
+        % statement) and "from" (in the "else / finally" statement)
         %    When and "end" is found it's marked as associated with the most
         % recent statement in parsingControlStack, by means of fields "end" (in
         % the "for", "while" or "if" statement) and "from" (in the "end"
@@ -180,17 +180,23 @@ while pos<=L
         parseControlStack(parseNesting) = n; % take note of opening statement
         pos = pos + 1;
         n = n + 1;
-    elseif s(pos)=='}' % else
-        assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''else'' found outside any control flow structure')
+    elseif s(pos)=='}' % else / finally
+        assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''else'' / ''finally'' found outside any control flow structure')
         parseNesting = parseNesting - 1; % move temporarily one nesting level up
-        S(n).type = 'controlFlow.else';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         parseNesting = parseNesting + 1; % restore nesting level
         m = parseControlStack(parseNesting); % innermost control structure that is open
-        assert(strcmp(S(m).type,'controlFlow.if'), 'MATL:parser', 'MATL error while parsing: ''else'' not associated with ''if''')
-        assert(~isfield(S(m),'else') || isempty(S(m).else), 'MATL:parser', 'MATL error while parsing: two ''else'' statements found associated to the same ''if''')
-        S(m).else = n; % associate opening statement with this
+        assert(any(strcmp(S(m).type,{'controlFlow.if' 'controlFlow.while' 'controlFlow.doWhile'})), 'MATL:parser', 'MATL error while parsing: ''else'' / ''finally'' not associated with ''if'', ''while'' or ''do...while''')
+        if strcmp(S(m).type,'controlFlow.if')
+            S(n).type = 'controlFlow.else';
+            assert(~isfield(S(m),'else') || isempty(S(m).else), 'MATL:parser', 'MATL error while parsing: two ''else'' statements found associated to the same ''if''')
+            S(m).else = n; % associate opening statement with this
+        else
+            S(n).type = 'controlFlow.finally';
+            assert(~isfield(S(m),'finally') || isempty(S(m).finally), 'MATL:parser', 'MATL error while parsing: two ''finally'' statements found associated to the same ''while'' or ''do..while''')
+            S(m).finally = n; % associate opening statement with this
+        end
         S(n).from = m; % associate this with opening statement
         pos = pos + 1;
         n = n + 1;
@@ -300,7 +306,7 @@ while pos<=L
                 end
             end
             if ~success
-                error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'' loop') %***change if I include while, do...while
+                error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'' loop') % Change this if I include while, do...while for `X@`
             end
         elseif any(s(pos+1)==' ') % Not currently used after X. We can filter here or leave it to the compiler
             error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)

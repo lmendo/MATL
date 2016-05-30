@@ -40,8 +40,8 @@ F(end).comment = 'if';
 F(end).description = '\matlab+if+ (control flow: conditional branch). \sa \matl+]+, \matl+}+';
 
 F(end+1).source = '}';
-F(end).comment = 'else';
-F(end).description = '\matlab+else+ (control flow: conditional branch). \sa \matl+?+';
+F(end).comment = 'else / finally';
+F(end).description = '\matlab+else+ (control flow: conditional branch) or \matlab+finally+ (control flow: do...while or while loop). \sa \matl+?+, \matl+`+, \matl+X`+';
 
 F(end+1).source = '@';
 F(end).comment = 'for loop variable or do...while / while loop iteration index';
