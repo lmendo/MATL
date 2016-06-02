@@ -249,7 +249,7 @@ X*	2	2	2		1	1	1		true	true	true	true	out{1} = kron(double(in{1}), double(in{2}))
 Y*	2	2	2		1	1	1		true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix product	matrix product, \matlab+*+ (\matlab+mtimes+)
 													if islogical(in{2}), in{2} = double(in{2}); end
 													out{1} = in{1}*in{2};
-Z*	1	inf	2		1	1	1		true	true	true	true	n = numel(in); combs = cell(1,n);	Cartesian product	Cartesian product. Given a number $n$ of arrays of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those arrays
+Z*	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	n = numel(in); combs = cell(1,n);	Cartesian product	Cartesian product. Given a number $n$ of arrays of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those arrays
 													[combs{end:-1:1}] = ndgrid(in{end:-1:1});
 													combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 													out{1} = combs; clear combs n
@@ -411,6 +411,9 @@ YA	2	3	2	3	1	1	1		true	true	true	true	if numel(in{2})==1, out{1} = dec2base(in{:
 													error(message('MATLAB:dec2base:FirstArg')); end
 													if numel(in)>2 && (~isscalar(in{3}) || ~(isnumeric(in{3}) || ischar(in{3})) || in{3} ~= floor(in{3}) || in{3} < 0)
 													error(message('MATLAB:dec2base:ThirdArg')); end
+													if isempty(d)
+													out{1} = [];
+													else
 													d = double(d);
 													n = max(1,round(log2(max(d)+1)/log2(b)));
 													while any(b.^n <= d), n = n + 1; end
@@ -420,6 +423,7 @@ YA	2	3	2	3	1	1	1		true	true	true	true	if numel(in{2})==1, out{1} = dec2base(in{:
 													s = reshape(symbols(s + 1),size(s));
 													out{1} = s;
 													clear d n b s
+													end
 													end
 % Adapted from dec2base
 ZA	2	2	2		1	1	1		true	true	true	true	x = in{1};	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. In (i) and (ii), non-recognized digits are ignored
@@ -587,9 +591,37 @@ ZQ	1	3	2	1	1	1	1		true	true	true	true	if numel(in)==1, out{1} = roots(in{1});	po
 													elseif numel(in)==3, out{1} = polyfit(in{:});
 													else error('MATL:runtime', 'MATL run-time error: incorrect number of inputs'), end
 R	1	2	1	2	1	1	1		true	true	true	true	out{1} = triu(in{:});	upper triangular part	\matlab+triu+. \sa \matl+XR+.
-XR	1	1	1		1	1	1		true	true	true	true	out{1} = triu(in{1},1);	upper triangular part, above diagonal	\matlab+triu(..., 1)+. \sa \matl+R+.
+XR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	upper triangular part, above diagonal / build matrix	\matlab+triu(..., 1)+. If $2$ inputs: builds an upper triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl+R+
+													out{1} = triu(in{1},1);
+													elseif numel(in)==2 && any(in{2}==[0 2])
+													y = triu(ones(round(-1 +sqrt(1+8*numel(in{1})))/2+1),1);
+													y(logical(y)) = in{1}(:);
+													if in{2}==2, y = y + tril(y.',-1); end
+													if ischar(in{1}), y = char(y); end
+													out{1} = y; clear y
+													elseif numel(in)==2 && any(in{2}==[1 3])
+													y = triu(ones(round(-1 +sqrt(1+8*numel(in{1})))/2));
+													y(logical(y)) = in{1}(:);
+													if in{2}==3, y = y + tril(y.',-1); end
+													if ischar(in{1}), y = char(y); end
+													out{1} = y; clear y
+													end
 YR	1	2	1	2	1	1	1		true	true	true	true	out{1} = tril(in{:});	lower triangular part	\matlab+tril+. \sa \matl+ZR+.
-ZR	1	1	1		1	1	1		true	true	true	true	out{1} = tril(in{1},-1);	lower triangular part, below diagonal	\matlab+tril(..., -1)+. \sa \matl+YR+.
+ZR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	lower triangular part, below diagonal / build matrix	\matlab+tril(..., -1)+. If $2$ inputs: builds a lower triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl+YR+.
+													out{1} = tril(in{1},-1);
+													elseif numel(in)==2 && any(in{2}==[0 2])
+													y = tril(ones(round(-1 +sqrt(1+8*numel(in{1})))/2+1),-1);
+													y(logical(y)) = in{1}(:);
+													if in{2}==2, y = y + triu(y.',1); end
+													if ischar(in{1}), y = char(y); end
+													out{1} = y; clear y
+													elseif numel(in)==2 && any(in{2}==[1 3])
+													y = tril(ones(round(-1 +sqrt(1+8*numel(in{1})))/2));
+													y(logical(y)) = in{1}(:);
+													if in{2}==3, y = y + triu(y.',1); end
+													if ischar(in{1}), y = char(y); end
+													out{1} = y; clear y
+													end
 S	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)>1 && ~ischar(in{2}) && numel(in{2})>1 && isvector(in{2}) && isequal(numel(in{1}),numel(in{2}))	sort	sort an array (\matlab+sort+) / sort an array based on another. (i) Single-array mode works like Matlab's \matlab+sort+. If $2$ inputs, a negative value of the second input corresponds to descending order. If first input is a cell array and the first cell contains a char array, the rest of the cells' contents are converted to char. (ii) If the first input is a cell array and the first cell contains a numeric array, single-array numeric mode is used. The first input is linearized if it's not a vector, and its contents are linearized for the purposes of sorting. The first input is then sorted in lexicographic order, ignoring other inputs. (iii) In two-array mode, this function takes as first $2$ inputs an array and a vector array which is not char. If the first array is not a vector it is linearized. The second vector is sorted and its order is applied to the first. An optional third input specifies direction as a string, or as a negative number in the non-singleton dimension of the second vector. The outputs are the two sorted arrays. (In two-array mode, if the two input arrays are scalar the result is the same as if the second input is interpreted as dimension, corresponding to single array mode). \sa \matl|XS|
 													if numel(in)==3 && isnumeric(in{3}) && in{3}<0, in{3}=-in{3}; in{4} = 'descend'; end
 													if ~isvector(in{1}), in{1} = in{1}(:); end
@@ -658,7 +690,8 @@ XX	2	9	2	3	1	6	max(1,sum(ismember(cellfun(@num2str, in(3:end), 'uniformoutput', 
 													if numel(in)==2, in{3} = 'match'; end
 													if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end
 													[out{:}] = regexp(in{:});
-YX	3	5	3	4	1	1	1		true	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end; if isnumeric(in{3}), in{3}=char(in{3}); end	replace string using regular expression	\matlab+regexprep+. If first, second or third inputs are numeric they are converted to char
+YX	3	5	3	4	1	1	1		true	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end; if isnumeric(in{3}), in{3}=char(in{3}); end	replace string using regular expression	\matlab+regexprep+. If first, second or third inputs are numeric they are converted to char. If they are cells their contents are converted to char
+													if iscell(in{1}), in{1} = cellfun(@char, in{1}, 'UniformOutput', false); end; if iscell(in{2}), in{2} = cellfun(@char, in{2}, 'UniformOutput', false); end; if iscell(in{3}), in{3} = cellfun(@char, in{3}, 'UniformOutput', false); end
 													[out{:}] = regexprep(in{:});
 ZX
 Y
@@ -670,7 +703,32 @@ XZ
 YZ
 ZZ
 [
-X[	2	2	2		1	inf	2		true	true	true	true	[out{:}] = ind2sub(in{:});	convert linear index into subscripts	\matlab+ind2sub+
+X[	2	2	2		1	inf	2		true	true	true	true	siz = double(in{1}); ndx = in{2}; lensiz = length(siz);	convert linear index into subscripts	\matlab+ind2sub+ without input restrictions
+													if lensiz < nout
+													siz = [siz ones(1,nout-lensiz)];
+													elseif lensiz > nout
+													siz = [siz(1:nout-1) prod(siz(nout:end))];
+													end
+													vout = {};
+													if nout > 2
+													k = cumprod(siz);
+													for i = nout:-1:3,
+													vi = rem(ndx-1, k(i-1)) + 1;
+													vj = (ndx - vi)/k(i-1) + 1;
+													vout{i-2} = double(vj);
+													ndx = vi;
+													end
+													end
+													if nout >= 2
+													vi = rem(ndx-1, siz(1)) + 1;
+													v2 = double((ndx - vi)/siz(1) + 1);
+													v1 = double(vi);
+													else 
+													v1 = double(ndx);
+													end
+													out = [{v1 v2} vout];
+													out = out(1:nout); clear siz ndx lensiz k i vi vj vout v1 v2
+% This code above was taken from Matlab's `ind2sub`
 Y[
 Z[
 \	2	2	2		1	2	1	2	true	true	true	true	out{1} = bsxfun(@mod, in{1}, in{2});	modulus/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is `floor(.../...)`.
@@ -679,7 +737,12 @@ X\	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@mod, in{1}-1, in{2})+1;	mo
 Y\	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}\in{2};	left matrix division	left matrix division, \matlab+\+ (\matlab+mldivide+)
 Z\
 ]
-X]	3	inf	3		1	1	1		true	true	true	true	out{1} = sub2ind(in{:});	convert subscripts into linear index	\matlab+sub2ind+
+X]	3	inf	3		1	1	1		true	true	true	true	cp = cumprod(in{1}(1:end-1));	convert subscripts into linear index	\matlab+sub2ind+ without input restrictions
+													y = in{2};
+													for n = 3:numel(in)
+													y = y + cp(n-2)*(in{n}-1);
+													end
+													out{1} = y; clear cp y
 Y]
 Z]
 ^	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
@@ -778,7 +841,7 @@ c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character arr
 													for k = 1:numel(in{1}), if ~ischar(in{1}{k}), in{1}{k} = char(in{1}{k}); end; end
 													out{1} = char(in{:});
 													end
-Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	out{1} = cat(in{:});	concatenate arrays	\matlab+cat+
+Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	out{1} = cat(in{end}, in{1:end-1});	concatenate arrays	\matlab+cat+. The dimension is the last input
 Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. Numeric inputs are converted to char
 Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of strings or numbers into single vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
 													for k = 1:numel(in{1}), if isnumeric(in{1}{k}), in{1}{k} = char(in{1}{k}); end;
@@ -1007,13 +1070,13 @@ o	1	3	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to double precisio
 													out{1} = vertcat(in{1}{:}); clear n fill lr
 													end
 Xo	1	1	1		1	1	1		true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
-Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For strings or cell arrays: change case
+Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case
 													str = {'significant' 'decimals'};
 													if numel(in)>=3 && isnumeric(in{3}), in(3) = str(in{3}); end; clear str
 													y = round(in{:});
 													elseif ~iscell(in{1})
-													x = in{1}; xlu = [lower(x); upper(x)];
-													[~, ind] = max(bsxfun(@ne, x, xlu)); y = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind));
+													x = in{1}(:).'; xlu = [lower(x); upper(x)];
+													[~, ind] = max(bsxfun(@ne, x, xlu)); y = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind)); y = reshape(y,size(in{1}));
 													else
 													y = cell(size(in{1}));
 													for n = 1:numel(in{1})

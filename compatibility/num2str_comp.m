@@ -1,4 +1,10 @@
 function y = num2str(varargin)
+% Avoids '-0' in result by the simple procedure of adding 0 to the input
+% if it's numeric. ('-0' arises in Octave because of "negative 0". It turns
+% out that adding "(positive) 0" to "negative 0" gives "(positive) 0".
+if isnumeric(varargin{1})
+    varargin{1} = varargin{1} + 0;
+end 
 % Fixes alignment in certain cases
 % http://stackoverflow.com/q/34483961/2586922
 % https://savannah.gnu.org/bugs/?46770
