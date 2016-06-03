@@ -172,7 +172,7 @@ for n = 1:numel(S)
                 end
                 % We cannot (easily) check with a regexp after letter replacing,
                 % because there will possibly be things like 'pi', 'true' etc.
-                % So we do it up here: an error us issued if any unrecognized letter is found,
+                % So we do it in the code above: an error is issued if any unrecognized letter is found,
                 % or if two recognized letters are contiguous
             end
             % Now generate compiled line
