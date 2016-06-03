@@ -31,6 +31,13 @@ if verbose
     disp('  Generating compiled code')
 end
 
+% For replacing letters in literal arrays:
+arrayReplaceOrig = {'O' 'l' 'H' 'I' 'K' 'A' 'B' 'C' 'D' 'E' 'X'  'a'  'b'  'c'  'd'  'F'     'T'    'P'  'Y'   'N'   'J'  'G'};
+arrayReplaceDest = {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '-1' '-2' '-3' '-4' 'false' 'true' 'pi' 'inf' 'NaN' 'j' '-1j'};
+arrayReplaceAllowMat = 'j';
+% spaces in arrayReplaceDest are added later
+ arrayReplaceOrigMat = cell2mat(arrayReplaceOrig); % same as a matrix. Above cells must contain only single letters
+
 Fsource = {F.source}; % this field of `F` will be used often
 
 % Possible improvement: preallocate for greater speed, and modify
@@ -51,7 +58,8 @@ implicitInputBlock = {...
     'implInput = {};' ...
     'for k = 1:1-numel(STACK)-nin(1)' ...
     'implInput{k} = input(implicitInputPrompt,''s'');' ...
-    'assert(isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-zA-Z]{2}'', ''once'')), ''MATL:runner'', ''MATL run-time error: input not allowed'')' ...
+    'valid = isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]'', ''once'')) && isempty(regexp(implInput{k}, ''^[^'''']*(''''[^'''']*''''[^'''']*)*[a-zA-Z]{2}'', ''once''));' ...
+    'assert(valid, ''MATL:runner'', ''MATL run-time error: input not allowed'')' ...
     'if isempty(implInput{k}), implInput{end} = []; else implInput{k} = eval(implInput{k}); end' ...
     'end' ...
     'STACK = [implInput STACK];' ...
@@ -84,10 +92,8 @@ end
 if ~online
     appendLines('delete inout; diary off; delete defout; diary defout', 0)
 end
-% For arrays with brackets or curly braces: F = false; T = true;
-appendLines('F = false; T = true;', 0)
-% Constants to be used within literals only:
-appendLines('P = pi; Y = inf; N = NaN; M = -1; G = -1j;', 0)
+% For user inputs or inputs to "str2num"
+appendLines('F = false; T = true; P = pi; Y = inf; N = NaN;', 0)
 % Constants to be used by function code
 appendLines('numCbM = 4;', 0); % number of levels in clipboard M
 if online
@@ -138,8 +144,32 @@ for n = 1:numel(S)
     appendLines(['% ' comment], S(n).nesting) % include MATL statement as a comment
     S(n).compileLine = numel(C); % take note of starting line for MATL statement in compiled code
     switch S(n).type
-        case {'literal.number', 'literal.colonArray.numeric', 'literal.array', 'literal.cellArray', 'literal.string', 'literal.colonArray.char'}
+        case {'literal.number', 'literal.colonArray.numeric', 'literal.string', 'literal.colonArray.char'}
             appendLines(['STACK{end+1} = ' S(n).source ';'], S(n).nesting)
+        case {'literal.array', 'literal.cellArray'}
+            x = S(n).source;
+            % Replace recognized letters by numbers with spaces
+            % for k = 1:numel(arrayReplaceOrig) % We remove this because Octave can't handle the regex (Matlab can)
+            %     orig = ['(?<=^[^'']*(''[^'']*''[^'']*)*)' arrayReplaceOrig{k}];
+            %     dest = [' ' arrayReplaceDest{k} ' '];
+            %     x = regexprep(x, orig, dest);
+            % end
+            w = find(~mod(cumsum(x==''''),2) & isletter(x)); % positions of x where replacing
+            % should take place: letters that have an even number of preceding quotes 
+            for k = w(end:-1:1) % inverse order because x will grow
+                [~, ind] = find(x(k)==arrayReplaceOrigMat);
+                if ~isempty(ind)
+                    x = [ x(1:k-1) ' ' arrayReplaceDest{ind} ' ' x(k+1:end) ];
+                elseif ~any(x(k)==arrayReplaceAllowMat)
+                    error('MATL:compiler', 'Content not allowed in MATL array literal');
+                    % We cannot (easily) check with a regexp after letter replacing,
+                    % because there will possibly be things like 'pi', 'true' etc.
+                    % So we do it here: if any unrecognized letter is found an error
+                    % is issued
+                end
+            end
+            % Now generate compiled line
+            appendLines(['STACK{end+1} = ' x ';'], S(n).nesting)
         case 'literal.logicalRowArray'
             lit = strrep(strrep(S(n).source,'T','true,'),'F','false,');
             lit = ['[' lit(1:end-1) ']'];
@@ -456,3 +486,4 @@ if ~iscell(newLines), newLines = {newLines}; end % string: convert to 1x1 cell a
 newLines = strcat({blanks(indStepComp*nesting)}, newLines);
 C(end+(1:numel(newLines))) = newLines;
 end
+

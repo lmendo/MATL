@@ -80,10 +80,8 @@ while pos<=L
         % so consume until the number of [ minus ] reaches 0
         [ini, fin] = regexp(s(pos:end), '^\[([^\[\]]*\[[^\[\]]*\])*[^\[\]]*\]', 'once');
         assert(isequal(ini,1), 'MATL:parser', 'MATL error while parsing: array literal not well formed')
-        if ~validateArray(s(pos:pos-1+fin))
-            error('MATL:parser', 'Content not allowed in MATL array literal')
-        end
         S(n).type = 'literal.array';
+        % Content validation will be done in the compiler, together with letter replacing
         S(n).source = s(pos:pos-1+fin);
         S(n).nesting = parseNesting;
         pos = pos + fin;
@@ -92,10 +90,8 @@ while pos<=L
         % so consume until the number of { minus } reaches 0
         fin = find(~cumsum((s(pos:end)=='{')-(s(pos:end)=='}')),1);
         assert(~isempty(fin), 'MATL:parser', 'MATL error while parsing: cell array literal not closed')
-        if ~validateArray(s(pos:pos-1+fin))
-            error('MATL:parser', 'Content not allowed in MATL cell array literal')
-        end
         S(n).type = 'literal.cellArray';
+        % Content validation will be done in the compiler, together with letter replacing
         S(n).source = s(pos:pos-1+fin);
         S(n).nesting = parseNesting;
         pos = pos + fin;
@@ -379,13 +375,4 @@ if isfield(S,'end') && any(cellfun(@(x) isequal(x,0), {S.end}))
     error('MATL:parser', 'MATL error while parsing: %s%s%s statement has no matching %s]%s', strongBegin, S(unclosed).source, strongEnd, strongBegin, strongEnd)
 end
 
-end
-
-function valid = validateArray(str)
-% valid = isempty(regexp(str, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', ...
-% 'once')); % Make sure it doesn't contain two letters in a row outside of a string
-valid = isempty(regexp(str, '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EH-LOQ-SU-XZ]', 'once')) & ...
-    isempty(regexp(str, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
-% First line: make sure it doesn't contain letters other than e, j, F, M, N, P, Q, T, Y outside strings 
-% Second line: make sure it doesn't contain two letters in a row outside strings
 end
