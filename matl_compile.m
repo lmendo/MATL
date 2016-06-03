@@ -33,10 +33,10 @@ end
 
 % For replacing letters in literal arrays:
 arrayReplaceOrig = {'O' 'l' 'H' 'I' 'K' 'A' 'B' 'C' 'D' 'E' 'X'  'a'  'b'  'c'  'd'  'F'     'T'    'P'  'Y'   'N'   'J'  'G'};
-arrayReplaceDest = {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '-1' '-2' '-3' '-4' 'false' 'true' 'pi' 'inf' 'NaN' 'j' '-1j'};
-arrayReplaceAllowMat = 'j';
-% spaces in arrayReplaceDest are added later
  arrayReplaceOrigMat = cell2mat(arrayReplaceOrig); % same as a matrix. Above cells must contain only single letters
+arrayReplaceDest = {'0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '-1' '-2' '-3' '-4' 'false' 'true' 'pi' 'inf' 'NaN' 'j' '-1j'};
+% spaces in arrayReplaceDest are added later
+arrayAllowMat = 'ej';
 
 Fsource = {F.source}; % this field of `F` will be used often
 
@@ -155,18 +155,25 @@ for n = 1:numel(S)
             %     x = regexprep(x, orig, dest);
             % end
             w = find(~mod(cumsum(x==''''),2) & isletter(x)); % positions of x where replacing
-            % should take place: letters that have an even number of preceding quotes 
+            % should take place: letters that have an even number of preceding quotes
+            lastArrayAllowed = -1; % initiallize. Index of last allowed letter found
             for k = w(end:-1:1) % inverse order because x will grow
-                [~, ind] = find(x(k)==arrayReplaceOrigMat);
+                [~, ind] = find(x(k)==arrayReplaceOrigMat); % x(k) is one of the letters to be replaced
                 if ~isempty(ind)
                     x = [ x(1:k-1) ' ' arrayReplaceDest{ind} ' ' x(k+1:end) ];
-                elseif ~any(x(k)==arrayReplaceAllowMat)
+                elseif any(x(k)==arrayAllowMat) % x(k) is allowed, as long as it's not contiguous with another
+                    if k==lastArrayAllowed-1; % we are going backwards. Contiguous means this
+                        error('MATL:compiler', 'Content not allowed in MATL array literal');
+                    else
+                        lastArrayAllowed = k; % update
+                    end
+                else % equivalently: elseif ~any(x(k)==arrayAllowMat)
                     error('MATL:compiler', 'Content not allowed in MATL array literal');
-                    % We cannot (easily) check with a regexp after letter replacing,
-                    % because there will possibly be things like 'pi', 'true' etc.
-                    % So we do it here: if any unrecognized letter is found an error
-                    % is issued
                 end
+                % We cannot (easily) check with a regexp after letter replacing,
+                % because there will possibly be things like 'pi', 'true' etc.
+                % So we do it up here: an error us issued if any unrecognized letter is found,
+                % or if two recognized letters are contiguous
             end
             % Now generate compiled line
             appendLines(['STACK{end+1} = ' x ';'], S(n).nesting)
