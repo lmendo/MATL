@@ -12,7 +12,10 @@ if nargin>=2 && strcmp(varargin{end},'stable')
     if ~isempty(x)
         [~, ind] = max(bsxfun(@eq, x(:), (1:max(x)))); [y, ind2] = sort(ind(:));
         [~, ind3] = sort(ind2); z =  ind3(x);
-        x = x(~any(triu(bsxfun(@eq, x, x.'),1)));
+        for n = 1:numel(x)
+            x(n) = x(n) * ~any(x(n)==x(1:n-1));
+        end
+        x = nonzeros(x).';
     end    
     if strcmp(varargin{2},'rows')
         x = a(x,:);
