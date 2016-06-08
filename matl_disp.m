@@ -65,8 +65,8 @@ if listing && ~isempty(S)
         texts(strcmp(Stype, 'controlFlow.doWhileIndex')) = {'do...while loop iteration index'};
         texts(strcmp(Stype, 'controlFlow.whileIndex')) = {'while loop iteration index'};
         texts(strcmp(Stype, 'controlFlow.end')) = {'end'};
-        texts(strcmp(Stype, 'controlFlow.conditionalBreak')) = {'conditional break'};
-        texts(strcmp(Stype, 'controlFlow.conditionalContinue')) = {'conditional continue'};
+        texts(strcmp(Stype, 'controlFlow.break')) = {'break'};
+        texts(strcmp(Stype, 'controlFlow.continue')) = {'continue'};
         ind = find(ismember(Stype, {'function'}));
         [val, indF] = ismember({S(ind).source}, {F.source}); % val equal to false indicates there's no comment (or perhaps no function)
         texts(ind(val)) = {F(indF(val)).comment};
