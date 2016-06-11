@@ -236,6 +236,8 @@ Y2
 13	'aeiouAEIOU'
 20	['Mon'; 'Tue'; 'Wed'; 'Thu'; 'Fri'; 'Sat'; 'Sun']
 21	[298 302 288 305 289 296 310]
+22	{'January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December'}
+23	{'Monday' 'Tuesday' 'Wednesday' 'Thursday' 'Friday' 'Saturday' 'Sunday'}
 
 
 Y3

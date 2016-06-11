@@ -560,9 +560,9 @@ YL	1	inf	2	3	1	inf	1		true	true	true	true	str = {'spiral' 'pascal' 'magic' 'hada
 													[out{:}] = gallery(in{end}, in{1:end-1});
 													end
 ZL
-M	1	1	1		0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)		true	true	false	true	if in{1}>=1 && in{1}<=4	paste from function-input clipboard M	paste from function-input clipboard M. Input specifies level ($1$ to $4$) or individual input ($5$ or larger)
+M	1	1	1		0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)		true	true	false	true	if in{1}>=1 && in{1}<=numCbM	paste from function-input clipboard M	paste from function-input clipboard M. Input specifies level ($1$ to $4$) or individual input ($5$ or larger)
 													out = [CB_M{in{1}}(1:nout)];
-													elseif in{1}>=5
+													elseif in{1}>numCbM
 													cbMflip = CB_M(end:-1:1); cbMIndivIn = [cbMflip{cellfun(@numel, cbMflip)>1}]; cbMIndivIn = cbMIndivIn(end:-1:1);
 													out = cbMIndivIn(in{1}-numCbM);
 													clear cbMflip cbMIndivIn
@@ -694,7 +694,9 @@ U	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	
 XU	1	1	1		1	1	1		true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
 ZU
-V	1	2	1	2	1	1	1		true	true	true	true	out{1} = num2str(in{:});	convert numbers to a string	\matlab+num2str+
+V	1	2	1	2	1	1	1		true	true	true	true	if numel(in)<2, in{2} = '%.15g '; end	convert numbers to a string	\matlab+num2str+. Uses format '%.15g ' by default. To get Matlab's default format use [] as format specification
+													if numel(in)==2 && isempty(in{2}), in(2) = []; end
+													out{1} = num2str(in{:});
 XV
 YV
 ZV
