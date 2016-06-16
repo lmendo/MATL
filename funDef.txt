@@ -255,7 +255,7 @@ Z*	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	n = numel(in); combs = cell(1
 													out{1} = combs; clear combs n
 +	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if isempty(in), y = 0; else y = in{1}; for n=2:numel(in), y = bsxfun(@plus, y, in{n}); end; end; out{1} = y; clear y n;	addition (element-wise, singleton expansion)	\matlab|+| (\matlab+plus+), element-wise with singleton expansion
 X+
-Y+	2	3	2	3	1	1	1		true	true	true	true	str = {'same' 'valid' 'full'};	two-dimensional convolution	\matlab+conv2+. Doesn't allow two-vector and onr matrix mode. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl|Z+|
+Y+	2	3	2	3	1	1	1		true	true	true	true	str = {'same' 'valid' 'full'};	two-dimensional convolution	\matlab+conv2+. Doesn't allow two-vector and one matrix mode. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl|Z+|
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if issparse(in{1}), in{1} = full(in{1}); end; if issparse(in{2}), in{2} = full(in{2}); end
 													out{1} = conv2(double(in{1}), double(in{2}), in{3:end});
@@ -271,7 +271,7 @@ X-	2	4	2	3	1	2	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set diff
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
 													if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 													if numel(in)==2, in{3}='stable'; end, [out{:}] = setdiff(in{:});
-Y-
+Y-	2	2	2		1	2	2	1	true	true	true	true	[out{:}] = deconv(in{:});	deconvolution and polynomial division	\matlab+deconv+
 Z-
 .
 X.
@@ -510,20 +510,19 @@ G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		tru
 													end
 													if numel(in)==0, out = CB_G(1:nout); else out = CB_G(mod(in{1}-1,numel(CB_G))+1); end; clear implInput valid
 XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imwrite+ is called with all inputs. For \matlab+imwrite+, if the filename has no extension '.png' is added, and  if it's empty 'image.png' is used. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imwhow+, \matlab+drawnow+ is called to update figure immediately
+YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imwrite+ is called with all inputs. For \matlab+imwrite+, if the filename has no extension '.png' is added, and  if it's empty 'image.png' is used. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
 													elseif ischar(in{end}), if isempty(in{end}), in{end} = 'image.png'; end, if isempty(regexp(in{end}, '\..+$', 'once')), in{end} = [in{end} '.png']; end, imwrite(in{:});
 													else switch(in{end})
 													case 0, if isempty(regexp(in{end-1}, '\..+$', 'once')), in{end-1} = [in{end-1} '.png']; end, imwrite(in{1:end-1});
-													case 1, imagesc(in{1:end-1}); axis ij, axis image
-													case 2, image(in{1:end-1}); axis ij, axis image
-													case 3, imshow(in{1:end-1});
+													case 1, imagesc(in{1:end-1}); axis ij, axis image, drawnow
+													case 2, image(in{1:end-1}); axis ij, axis image, drawnow
+													case 3, imshow(in{1:end-1}); drawnow
 													otherwise error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
 													end
-													drawnow
-ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+.  $2$: \matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
+ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately.  $2$: \matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
 													case 0, format(in{1:end-1});
-													case 1, axis(in{1:end-1});
+													case 1, axis(in{1:end-1}); drawnow
 													case 2, [out{:}] = colormap(in{1:end-1}); if isempty(out), drawnow, end
 													case 3, hold(in{1:end-1})
 													otherwise error('MATL:runtime', 'MATL run-time error: unrecognized last input'); end
@@ -694,7 +693,7 @@ U	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	
 XU	1	1	1		1	1	1		true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
 ZU
-V	1	2	1	2	1	1	1		true	true	true	true	if numel(in)<2, in{2} = '%.15g '; end	convert numbers to a string	\matlab+num2str+. Uses format '%.15g ' by default. To get Matlab's default format use [] as format specification
+V	1	2	1	2	1	1	1		true	true	true	true	if numel(in)<2, in{2} = '%.15g '; end	convert numbers to a string	\matlab+num2str+. Uses format \matlab+'%.15g '+ by default. To get Matlab's default format use \matlab+[]+ as format specification
 													if numel(in)==2 && isempty(in{2}), in(2) = []; end
 													out{1} = num2str(in{:});
 XV
@@ -799,7 +798,7 @@ Ya	2	4	2	3	1	1	1		true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in
 													for k = 4:min(numel(in),4), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													out{1} = padarray(in{:});
 													if c, out{1} = char(out{1}); end; clear c
-Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base represented specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
+Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
 													if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
 													if numel(in{2})>1, ax = in{2}; bx=numel(ax); else bx = in{2}; ax = 0:bx-1; end
 													if numel(in{3})>1, az = in{3}; bz=numel(az); else bz = in{3}; az = 0:bz-1; end
@@ -1024,7 +1023,20 @@ h	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(
 													out{1} = horzcat(in{:});
 Xh	0	inf	numel(STACK)		1	1	1		true	true	true	true	out{1} = in;	concatenate into cell array	concatenate into cell array (\matlab+{..., ...}+)
 Yh	1	2	2	1	1	1	1		true	true	true	true	y = hankel(in{:}); if any(cellfun(@ischar,in)), y = char(y); end; out{1} = y; clear y	Hankel matrix	\matlab+hankel+. If any input is of type char: returns char output
-Zh	3	3	3		1	1	1		true	true	true	true	out{1} = hypergeom(in{:});	hypergeometric function	\matlab+hypergeom+
+Zh	3	3	3		1	1	1		true	true	true	true	if any( ~mod(in{1},1) & (in{1}<=0) )	hypergeometric function	\matlab+hypergeom+. If a numerator coefficient is a nonpositive integer the series is truncated at the first index for which a zero appears in the numerator, regardless of the denominator
+													a = in{1}; b = in{2}; z = in{3};
+													N = -max(a(~mod(a,1)));
+													y = zeros(size(z));
+													for k = 1:numel(z)
+													for n = 0:N
+													y(k) = y(k) + prod(prod(bsxfun(@plus, a, (0:n-1).'),2) ./ prod(bsxfun(@plus, b, (0:n-1).'),2) .* z(k) ./ (1:n).');
+													end
+													end
+													out{1} = y; clear a b z y n N k
+% The above is taken from hypergeom_comp.m
+													else
+													out{1} = hypergeom(in{:});
+													end
 i	0	2	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input	\matlab+input+ with content checking. If $0$ inputs: uses default prompt string. \sa \matl+j+.
 													if numel(in)==1, y = input(in{1},'s');
 													valid = isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));

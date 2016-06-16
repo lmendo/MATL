@@ -4,7 +4,7 @@ function y = hypergeom(a,b,z)
 % directly for each entry of z, trying to avoid overflow in the products. 
 % If not: call function genHyper for each entry of z, and make result real if all inputs are
 if any( ~mod(a,1) & (a<=0) ) % sum is finite
-    N = -min(a(~mod(a,1)));
+    N = -max(a(~mod(a,1)));
     y = zeros(size(z)); % initiallize
     for k = 1:numel(z)
         for n = 0:N
