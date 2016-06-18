@@ -185,7 +185,7 @@ for n = 1:numel(descrFormatted)
         else
             inFormatted{n} = sprintf('%i-- (%s / %s)', minIn, defInStr, altInStr);
         end
-    elseif (minOut == maxOut) && ~isempty(altOutStr)
+    elseif (minIn == maxIn) && ~isempty(altInStr)
         inFormatted{n} = sprintf('%i (%s / %s)', maxIn, defInStr, altInStr);
     else
         if (maxIn ~= defIn) % || ~isempty(altInStr) % We removed this condition for the same reasons as for the output
