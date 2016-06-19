@@ -507,7 +507,13 @@ YE
 ZE
 F
 XF
-YF
+YF	1	1	1		1	1	1		true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	Exponents of prime factor decomposition. If input is a numeric array it is linearized, and each result is in an output row 
+													p = primes(max([f{:}]));
+													y = zeros(numel(f), numel(p));
+													for k = 1:numel(f);
+													y(k,:) = sum(bsxfun(@eq, f{k}(:), p), 1);
+													end
+													out{1} = y; clear f p y k
 ZF
 G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		true	true	false	true	if numel(CB_G)==0	paste from user-input clipboard G	paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level
 													implInput = input(implicitInputPrompt,'s');
