@@ -690,7 +690,9 @@ T
 XT
 YT	1	2	2	2	1	1	1		true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+
 ZT
-U	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	convert string matrix to numeric array, or to general array	\matlab+str2num+ with content checking. If input is not char, it is automatically converted to char. Then content checking is applied. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned
+U	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	convert string matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. The input content is first checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. (ii) For numeric input: \matlab+(...).^2+
+													out{1} = in{1}.^2;
+													else
 													valid = true;
 													for r = 1:size(in{1},1)
 													valid = valid && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
@@ -704,6 +706,7 @@ U	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	
 													y = [];
 													end
 													out{1} = y; clear ok r valid
+													end
 XU	1	1	1		1	1	1		true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
 ZU
