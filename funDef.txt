@@ -1037,7 +1037,12 @@ Zg	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = gammaln(in{1});	
 h	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(x,1), in)))	horizontal concatenation	\matlab+horzcat+. If inputs are matrices with non-matching sizes they are linearized
 													in = cellfun(@(x) reshape(x,1,[]), in, 'uniformoutput', false);
 													end
-													out{1} = horzcat(in{:});
+													if any(cellfun(@ischar, in))
+													for k = 1:numel(in)
+													if islogical(in{k}), in{k} = double(in{k}); end
+													end
+													end
+													out{1} = horzcat(in{:}); clear k
 Xh	0	inf	numel(STACK)		1	1	1		true	true	true	true	out{1} = in;	concatenate into cell array	concatenate into cell array (\matlab+{..., ...}+)
 Yh	1	2	2	1	1	1	1		true	true	true	true	y = hankel(in{:}); if any(cellfun(@ischar,in)), y = char(y); end; out{1} = y; clear y	Hankel matrix	\matlab+hankel+. If any input is of type char: returns char output
 Zh	3	3	3		1	1	1		true	true	true	true	if any( ~mod(in{1},1) & (in{1}<=0) )	hypergeometric function	\matlab+hypergeom+. If a numerator coefficient is a nonpositive integer the series is truncated at the first index for which a zero appears in the numerator, regardless of the denominator
@@ -1289,6 +1294,11 @@ Yu
 Zu	1	2	1		1	1	1		true	true	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
 v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(x,2), in)))	vertical concatenation	\matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized
 													in = cellfun(@(x) reshape(x,[],1), in, 'uniformoutput', false);
+													end
+													if any(cellfun(@ischar, in))
+													for k = 1:numel(in)
+													if islogical(in{k}), in{k} = double(in{k}); end
+													end
 													end
 													out{1} = vertcat(in{:});
 Xv
