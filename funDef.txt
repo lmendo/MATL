@@ -880,7 +880,12 @@ c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character arr
 													for k = 1:numel(in{1}), if ~ischar(in{1}{k}), in{1}{k} = char(in{1}{k}); end; end
 													out{1} = char(in{:});
 													end
-Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	out{1} = cat(in{end}, in{1:end-1});	concatenate arrays	\matlab+cat+. The dimension is the last input
+Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	if any(cellfun(@ischar, in))	concatenate arrays	\matlab+cat+. The dimension is the last input
+													for k = 1:numel(in)
+													if islogical(in{k}), in{k} = double(in{k}); end
+													end
+													end
+													out{1} = cat(in{end}, in{1:end-1}); clear k
 Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	if all(cellfun(@isnumeric, in))	concatenate strings	\matlab+strcat+. If not all inputs are numeric, numeric inputs are converted to char. If all inputs are numeric the result is numeric (with singleton expansion along the first dimension), and no trailing values are removed
 													m = max(cellfun(@(x) size(x,1), in));
 													for k = 1:numel(in), if size(in{k},1)==1, in{k} = repmat(in{k},m,1); end; end
