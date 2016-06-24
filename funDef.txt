@@ -896,6 +896,7 @@ Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	if all(cellfun(@isnumeric, in
 													end
 Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of strings or numbers into single vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
 													in{1} = in{1}(:).';
+% This line is for compatibility with R2014b `strjoin`: it doesn't like cell arrays that are not rows
 													for k = 1:numel(in{1}), if isnumeric(in{1}{k}), in{1}{k} = char(in{1}{k}); end;
 													in{1}{k} = in{1}{k}(:).'; end;
 													if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end;
@@ -1134,11 +1135,12 @@ Xn	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==2	binomial coefficient (numb
 													out{1} = round(exp(gammaln(sum(in{1})+1) - sum(gammaln(in{1}+1))));
 													end
 % The code for implementing singleton expansion (through repmat) is taken from the code for the bitand function
-Yn	1	5	2	4	1	1	1		true	true	true	true	if numel(in)==1	interpolation (table lookup) / convert roots to polynomial	(i) If $1$ input: \matlab+poly+. (ii) If $2$ or more inputs: \matlab+interp1+. \matlab+'pp'+ option not supported. This function allows flag strings in the fourth input to be replaced by numbers, as follows: 1: \matlab+'linear'+, 2: \matlab+'nearest'+, 3: \matlab+'next'+, 4: \matlab+'previous'+, 5: \matlab+'spline'+, 6: \matlab+'pchip'+, 7: \matlab+'cubic'+, 8: \matlab+'v5cubic'+
+Yn	1	5	2	4	1	1	1		true	true	true	true	if numel(in)==1	interpolation (table lookup) / convert roots to polynomial	(i) If $1$ input: \matlab+poly+. (ii) If $2$ or more inputs: \matlab+interp1+. With $2$ or $3$ numeric inputs, flags \matlab+'linear'+ and \matlab+'extrap'+ are assumed. \matlab+'pp'+ option not supported. A finite numeric value in the fourth input is replaced by a flag string, as follows: 1: \matlab+'linear'+, 2: \matlab+'nearest'+, 3: \matlab+'next'+, 4: \matlab+'previous'+, 5: \matlab+'spline'+, 6: \matlab+'pchip'+, 7: \matlab+'cubic'+, 8: \matlab+'v5cubic'+
 													out{1} = poly(in{1});
 													else
 													str = {'linear' 'nearest' 'next' 'previous' 'spline' 'pchip' 'cubic' 'v5cubic'};
-													for k = 4:min(numel(in),4), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
+													for k = 4:min(numel(in),4), if isnumeric(in{k}) && isfinite(in{k}), in(k) = str(in{k}); end; end; clear str
+													if numel(in)==2 || (numel(in)==3 && ~ischar(in{3})), in = [in {'linear' 'extrap'}]; end
 													out{1} = interp1(in{:});
 													end
 Zn
