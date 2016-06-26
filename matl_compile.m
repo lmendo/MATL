@@ -103,6 +103,7 @@ else
     appendLines('defaultInputPrompt = ''> '';', 0);
     appendLines('implicitInputPrompt = ''> '';', 0);
 end
+appendLines('replaceBySpace = char([0:7 14:31]);', 0); % these characters will be replaced by space
 % Predefine literals for functions
 if ~isempty(S)
     plf = cellstr(char(bsxfun(@plus, 'X0', [floor(0:.1:2.9).' repmat((0:9).',3,1)]))).'; % {'X0'...'Z9'}

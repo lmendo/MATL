@@ -473,25 +473,25 @@ ZC	2	3	2		1	1	1		true	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in
 													else
 													out{1} = im2col(in{:});
 													end
-D	0	inf	1	numel(STACK)	0	0	0		true	true	true	true	if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+D	0	inf	1	numel(STACK)	0	0	0		true	true	true	true	if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 													kk = cellfun(@iscell, data);
 													while any(kk)
 													data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
 													for k = find(kk), data{k} = data{k}(:); end
 													data = vertcat(data{:}); kk = cellfun(@iscell, data); end
-													for k = 1:numel(data), disp(num2str(data{k}, fmt{:})), end
-													clear data kk k
-XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. \sa \matl+D+, \matl+YD+, \matl+ZD+
+													for k = 1:numel(data), d = num2str(data{k}, fmt{:}); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
+													clear data kk k d
+XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl+D+, \matl+YD+, \matl+ZD+
 													kk = cellfun(@iscell, data);
 													while any(kk)
 													data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
 													for k = find(kk), data{k} = data{k}(:); end
 													data = vertcat(data{:}); kk = cellfun(@iscell, data); end
-													for k = 1:numel(data), disp(num2str(data{k}, '%.15g ')), end
+													for k = 1:numel(data), d = num2str(data{k}, '%.15g '); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
 													clear data kk k
 YD	1	inf	2		0	2	1		true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
 													else fprintf(in{:}); end
-ZD	0	inf	1		0	0	0		true	true	true	true	for k = 1:numel(in), disp(in{k}), end	display	\matlab+disp+ for each input. \sa \matl+D+, \matl+XD+, \matl+YD+
+ZD	0	inf	1		0	0	0		true	true	true	true	for k = 1:numel(in), if ischar(in{k}), in{k}(ismember(in{k},replaceBySpace)) = ' '; end, disp(in{k}), end	display	\matlab+disp+ for each input. For char input, most characters below 32 are replaced by space. \sa \matl+D+, \matl+XD+, \matl+YD+
 E	1	1	1		1	1	1		true	true	true	true	out{1} = in{1}*2;	multiply by 2	\matlab|(...)*2|
 XE	3	3	3		1	1	1		true	true	true	true	if ~(iscell(in{1}) && ~iscell(in{2}) && ~iscell(in{3}))	replace elements in numeric or char array	With numeric or char inputs, replace in first input all occurrences of each element of the second input by the corresponding element of the third input. The third input may be longer than the second, and then the extra elements are ignored. Output has the same class and size as the first input. If the three inputs are cell arrays of strings (the second may also be a string instead of a cell array of strings), each string of the first input is considered atomic, that is, replacing is based on whole strings. If the first input is a cell array and the others are numeric or char, replacing is done on each cell's contents as if the cell's contents were the first input
 													[ii, jj] = ismember(in{1}, in{2}); y = in{1}; y(ii) = in{3}(jj(ii)); out{1} = y; clear ii jj y
