@@ -507,13 +507,17 @@ YE
 ZE
 F
 XF
-YF	1	1	1		1	1	1		true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	Exponents of prime factor decomposition. If input is a numeric array it is linearized, and each result is in an output row 
+YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. (ii) With $2$ outputs: first output gives the prime factors, second is as before.
 													p = primes(max([f{:}]));
 													y = zeros(numel(f), numel(p));
 													for k = 1:numel(f);
 													y(k,:) = sum(bsxfun(@eq, f{k}(:), p), 1);
 													end
-													out{1} = y; clear f p y k
+													if nout==1, out{1} = y;
+													elseif nout==2, out = {p, y};
+													else error('MATL:runtime', 'MATL run-time error: number of outputs not supported');
+													end
+													clear f p y k
 ZF
 G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		true	true	false	true	if numel(CB_G)==0	paste from user-input clipboard G	paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level
 													implInput = input(implicitInputPrompt,'s');
@@ -524,10 +528,24 @@ G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		tru
 													end
 													if numel(in)==0, out = CB_G(1:nout); else out = CB_G(mod(in{1}-1,numel(CB_G))+1); end; clear implInput valid
 XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end})&&numel(in{end})~=1, imshow(in{:});	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. If last input is char: \matlab+imwrite+ is called with all inputs. For \matlab+imwrite+, if the filename has no extension '.png' is added, and  if it's empty 'image.png' is used. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
-													elseif ischar(in{end}), if isempty(in{end}), in{end} = 'image.png'; end, if isempty(regexp(in{end}, '\..+$', 'once')), in{end} = [in{end} '.png']; end, imwrite(in{:});
-													else switch(in{end})
-													case 0, if isempty(regexp(in{end-1}, '\..+$', 'once')), in{end-1} = [in{end-1} '.png']; end, imwrite(in{1:end-1});
+YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
+													imshow(in{:}); drawnow
+													elseif ischar(in{end})
+													k = find(cellfun(@ischar, in),1);
+													if isempty(in{k}), in{k} = 'image.png'; end;
+													if isempty(regexp(in{k}, '\..+$', 'once')), in{k} = [in{k} '.png']; end
+													imwrite(in{:}); clear k
+													else
+													switch(in{end})
+													case 0
+													k = find(cellfun(@ischar, in),1);
+													if isempty(k)
+													in{end+1} = in{end}; in{end-1} = 'image.png';
+													else
+													if isempty(in{k}), in{k} = 'image.png'; end;
+													if isempty(regexp(in{k}, '\..+$', 'once')), in{k} = [in{k} '.png']; end
+													end
+													imwrite(in{1:end-1}); clear k
 													case 1, imagesc(in{1:end-1}); axis ij, axis image, drawnow
 													case 2, image(in{1:end-1}); axis ij, axis image, drawnow
 													case 3, imshow(in{1:end-1}); drawnow
