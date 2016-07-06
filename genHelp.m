@@ -216,7 +216,7 @@ for n = 1:numel(descrFormatted)
         case '-1'
             defOutStr = 'number of elements that will be produced';
         case '-2'
-            defOutStr = 'number of subarrays that will be produced';
+            defOutStr = 'number of arrays that will be produced';
         otherwise
             error('Unrecognized default number of outputs')
         end

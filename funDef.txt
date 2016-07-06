@@ -760,7 +760,7 @@ XZ
 YZ
 ZZ
 [
-X[	2	2	2		1	inf	2		true	true	true	true	siz = double(in{1}); ndx = in{2}; lensiz = length(siz);	convert linear index into subscripts	\matlab+ind2sub+ without input restrictions
+X[	2	2	2		1	inf	numel(in{1})		true	true	true	true	siz = double(in{1}); ndx = in{2}; lensiz = length(siz);	convert linear index into subscripts	\matlab+ind2sub+ without input restrictions
 													if lensiz < nout
 													siz = [siz ones(1,nout-lensiz)];
 													elseif lensiz > nout
@@ -780,12 +780,13 @@ X[	2	2	2		1	inf	2		true	true	true	true	siz = double(in{1}); ndx = in{2}; lensiz 
 													vi = rem(ndx-1, siz(1)) + 1;
 													v2 = double((ndx - vi)/siz(1) + 1);
 													v1 = double(vi);
+													out = [{v1 v2} vout];
 													else 
 													v1 = double(ndx);
+													out = [{v1} vout];
 													end
-													out = [{v1 v2} vout];
 													out = out(1:nout); clear siz ndx lensiz k i vi vj vout v1 v2
-% This code above was taken from Matlab's `ind2sub`
+% This code above was adapted from Matlab's `ind2sub`
 Y[
 Z[
 \	2	2	2		1	2	1	2	true	true	true	true	out{1} = bsxfun(@mod, in{1}, in{2});	modulo/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. \sa \matl|X\|, \matl|o|
