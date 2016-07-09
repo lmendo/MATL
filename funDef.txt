@@ -654,7 +654,7 @@ XR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	upper triangular part, abo
 													out{1} = y; clear y
 													end
 YR	1	2	1	2	1	1	1		true	true	true	true	out{1} = tril(in{:});	lower triangular part	\matlab+tril+. \sa \matl+ZR+.
-ZR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	lower triangular part, below diagonal / build matrix	\matlab+tril(..., -1)+. If $2$ inputs: builds a lower triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl+XR, \matl+YR+.
+ZR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	lower triangular part, below diagonal / build matrix	\matlab+tril(..., -1)+. If $2$ inputs: builds a lower triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl+XR+, \matl+YR+.
 													out{1} = tril(in{1},-1);
 													elseif numel(in)==2 && any(in{2}==[0 2])
 													y = tril(ones(round(-1 +sqrt(1+8*numel(in{1})))/2+1),-1);
