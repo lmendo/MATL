@@ -529,12 +529,14 @@ G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		tru
 													end
 													if numel(in)==0, out = CB_G(1:nout); else out = CB_G(mod(in{1}-1,numel(CB_G))+1); end; clear implInput valid
 XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
+YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matl+imshow+ and \matl+imwrite+, if the second input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matl+uint8+, then to \matl+double+, and then dividing by $255$. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
+													if numel(in)>=2 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
 													imshow(in{:}); drawnow
 													elseif ischar(in{end})
 													k = find(cellfun(@ischar, in),1);
 													if isempty(in{k}), in{k} = 'image.png'; end;
 													if isempty(regexp(in{k}, '\..+$', 'once')), in{k} = [in{k} '.png']; end
+													if numel(in)>=2 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
 													imwrite(in{:}); clear k
 													else
 													switch(in{end})
@@ -546,19 +548,32 @@ YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~
 													if isempty(in{k}), in{k} = 'image.png'; end;
 													if isempty(regexp(in{k}, '\..+$', 'once')), in{k} = [in{k} '.png']; end
 													end
+													if numel(in)>=3 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
 													imwrite(in{1:end-1}); clear k
-													case 1, imagesc(in{1:end-1}); axis ij, axis image, drawnow
-													case 2, image(in{1:end-1}); axis ij, axis image, drawnow
-													case 3, imshow(in{1:end-1}); drawnow
-													otherwise error('MATL:runtime', 'MATL run-time error: unrecognized last input');
+													case 1
+													imagesc(in{1:end-1}); axis ij, axis image, drawnow
+													case 2
+													image(in{1:end-1}); axis ij, axis image, drawnow
+													case 3
+													if numel(in)>=3 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
+													imshow(in{1:end-1}); drawnow
+													otherwise
+													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
 													end
-ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately.  $2$: \matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
-													case 0, format(in{1:end-1});
-													case 1, axis(in{1:end-1}); drawnow
-													case 2, [out{:}] = colormap(in{1:end-1}); if isempty(out), drawnow, end
-													case 3, hold(in{1:end-1})
-													otherwise error('MATL:runtime', 'MATL run-time error: unrecognized last input'); end
+ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matl+uint8+, then to \matl+double+, and then dividing by $255$. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
+													case 0
+													format(in{1:end-1});
+													case 1
+													axis(in{1:end-1}); drawnow
+													case 2
+													if numel(in)>=2 && isnumeric(in{1}) && ndims(in{1})==2 && size(in{1},2)==3 && any(in{1}(:)>1), in{1} = double(uint8(in{1}))/255; end
+													[out{:}] = colormap(in{1:end-1}); if isempty(out), drawnow, end
+													case 3
+													hold(in{1:end-1})
+													otherwise
+													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
+													end
 H	0	0	0		0	inf	numel(CB_H)		true	true	false	true	out = CB_H(1:nout);	paste from clipboard H	paste from clipboard H
 XH	0	inf	1	2	0	0	0		false	true	false	true	CB_H = in;	copy to clipboard H	copy to clipboard H
 YH
