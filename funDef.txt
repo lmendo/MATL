@@ -529,7 +529,7 @@ G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		tru
 													end
 													if numel(in)==0, out = CB_G(1:nout); else out = CB_G(mod(in{1}-1,numel(CB_G))+1); end; clear implInput valid
 XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
-YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matl+imshow+ and \matl+imwrite+, if the second input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matl+uint8+, then to \matl+double+, and then dividing by $255$. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
+YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matl+imshow+ and \matl+imwrite+, if the second input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
 													if numel(in)>=2 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
 													imshow(in{:}); drawnow
 													elseif ischar(in{end})
@@ -561,7 +561,7 @@ YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
 													end
-ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matl+uint8+, then to \matl+double+, and then dividing by $255$. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
+ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+
 													case 0
 													format(in{1:end-1});
 													case 1
@@ -835,8 +835,8 @@ Y_
 Z_
 `
 X`
-Y`	0	0	0		0	1	0		true	true	true	true	if numel(out)==1, out{1} = tic; else tic; end	start a stopwatch timer	\matlab+tic+
-Z`	0	1	0		0	1	1		true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc(in{:});	read the stopwatch timer	\matlab+toc+
+Y`	0	0	0		0	1	0		true	true	true	true	if numel(out)==1, out{1} = tic; else tic; end	start a stopwatch timer	\matlab+tic+. \sa \matl+Z`+
+Z`	0	1	0		0	1	1		true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc(in{:});	read the stopwatch timer	\matlab+toc+. \sa \matl+Y`+
 													elseif numel(in) && numel(out)==0, toc(in{:});
 													elseif ~numel(in) && numel(out)==1, out{1} = toc;
 													elseif ~numel(in) && numel(out)==0, toc; end
