@@ -363,7 +363,11 @@ X9	1	1	1		1	1	1		true	true	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1},
 													out{1} = preLit.(fn).val{k};
 Y9
 Z9
-:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = colon(1,in{1}); else out{1} = colon(in{:}); end	vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+
+:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1	vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+  if \matlab+x+ is char.
+													if ischar(in{1}), s = ' '; else s = 1; end
+													out{1} = colon(s,in{:}); clear s
+													else
+													out{1} = colon(in{:}); end
 X:	1	1	1		1	1	1		true	true	true	true	out{1} = in{1}(:);	linearize to column array	linearize to column array (index with \matlab+(:)+)
 Y:	1	1	1		0	inf	numel(in{1})		true	true	true	true	assert(iscell(in{1}), 'MATL:runtime', 'MATL run-time error: a cell array is needed as input');	unbox cell array	generate comma-separated list from cell array (index with \matlab+{:}+) and push each element onto stack
 													out = reshape(in{1}(1:nout),1,[]);
