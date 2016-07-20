@@ -230,8 +230,10 @@ for n = 1:numel(descrFormatted)
         case {'[false true]' '[false,true]' '[false, true]'}
             altOutStr = '2nd'; % It should be specified '2nd of 2'. But it's longer. Up to now its always "x-th
             % up to the maximum number", so I don't specify
-            case {'[false true false]' '[false,true,false]' '[false, true, false]'}
+        case {'[false true false]' '[false,true,false]' '[false, true, false]'}
             altOutStr = '2nd';
+        case {'ndims(in{1})'}
+            altOutStr = 'number of dimensions of first input';
         otherwise
             error('Unrecognized alternative number of outputs')
         end

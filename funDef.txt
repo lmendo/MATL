@@ -1162,7 +1162,11 @@ Zm	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, x=1; for t=in{1}(:).', x=
 													clear nd sz1 sz2 rm1 rm2 insx1 insx2
 													end
 													end
-n	1	1	1		1	1	1		true	true	true	true	out{1} = numel(in{:});	number of elements in array	\matlab+numel+
+n	1	1	1		1	inf	1	ndims(in{1})	true	true	true	true	if numel(out)==1	number of elements in array / size along each dimension	\matlab+numel+. For several outputs, or a single output other than the first, gives \matlab+size+ along those dimensions
+													out{1} = numel(in{:});
+													else
+													[out{:}] = size(in{:});
+													end
 Xn	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==2	binomial coefficient (number of combinations)	(i) If $2$ inputs: \matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result is \matlab+0+. (ii) If $1$ input: multinomial coefficient. The input contains the lower terms; their sum is the upper term. \sa \matl|XN|
 													nd = max(ndims(in{1}), ndims(in{2})); sz1 = arrayfun(@(n)size(in{1},n), 1:nd); sz2 = arrayfun(@(n)size(in{2},n), 1:nd);
 													assert(all(sz1==sz2 | sz1==1 | sz2==1), 'MATL:runtime', 'MATL run-time error: inputs have incompatible sizes')
