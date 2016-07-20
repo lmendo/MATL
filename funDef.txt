@@ -1295,7 +1295,12 @@ Ys	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 													y = ipermute(y, [d 1:d-1 d+1:ndims(in{1})]);
 													out{1} = y; clear d m M x y
 													end
-Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = std(in{:});	standard deviation	\matlab+std+
+Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	standard deviation / covariance matrix	\matlab+std+. With $2$ inputs \matlab+x+, \matlab+f+ and \matlab+f+ equal to $2$ or $3$, gives \matlab+cov(x, f-2)+
+													if numel(in)==1 || (numel(in)==2 && in{2}<=1) || numel(in)>2
+													out{1} = std(in{:});
+													else
+													out{1} = cov(in{1}, in{2}-2);
+													end
 t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
 Yt
