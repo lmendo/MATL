@@ -1358,7 +1358,7 @@ v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(
 													end
 													out{1} = vertcat(in{:});
 Xv
-Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen- or singular-value decomposition / remove insignificant whitespace	(i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. (ii) If input is a string or cell array of strings: \matlab+strtrim+
+Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen- or singular-value decomposition / remove insignificant whitespace	(i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. (ii) If input is a string or cell array of strings: \matlab+strtrim+. For string or char array input, char $0$ also counts as whitespace
 													if nout<=2	
 													[out{:}] = eig(in{:});
 													elseif nout==3
@@ -1366,6 +1366,12 @@ Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen
 													else error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
 													end
 													else
+													if ischar(in{1})
+													s = find(~all(ismember(in{1}, [0 9 10 11 12 13 32]),1), 1, 'first');
+													e = find(~all(ismember(in{1}, [0 9 10 11 12 13 32]),1), 1, 'last');
+													in{1} = in{1}(:,s:e);
+													end; clear s e
+% The above is needed to include 0 as whitespace
 													out{1} = strtrim(in{:});
 													end
 Zv	1	1	1		1	1	1		true	true	true	true	out{1} = deblank(in{:});	remove trailing blanks	\matlab+deblank+
