@@ -58,7 +58,9 @@ Z$	0	1	0		1	1	1		true	true	true	false	if ~numel(in) || isempty(in{1}), in{1} = '
 %
 X%	1	1	1		1	1	1		true	true	true	true	out{1} = class(in{1});	class	class of input (\matlab+class+ with one input)
 Y%	2	3	2		1	1	1		true	true	true	true	out{1} = cast(in{:});	cast to data type	\matlab+cast+
-Z%	2	2	2		1	1	1		true	true	true	true	out{1} = typecast(in{:});	convert datatypes without changing underlying data	\matlab+typecast+
+Z%	2	2	2		1	1	1		true	true	true	true	str = {'uint8' 'int8' 'uint64' 'int64' 'uint64' 'int16' 'uint32' 'int32' 'double' 'single'};	convert datatypes without changing underlying data	\matlab+typecast+. This function allows strings in second input to be replaced by numbers, as follows: 1: \matlab+'uint8'+, 2: \matlab+'int8'+, 3: \matlab+'uint64'+, 4: \matlab+'int64'+, 5: \matlab+'uint64'+, 6: \matlab+'int16'+, 7: \matlab+'uint32'+, 8: \matlab+'int32'+, 9: \matlab+'double'+, 10: \matlab+'single'+
+													if isnumeric(in{2}), in(2) = str(in{2}); end; clear str
+													out{1} = typecast(in{:});
 &
 X&	2	4	2	3	1	3	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set intersection	\matlab+intersect+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end;	clear str
