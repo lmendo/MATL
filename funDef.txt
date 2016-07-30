@@ -849,13 +849,30 @@ Z`	0	1	0		0	1	1		true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc
 % Matlab R2015b hangs with tic; in = {}; t=toc(in{:}). That's why I distinguish here the no-input version
 a	1	2	1	2	1	1	1		true	true	true	true	out{1} = any(in{:});	any	\matlab+any+. \sa \matl|Xa|
 Xa	1	1	1		1	1	1		true	true	true	true	out{1} = any(in{:},1);	any, along first dimension	\matlab+any(..., 1)+. \sa \matl|a|
-Ya	2	4	2	3	1	1	1		true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in{1}); end	pad array	\matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'pre'+, 2: \matlab+'post'+, 3: \matlab+'both'+
+Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad / unpad array	(i) \matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'pre'+, 2: \matlab+'post'+, 3: \matlab+'both'+. (ii) If the second input contains at least on negative or complex value, the array in the first input is unpadded. The array can only have two dimensions. The second input can have one or two entries, specifying dimensions. A negative value indicates unpad along that dimension. A complex value indicates unpad along the two dimensions. The third input specifies which values are considered padding; by default $0$
+													c = ischar(in{1}); if c, in{1} = double(in{1}); end
 													if numel(in)>=3 && ischar(in{3}) && numel(in{3})==1, in{3} = double(in{3}); end
 													if islogical(in{2}), in{2} = double(in{2}); end
 													str = {'pre' 'post' 'both'};
-													for k = 4:min(numel(in),4), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
+													for k = 4:min(numel(in),4), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear k str
 													out{1} = padarray(in{:});
 													if c, out{1} = char(out{1}); end; clear c
+													else
+													if any(imag(in{2})), in{2} = [-1 -1]; end
+													if numel(in{2})==1, in{2}(end+1) = 0; end
+													if numel(in)<3, in{3} = 0; end
+													if in{2}(1)<0
+													s = find(~all(ismember(in{1}, in{3}),2), 1, 'first');
+													e = find(~all(ismember(in{1}, in{3}),2), 1, 'last');
+													in{1} = in{1}(s:e,:);
+													end
+													if in{2}(2)<0
+													s = find(~all(ismember(in{1}, in{3}),1), 1, 'first');
+													e = find(~all(ismember(in{1}, in{3}),1), 1, 'last');
+													in{1} = in{1}(:,s:e); clear s e
+													end
+													out{1} = in{1};
+													end
 Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
 													if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
 													if numel(in{2})>1, ax = in{2}; bx=numel(ax); else bx = in{2}; ax = 0:bx-1; end
@@ -1361,7 +1378,7 @@ v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(
 													out{1} = vertcat(in{:});
 Xv
 Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen- or singular-value decomposition / remove insignificant whitespace	(i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. (ii) If input is a string or cell array of strings: \matlab+strtrim+. For string or char array input, char $0$ also counts as whitespace
-													if nout<=2	
+													if nout<=2
 													[out{:}] = eig(in{:});
 													elseif nout==3
 													if islogical(S_OUT) && isequal(S_OUT, [false true false]), out = {NaN svd(in{:}) NaN}; else [out{:}] = svd(in{:}); end
