@@ -480,14 +480,52 @@ ZC	2	3	2		1	1	1		true	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in
 													else
 													out{1} = im2col(in{:});
 													end
-D	0	inf	1	numel(STACK)	0	0	0		true	true	true	true	if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end	convert to string and display	If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display / string representation	(i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. (ii) With $1$ output: \matlab+mat2str+. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the column separator should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+													if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end
 													kk = cellfun(@iscell, data);
 													while any(kk)
 													data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
 													for k = find(kk), data{k} = data{k}(:); end
-													data = vertcat(data{:}); kk = cellfun(@iscell, data); end
+													data = vertcat(data{:}); kk = cellfun(@iscell, data);
+													end
 													for k = 1:numel(data), d = num2str(data{k}, fmt{:}); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
-													clear data kk k d
+													clear data kk k d fmt
+													else
+													if numel(in)<4, sep_noncell = false; else sep_noncell = in{4}; end
+													if numel(in)<3, row_sep = '; '; else row_sep = in{3}; end
+													if numel(in)<2, col_sep = ' '; else col_sep = in{2}; end
+													x = in{1};
+													x = {x}; y = {[]}; done = false;
+													while ~done
+													done = true;
+													for n = 1:numel(y);
+													if isempty(y{n})
+													done = false;
+													if ~iscell(x{1})
+													s = mat2str(x{1});
+													if sep_noncell
+													for k = flip(find(~mod(cumsum(s==''''),2) & s==' ')), s = [s(1:k-1) col_sep s(k+1:end)]; end
+													for k = flip(find(~mod(cumsum(s==''''),2) & s==';')), s = [s(1:k-1) row_sep s(k+1:end)]; end
+													end
+													y{n} = s;  x(1) = [];
+													else
+													str = ['{' repmat([{[]}, col_sep], 1, numel(x{1})) '}'];
+													ind_sep = find(cellfun(@(t) isequal(t, col_sep), str));
+													if ~isempty(ind_sep)
+													str(ind_sep(end)) = [];
+													ind_sep(end) = [];
+													end
+													step_sep = size(x{1}, 2);
+													str(ind_sep(step_sep:step_sep:end)) = {row_sep};
+													y = [y(1:n-1) str y(n+1:end)]; x = [reshape(x{1}.', 1, []) x(2:end)];
+													end
+													end
+													end
+													end
+													y = [y{:}]; % concatenate all strings
+													out{1} = y;
+													clear x sep_noncell row_sep col_sep done s k str inde_sep step_sep y
+													end
 XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl+D+, \matl+YD+, \matl+ZD+
 													kk = cellfun(@iscell, data);
 													while any(kk)
