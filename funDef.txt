@@ -381,10 +381,13 @@ Y;	1	1	1		1	1	1		true	true	true	true	out{1} = asin(in{1});	inverse sine (radians
 Z;	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@atan2, in{1}, in{2});	four quadrant inverse tangent (radians; element-wise, singleton expansion)	\matlab+atan2+, element-wise with singleton expansion
 <	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is less than? (element-wise, singleton expansion)	\matlab+<+ (\matlab+lt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
 													out{1} = bsxfun(@lt, in{1}, in{2});
-X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+
+X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if input is. \sa \matl+X>+
 													elseif numel(in)==1, [out{:}] = min(in{:});
 													else in{2} = []; [out{:}] = min(in{:}); end
-Y<	1	3	1	2	1	1	1		true	true	true	true	out{1} = cummin(in{:});	cumulative minimum	\matlab+cummin+
+													if (numel(in)==1 && ischar(in{1})) || (numel(in)==2 && ischar(in{1}) && ischar(in{2})) || (numel(in)==3 && ischar(in{1}) && isempty(in{2})), out{1} = char(out{1}); end
+Y<	1	3	1	2	1	1	1		true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in{1}); end	cumulative minimum	\matlab+cummin+. Output is \matlab+char+ if input is. \sa \matl+Y>+
+													out{1} = cummin(in{:});
+													if c, out{1} = char(out{1}); end; clear c
 Z<
 =	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is equal? (element-wise, singleton expansion)	\matlab+==+ (\matlab+eq+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
 													out{1} = bsxfun(@eq, in{1}, in{2});
@@ -393,10 +396,13 @@ Y=	2	2	2		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); e
 Z=	3	3	3		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+. If first or second inputs are numeric they are converted to char
 >	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is greater than? (element-wise, singleton expansion)	\matlab+>+ (\matlab+gt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
 													out{1} = bsxfun(@gt, in{1}, in{2});
-X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+
+X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if input is. \sa \matl+X<+
 													elseif numel(in)==1, [out{:}] = max(in{:});
 													else in{2} = []; [out{:}] = max(in{:}); end
-Y>	1	3	1	2	1	1	1		true	true	true	true	[out{1}] = cummax(in{:});	cumulative maximum	\matlab+cummax+
+													if (numel(in)==1 && ischar(in{1})) || (numel(in)==2 && ischar(in{1}) && ischar(in{2})) || (numel(in)==3 && ischar(in{1}) && isempty(in{2})), out{1} = char(out{1}); end
+Y>	1	3	1	2	1	1	1		true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in{1}); end	cumulative maximum	\matlab+cummax+. Output is \matlab+char+ if input is. \sa \matl+Y<+
+													out{1} = cummax(in{:});
+													if c, out{1} = char(out{1}); end; clear c
 Z>
 ?
 X?
