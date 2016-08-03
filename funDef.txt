@@ -486,7 +486,7 @@ ZC	2	3	2		1	1	1		true	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in
 													else
 													out{1} = im2col(in{:});
 													end
-D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display / string representation	(i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. (ii) With $1$ output: \matlab+mat2str+. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the column separator should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display / string representation	(i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. (ii) With $1$ output: \matlab+mat2str+. Empty arrays are always shown as \matlab+[]+, \matlab+''+ or \matlab+{}+. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the column separator should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 													if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end
 													kk = cellfun(@iscell, data);
 													while any(kk)
@@ -508,7 +508,7 @@ D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display 
 													if isempty(y{n})
 													done = false;
 													if ~iscell(x{1})
-													s = mat2str(x{1});
+													if isempty(x{1}), if ischar(x{1}), s = ''''''; else, s = '[]'; end; else s = mat2str(x{1}); end
 													if sep_noncell
 													for k = flip(find(~mod(cumsum(s==''''),2) & s==' ')), s = [s(1:k-1) col_sep s(k+1:end)]; end
 													for k = flip(find(~mod(cumsum(s==''''),2) & s==';')), s = [s(1:k-1) row_sep s(k+1:end)]; end
