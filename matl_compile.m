@@ -25,7 +25,8 @@ global indStepComp C implicitInputBlock
 
 indStepComp = 4;
 
-compat_folder = 'compatibility';
+thisdir = fileparts(mfilename('fullpath'));
+compat_folder = fullfile(thisdir, 'compatibility');
 
 if verbose
     disp('  Generating compiled code')
@@ -348,7 +349,7 @@ if ~isMatlab
     for n = 1:numel(fnames)
         fname = fnames{n};
         if any(~cellfun(@isempty,strfind(C,fname))) % This may give false positives, but that's not a problem
-            fid = fopen([compat_folder filesep fname '_comp.m'], 'r');
+            fid = fopen(fullfile(compat_folder, [fname '_comp.m']), 'r');
             x = reshape(fread(fid,inf,'*char'),1,[]);
             fclose(fid);
             x = regexprep(x, '\r\n', '\n');

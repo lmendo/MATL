@@ -287,6 +287,6 @@ H.out = outFormatted;
 H.inOutTogether = inOutTogether;
 H.sourcePlain = sourcePlain;
 H.descrPlain = descrPlain;
-save help H
+save(fullfile(fileparts(mfilename('fullpath')), 'help.mat'), 'H')
 
 
