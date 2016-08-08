@@ -15,7 +15,6 @@ cOutFile = 'MATLc.m'; % temporary file for compiled code
  cOutFileNoExt = cOutFile(1:end-2); % same without extension. Needed to run file in old Matlab versions
  % cOutFileNoExt = regexprep(cOutFile, '\.m$', ''); % Old Octave versions
  % (before 3.8 apparently) don't recognize '\.'  as an escaped dot symbol
-
 thisDir = fileparts(mfilename('fullpath'));
 funDefMasterFile = fullfile(thisDir, 'funDef.txt'); % function definition master file
 funDefMatFile = fullfile(thisDir, 'funDef.mat'); % function definition processed file

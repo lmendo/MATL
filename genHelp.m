@@ -228,10 +228,13 @@ for n = 1:numel(descrFormatted)
     if isnan(altOut) && ~isempty(F(n).altOut) % F(n).altOut contains a string that couldn't be converted to a number
         switch F(n).altOut
         case {'[false true]' '[false,true]' '[false, true]'}
-            altOutStr = '2nd'; % It should be specified '2nd of 2'. But it's longer. Up to now its always "x-th
-            % up to the maximum number", so I don't specify
+            altOutStr = '2nd'; % It should be specified '2nd of 2'. But it's longer. Up to now the "of 2" part is not
+            % necessary (that depends on the function. For `find` it would be necessary, because its first output changes
+            % depending on whether there's a second output or not). So I don't specify
         case {'[false true false]' '[false,true,false]' '[false, true, false]'}
-            altOutStr = '2nd';
+            altOutStr = '2nd'; % It should be specified "2nd of 3"
+        case {'[false false true]' '[false,false,true]' '[false, false, true]'}
+            altOutStr = '3rd';
         case {'ndims(in{1})'}
             altOutStr = 'number of dimensions of first input';
         otherwise
