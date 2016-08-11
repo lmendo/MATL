@@ -1098,7 +1098,7 @@ Xe
 Ye
 Ze	1	1	1		1	1	1		true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
 f	1	3	1		1	3	1	2	true	true	true	true	[out{:}] = find(in{:});	find	\matlab+find+
-Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / non-empty substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: cell array of all non-empty substrings. Works also for numeric or cell arrays
+Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / non-empty substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: output is a cell array of all non-empty substrings. Works also for numeric or cell arrays
 													if ischar(in{1}) || (iscell(in{1})&&ischar(in{1}{1}))
 													out{1} = strfind(in{:});
 													else
