@@ -1380,16 +1380,25 @@ Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
 Yt
-Zt	3	3	3		1	1	1		true	true	true	true	if ~isnumeric(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric array (not a cell array of numeric arrays). In this case the other inputs can be char or numeric (not cell); each input array is linearized; result is a row vector; and result is char if third input is, even if no substitutions have been actually done
+Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric or logical array (not a cell array of numeric or logical arrays). In this case the other inputs can be char, numeric or logical (not cell); each input array is linearized; result is a row vector; and result has the type of the third input, even if no substitutions have been actually done
 													out{1} = strrep(in{:});
 													else
-													t = in{1}(:).'; p = in{2}(:).'; r = in{3}(:).'; n = numel(p);
-													y = t;
-													for k = numel(t)-n+1:-1:1
-													if t(k:k+n-1)==p, y = [y(1:k-1) r y(k+n:end)]; end
+													t = in{1}(:).'; p = in{2}(:).'; r = in{3}(:).'; m = numel(p); n = numel(r);
+													y = []; mem = false;
+% This line above defines y as double. We will cast to char or logical at the end if needed
+													while numel(t)
+													if isequal(t(1:min(m,end)), p)
+													y = [y r]; t = t(2:end); mem = true;
+													elseif mem
+													y = [y t(m)]; t = t(m+1:end); mem = false;
+													else
+													y = [y t(1)]; t = t(2:end);
 													end
+													end
+% The above `while` loop implements the logic of `strrep`. It's complicated, because of overlapping patterns. This is handled by variable `mem`
 													if ischar(in{3}), y = char(y); end
-													out{1} = y;
+													if islogical(in{3}), y = logical(y); end
+													out{1} = y; clear t p r m n mem
 													end
 u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'};	unique	\matlab+unique+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique element. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl+Xu+
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
@@ -1464,7 +1473,7 @@ Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	eye (matrix with ones 
 Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
 Zy	1	2	1		1	inf	1		true	true	true	true	[out{:}] = size(in{:});	size	\matlab+size+
 z	1	1	1		1	1	1		true	true	true	true	out{1} = nnz(in{:});	number of nonzero elements	\matlab+nnz+
-Xz	1	1	1		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1}), out{1} = regexprep(in{1}, '[\s\0]', ''); else, out{1} = nonzeros(in{:}); end	nonzero elements / remove whitespace	\matlab+nonzeros+. If input is a string or cell array strings: remove whitespace, including \matlab+char(0)+
+Xz	1	1	1		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1}), out{1} = regexprep(in{1}, '[\s\0]', ''); else, out{1} = nonzeros(in{:}); end	nonzero elements / remove whitespace	\matlab+nonzeros+. If input is a string or cell array of strings: remove whitespace, including \matlab+char(0)+
 Yz
 Zz
 {
