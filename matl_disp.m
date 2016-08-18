@@ -39,8 +39,8 @@ if listing && ~isempty(S)
     else
         d([S.implicit]) = []; % remove implicit source statements for display without comment texts
     end
-    d = char(d);
     if commentSymbols
+        d = char(d);
         d = [d, repmat([blanks(indentCommentSymbol) '%'],size(d,1),1)];
     end
     if commentTexts % Changes done here should be done in `genHelp.m` too

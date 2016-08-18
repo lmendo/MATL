@@ -283,6 +283,3 @@ if any(options=='d')
     matl_run(S, pOutFile, cOutFileNoExt, [S.compileLine], isMatlab, useTags) % ...NoExt because a file name without
     % extension is needed in old Matlab versions
 end
-
-
-
