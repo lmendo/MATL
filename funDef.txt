@@ -429,7 +429,7 @@ Z@	1	3	1	2	1	1	1		true	true	true	true	if numel(in)~=3, out{1} = randperm(in{:});
 													else [~, p] = sort(rand(in{3},in{1}),2); p = p(:,1:in{2}); out{1} = p; clear p, end
 A	1	2	1	2	1	1	1		true	true	true	true	out{1} = all(in{:});	all	\matlab+all+. \sa \matl|XA|
 XA	1	1	1		1	1	1		true	true	true	true	out{1} = all(in{:},1);	all, along first dimension	\matlab+all(..., 1)+. \sa \matl|A|
-YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert integer to string representation in given base	(i) \matlab+dec2base+. (ii) If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Base \matlab+0+ is interpreted as \matlab+10+, \matlab+1+ as \matlab+16+, \matlab+false+ as \matlab+0:9+, \matlab+true+ as \matlab+0:15+. \sa \matl+ZA+, \matl+Za+
+YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert integer to string representation in given base	(i) \matlab+dec2base+. (ii) If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+ZA+, \matl+Za+
 													elseif islogical(in{2}) && isequal(in{2}, true), in{2} = 0:15;
 													elseif isnumeric(in{2}) && isequal(in{2}, 0), in{2} = 10;
 													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16; end
@@ -454,7 +454,7 @@ YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, fals
 													end
 													end
 % Adapted from dec2base
-ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Non-recognized digits are ignored. Base \matlab+0+ is interpreted as \matlab+10+, \matlab+1+ as \matlab+16+, \matlab+false+ as \matlab+0:9+, \matlab+true+ as \matlab+0:15+. \sa \matl+ZA+, \matl+Za+
+ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Non-recognized digits are ignored. Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+ZA+, \matl+Za+
 													elseif islogical(in{2}) && isequal(in{2}, true), in{2} = 0:15;
 													elseif isnumeric(in{2}) && isequal(in{2}, 0), in{2} = 10;
 													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16; end
@@ -930,8 +930,11 @@ Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad 
 													end
 													out{1} = in{1};
 													end
-Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
+Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second input equals \matl+F+ or \matl+T+, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order
 													if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
+													if islogical(in{2}) && isscalar(in{2})
+													if in{2}, in{2} = ' ':'~'; else in{2} = [' ':'&' '(':'~']; end
+													end
 													if numel(in{2})>1, ax = in{2}; bx=numel(ax); else bx = in{2}; ax = 0:bx-1; end
 													if numel(in{3})>1, az = in{3}; bz=numel(az); else bz = in{3}; az = 0:bz-1; end
 													Z = cell(size(in{1}));
