@@ -122,7 +122,7 @@ appendLines('S_IN = ''def''; S_OUT = ''def'';', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
 % "level".
-appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 2 1j]} {[2 2 1j]} {[1 1j-1]} {[2 1j]} {[1 0]} {[2 1j-1]} {[2 3 1]} {[3 1 2]} {[1 1j]} {[1j -1 1]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {0.5772156649015328606} {(sqrt(5)+1)/2} {2j*pi} {[1 3 2 4]} {[1 3 4 2]} {[3 1 2 4]} {[3 1 4 2]} {[3 4 1 2]} };', 0)
+appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 2 1j]} {[2 2 1j]} {[1 1j-1]} {[2 1j]} {[1 0]} {[2 1j-1]} {[2 3 1]} {[3 1 2]} {[1 1j]} {[1j -1 1]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {0.5772156649015328606} {(sqrt(5)+1)/2} {2j*pi} {[1 3 2 4]} {[1 3 4 2]} {[3 1 2 4]} {[3 1 4 2]} {[3 4 1 2]} {[1 .5j]} {[1 .5+.5j]} {[1+.5j 1j]} {[.5+.5j 1j]} };', 0)
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
