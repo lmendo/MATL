@@ -29,7 +29,7 @@ Y!	1	1	1		0	2	2		true	true	true	false	[out{:}] = system(in{:});	execute system c
 Z!	1	1	1		1	1	1		true	true	true	true	out{1} = full(in{1});	convert sparse matrix to full matrix	\matlab+full+
 "
 X"	2	inf	3		1	1	1		true	true	true	true	out{1} = repmat(in{:});	replicate and tile array	\matlab+repmat+
-Y"	2	inf	2		1	1	1		true	true	true	true	out{1} = repelem(in{:});	replicate elements of array	\matlab+repelem+ (run-length decoding)
+Y"	2	inf	2	3	1	1	1		true	true	true	true	out{1} = repelem(in{:});	replicate elements of array	\matlab+repelem+ (run-length decoding)
 Z"	1	1	1		1	1	1		true	true	true	true	S = ' ';	string or array of blanks	\matlab+blanks+. It allows vector input, and in that case it produces a matrix or multidimensional array
 													if numel(in{1})<=1, y = S(ones(1,in{1}));
 													else, y = S(ones(in{1}));
