@@ -1,5 +1,5 @@
 function y = strncmp(x1, x2, n)
-% This repreoduces Matlab behaviour: if (strings) x1 and x2 are equal, or (cells) their contents
+% This reproduces Matlab behaviour: if (strings) x1 and x2 are equal, or (cells) their contents
 % are equal, Matlab gives 1 even if n is larger than the strings' length (Octave gives 0).
 if ischar(x1) && ischar(x2)
     y = builtin('strncmp', x1, x2, n) || (strcmp(x1, x2) && n>numel(x1));
