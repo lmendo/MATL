@@ -1159,7 +1159,7 @@ Yg	1	3	1		1	1	1		true	true	true	true	if numel(in)==1, out{1} = gamma(in{1});	gam
 													else out{1} = betainc(in{:}); end
 Zg	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = gammaln(in{1});	logarithm of gamma or beta function	\matlab+gammaln+ / \matlab+betaln+, depending on number of inputs
 													else out{1} = betaln(in{:}); end
-h	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(x,1), in)))	horizontal concatenation	\matlab+horzcat+. If inputs are matrices with non-matching sizes they are linearized
+h	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if any(diff(nonzeros(cellfun(@(x) size(x,1), in))))	horizontal concatenation	\matlab+horzcat+. If inputs are matrices with non-matching sizes they are linearized
 													in = cellfun(@(x) reshape(x,1,[]), in, 'uniformoutput', false);
 													end
 													if any(cellfun(@ischar, in))
@@ -1436,7 +1436,7 @@ Xu	1	3	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first'};	u
 													end
 Yu
 Zu	1	2	1		1	1	1		true	true	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
-v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(cellfun(@(x) size(x,2), in)))	vertical concatenation	\matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized
+v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(nonzeros(cellfun(@(x) size(x,2), in))))	vertical concatenation	\matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized
 													in = cellfun(@(x) reshape(x,[],1), in, 'uniformoutput', false);
 													end
 													if any(cellfun(@ischar, in))
