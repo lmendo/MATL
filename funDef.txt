@@ -1212,7 +1212,9 @@ Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}
 													clear x y ind dmin
 Zk
 l	0	inf	0	2	1	1	1		true	true	true	true	out{1} = ones(in{:});	array of ones	\matlab+ones+ (if $0$ inputs: produces output $1$)
-Xl
+Xl	2	2	2		1	1	1		true	true	true	true	if numel(in{2})==1, z = min(in{1}, in{2});	clamp (limit to a range)	(i) If the second input has two elements, it defines a range, to which the first input is clamped. That is, it computes the maximum between the input and the first element of the second input, and then the minimum between that and the second element of the second input. (ii) If the second input has only one element, the minimum of that and the first input is computed
+													else z = max(min(in{1}, in{2}(2)), in{2}(1));end
+													out{1} = z; clear z
 Yl	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = log(in{1}); else out{1} = log(in{1})/log(in{2}); end	logarithm	\matlab+log+. If $2$ inputs: second input specifies logarithm base
 Zl	1	1	1		1	2	1		true	true	true	true	[out{:}] = log2(in{:});	base 2 logarithm	\matlab+log2+
 m	2	4	2		1	2	1	[false true]	true	true	true	true	if (iscell(in{1}) && (nnz(~cellfun(@ischar, in{1})) || isnumeric(in{2}))) || (iscell(in{2}) && (nnz(~cellfun(@ischar, in{2})) || isnumeric(in{1})))	true for set member	\matlab+ismember+. It also works for cell arrays with numeric content, or with mixed char/numeric content. \sa \matl+Xm+
