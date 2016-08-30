@@ -186,11 +186,11 @@ while pos<=L
         assert(any(strcmp(S(m).type,{'controlFlow.if' 'controlFlow.while' 'controlFlow.doWhile'})), 'MATL:parser', 'MATL error while parsing: ''else'' / ''finally'' not associated with ''if'', ''while'' or ''do...while''')
         if strcmp(S(m).type,'controlFlow.if')
             S(n).type = 'controlFlow.else';
-            assert(~isfield(S(m),'else') || isempty(S(m).else), 'MATL:parser', 'MATL error while parsing: two ''else'' statements found associated to the same ''if''')
+            assert(~isfield(S(m),'else') || isempty(S(m).else), 'MATL:parser', 'MATL error while parsing: two ''else'' statements found associated with the same ''if''')
             S(m).else = n; % associate opening statement with this
         else
             S(n).type = 'controlFlow.finally';
-            assert(~isfield(S(m),'finally') || isempty(S(m).finally), 'MATL:parser', 'MATL error while parsing: two ''finally'' statements found associated to the same ''while'' or ''do..while''')
+            assert(~isfield(S(m),'finally') || isempty(S(m).finally), 'MATL:parser', 'MATL error while parsing: two ''finally'' statements found associated with the same ''while'' or ''do..while''')
             S(m).finally = n; % associate opening statement with this
         end
         S(n).from = m; % associate this with opening statement

@@ -67,6 +67,14 @@ F(end+1).source = '''';
 F(end).comment = 'string delimiter';
 F(end).description = 'string delimiter. Should be doubled when used within a string';
 
+F(end+1).source = 'T';
+F(end).comment = 'logical literal';
+F(end).description = 'Literal \matlab+true+. It can also be used within arrays. For logical row vectors the square brackets are not necessary, so \matl+TTFF+ corresponds to \matlab+[true true false false]+. \sa \matl+F+';
+
+F(end+1).source = 'F';
+F(end).comment = 'logical literal';
+F(end).description = 'Literal \matlab+false+. It can also be used within arrays. For logical row vectors the square brackets are not necessary, so \matl+TTFF+ corresponds to \matlab+[true true false false]+. \sa \matl+T+';
+
 %F(end+1).source = ' ';
 %F(end).comment = 'separator';
 %F(end).description = 'separator. Newline can be used as separator too';
