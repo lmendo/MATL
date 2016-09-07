@@ -1212,7 +1212,7 @@ Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}
 													clear x y ind dmin
 Zk
 l	0	inf	0	2	1	1	1		true	true	true	true	out{1} = ones(in{:});	array of ones	\matlab+ones+ (if $0$ inputs: produces output $1$)
-Xl	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==2, z = bsxfun(@min, in{1}, in{2});	clamp (limit to a range)	(i) With $2$ inputs, the minimum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the maximum between the first and the second, and then the minimum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl+X<+, \matl+X>+
+Xl	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==2, z = bsxfun(@max, in{1}, in{2});	clamp (limit to a range)	(i) With $2$ inputs, the maximum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the maximum between the first and the second, and then the minimum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl+X<+, \matl+X>+
 													else z = bsxfun(@min, bsxfun(@max, in{1}, in{2}), in{3}); end
 													if ischar(in{1}), z = char(z); end
 													out{1} = z; clear z
