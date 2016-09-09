@@ -1388,7 +1388,10 @@ Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
 Yt
-Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1})	replace substring with another	\matlab+strrep+. The first input can be a numeric or logical array (not a cell array of numeric or logical arrays). In this case the other inputs can be char, numeric or logical (not cell); each input array is linearized; result is a row vector; and result has the type of the third input, even if no substitutions have been actually done
+Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1})	replace substring with another	(i) If first input is char or a cell array: \matlab+strrep+. Numerical second and third inputs are converted to char. (ii) The first input can be a numerical or logical array (not a cell array of numeric or logical arrays). In this case the other inputs can be char, numeric or logical (not cell); each input array is linearized; result is a row vector; and result has the type of the third input, even if no substitutions have been actually done
+													if isnumeric(in{2}), in{2} = char(in{2}); end
+													if isnumeric(in{3}), in{3} = char(in{3}); end
+% The above two lines are needed {in Matlab and in Octave} if in{1} is cell, and are needed {only in Octave} if in{1} is char
 													out{1} = strrep(in{:});
 													else
 													t = in{1}(:).'; p = in{2}(:).'; r = in{3}(:).'; m = numel(p); n = numel(r);
