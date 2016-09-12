@@ -85,6 +85,11 @@ appendLines('warningState = warning;', 0);
 appendLines('format compact; format long; warning(''off'',''all''); close all', 0) % clc
 appendLines('defaultColorMap = get(0, ''DefaultFigureColormap'');', 0)
 appendLines('set(0, ''DefaultFigureColormap'', gray(256));', 0)
+if ~isMatlab
+    appendLines('page_screen_output(false, ''local'');', 0)
+    appendLines('page_output_immediately(true, ''local'');', 0)
+    % This is needed in Octave so it honours pauses etc. Thanks, Suever!
+end
 if isMatlab && exist('rng', 'file') % recent Matlab version
     appendLines('rng(''shuffle'')', 0)
 elseif isMatlab % old Matlab version
