@@ -109,7 +109,9 @@ Z'	0	1	0	1	1	1	1		true	true	true	true	if numel(in)==0, out{1} = now;	current dat
 													end
 													if ~islogical(indices{n}) && ~ischar(indices{n})
 													indices{n} = round(indices{n});
-													end
+													ind = indices{n}<=0;
+													indices{n}(ind) = mod(indices{n}(ind)-1,sz(n))+1;
+													end; clear ind
 													end
 													if ~isempty(arrayData), arrayDestination(indices{:}) = arrayData;
 													else arrayDestination(indices{:}) = [];
@@ -132,7 +134,9 @@ X(	3	inf	3		1	1	1		true	true	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{
 													end
 													if ~islogical(indices{n}) && ~ischar(indices{n})
 													indices{n} = round(indices{n});
-													end
+													ind = indices{n}<=0;
+													indices{n}(ind) = mod(indices{n}(ind)-1,sz(n))+1;
+													end; clear ind
 													end
 													nei = cellfun(@nnz, indices);
 													if numel(nei)==1, nei = [nei 1]; end
@@ -154,7 +158,9 @@ Y(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													end
 													if ~islogical(indices{n}) && ~ischar(indices{n})
 													indices{n} = round(indices{n});
-													end
+													ind = indices{n}<=0;
+													indices{n}(ind) = mod(indices{n}(ind)-1,sz(n))+1;
+													end; clear ind
 													end
 													if ~isempty(arrayData), arrayDestination(indices{:}) = arrayData;
 													else arrayDestination(indices{:}) = [];
@@ -174,7 +180,9 @@ Z(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													end
 													if ~islogical(indices{n}) && ~ischar(indices{n})
 													indices{n} = round(indices{n});
-													end
+													ind = indices{n}<=0;
+													indices{n}(ind) = mod(indices{n}(ind)-1,sz(n))+1;
+													end; clear ind
 													end
 													if ~isempty(arrayData), arrayDestination(indices{:}) = arrayData;
 													else arrayDestination(indices{:}) = [];
