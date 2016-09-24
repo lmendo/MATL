@@ -582,7 +582,7 @@ YE
 ZE
 F
 XF
-YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. (ii) With $2$ outputs: first output gives the prime factors, second is as before.
+YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. (ii) With $2$ outputs: first output gives the prime factors, second is as before. \sa \matl+Yf+
 													p = primes(max([f{:}]));
 													y = zeros(numel(f), numel(p));
 													for k = 1:numel(f);
@@ -798,7 +798,7 @@ YS	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==3 && numel(in{2})>1 && ndims
 ZS	1	1	1		1	1	1		true	true	true	true	out{1} = sign(in{:});	sign function	\matlab+sign+
 T
 XT
-YT	1	2	2	2	1	1	1		true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+
+YT	1	2	1	2	1	1	1		true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+
 ZT
 U	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	convert string matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl+D+). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. (ii) For numeric input: \matlab+(...).^2+
 													out{1} = in{1}.^2;
@@ -1160,7 +1160,7 @@ Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within anot
 													end
 													out{1} = y; clear y s e
 													end
-Yf	1	1	1		1	1	1		true	true	true	true	if in{1}>=0, if in{1}==1, out{1} = []; else out{1} = factor(in{1}); end	prime factors	\matlab+factor+. For input $1$ it returns an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ produces $1$).
+Yf	1	1	1		1	1	1		true	true	true	true	if in{1}>=0, if in{1}==1, out{1} = []; else out{1} = factor(in{1}); end	prime factors	\matlab+factor+. For input $1$ it returns an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ produces $1$). \sa \matl+YF+
 													else in{1}=-in{1};
 													out{1} = factor(in{1});
 													end
