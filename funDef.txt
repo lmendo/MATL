@@ -920,7 +920,7 @@ Z`	0	1	0		0	1	1		true	true	true	true	if numel(in) && numel(out)==1, out{1} = toc
 % Matlab R2015b hangs with tic; in = {}; t=toc(in{:}). That's why I distinguish here the no-input version
 a	1	2	1	2	1	1	1		true	true	true	true	out{1} = any(in{:});	any	\matlab+any+. \sa \matl|Xa|
 Xa	1	1	1		1	1	1		true	true	true	true	out{1} = any(in{:},1);	any, along first dimension	\matlab+any(..., 1)+. \sa \matl|a|
-Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad / unpad array	(i) \matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'pre'+, 2: \matlab+'post'+, 3: \matlab+'both'+. (ii) If the second input contains at least on negative or complex value, the array in the first input is unpadded. The array can only have two dimensions. The second input can have one or two entries, specifying dimensions. A negative value indicates unpad along that dimension. A complex value indicates unpad along the two dimensions. The third input specifies which values are considered padding; by default $0$
+Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad / unpad array	(i) \matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'pre'+, 2: \matlab+'post'+, 3: \matlab+'both'+. (ii) If the second input contains at least one negative or complex value, the array in the first input is unpadded. The array can only have two dimensions. The second input can have one or two entries, specifying dimensions. A negative value indicates unpad along that dimension. A complex value indicates unpad along the two dimensions. The third input specifies which values are considered padding; by default $0$
 													c = ischar(in{1}); if c, in{1} = double(in{1}); end
 													if numel(in)>=3 && ischar(in{3}) && numel(in{3})==1, in{3} = double(in{3}); end
 													if islogical(in{2}), in{2} = double(in{2}); end
@@ -1018,12 +1018,12 @@ Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	if any(cellfun(@ischar, in))	
 													end
 													end
 													out{1} = cat(in{end}, in{1:end-1}); clear k
-Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	if all(cellfun(@isnumeric, in))	concatenate strings	\matlab+strcat+. If not all inputs are numeric, numeric inputs are converted to char. If all inputs are numeric the result is numeric (with singleton expansion along the first dimension), and no trailing values are removed
+Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	if all(cellfun(@isnumeric, in) | cellfun(@islogical, in))	concatenate strings	\matlab+strcat+. If not all inputs are numerical or logical, numerical or logical inputs are converted to char. If all inputs are numerical or logical the result is numerical or logical (with singleton expansion along the first dimension), and no trailing values are removed 
 													m = max(cellfun(@(x) size(x,1), in));
 													for k = 1:numel(in), if size(in{k},1)==1, in{k} = repmat(in{k},m,1); end; end
 													out{1} = horzcat(in{:}); clear m k
 													else
-													for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; end;
+													for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; if islogical(in{k}), in{k} = char(double(in{k})); end; end;
 													out{1} = strcat(in{:}); clear k
 													end
 Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of strings or numbers into single vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
