@@ -1496,7 +1496,7 @@ Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	eye (matrix with ones 
 Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
 Zy	1	2	1		1	inf	1		true	true	true	true	[out{:}] = size(in{:});	size	\matlab+size+
 z	1	1	1		1	1	1		true	true	true	true	out{1} = nnz(in{:});	number of nonzero elements	\matlab+nnz+
-Xz	1	1	1		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1}), out{1} = regexprep(in{1}, '[\s\0]', ''); else, out{1} = nonzeros(in{:}); end	nonzero elements / remove whitespace	\matlab+nonzeros+. If input is a string or cell array of strings: remove whitespace, including \matlab+char(0)+
+Xz	1	1	1		1	1	1		true	true	true	true	if iscell(in{1}), out{1} = regexprep(in{1}, '[\s\0]', ''); elseif ischar(in{1}), out{1} = regexprep(reshape(in{1},1,[]), '[\s\0]', ''); else, out{1} = nonzeros(in{:}); end	nonzero elements / remove whitespace	\matlab+nonzeros+. If input is a string or char array: removes whitespace, including \matlab+char(0)+; the result is a string. If input is cell array of strings: operates on each string
 Yz
 Zz
 {
