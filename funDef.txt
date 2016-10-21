@@ -596,7 +596,7 @@ YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutpu
 ZF
 G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		true	true	false	true	if numel(CB_G)==0	paste from user-input clipboard G	paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level
 													implInput = input(implicitInputPrompt,'s');
-													valid = isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
+													valid = isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-df-hk-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
 													assert(valid, 'MATL:runner', 'MATL run-time error: input not allowed')
 													if isempty(implInput), implInput = []; else implInput = eval(implInput); end
 													CB_G{1} = implInput;
@@ -806,7 +806,7 @@ U	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	convert string matrix to
 													in{1}(ismember(in{1},replaceBySpace)) = ' ';
 													valid = true;
 													for r = 1:size(in{1},1)
-													valid = valid && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
+													valid = valid && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-df-hk-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
 													end
 													if valid
 													[y, ok] = str2num(in{1});
@@ -1200,7 +1200,7 @@ Zh	3	3	3		1	1	1		true	true	true	true	if any( ~mod(in{1},1) & (in{1}<=0) )	hyperg
 													end
 i	0	2	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input	\matlab+input+ with content checking. If $0$ inputs: uses default prompt string. \sa \matl+j+.
 													if numel(in)==1, y = input(in{1},'s');
-													valid = isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
+													valid = isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-df-hk-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(y, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
 													assert(valid, 'MATL:runner', 'MATL run-time error: input not allowed')
 													if isempty(y), y = []; else y = eval(y); end
 													else y = input(in{:}); end
