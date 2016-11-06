@@ -441,10 +441,12 @@ Z@	1	3	1	2	1	1	1		true	true	true	true	c = ischar(in{1});	random permutation	\mat
 													clear p c x
 A	1	2	1	2	1	1	1		true	true	true	true	out{1} = all(in{:});	all	\matlab+all+. \sa \matl|XA|
 XA	1	1	1		1	1	1		true	true	true	true	out{1} = all(in{:},1);	all, along first dimension	\matlab+all(..., 1)+. \sa \matl|A|
-YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert integer to string representation in given base	(i) \matlab+dec2base+. (ii) If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+ZA+, \matl+Za+
+YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert integer to string representation in given base	(i) \matlab+dec2base+. (ii) If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii) Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+ZA+, \matl+Za+
 													elseif islogical(in{2}) && isequal(in{2}, true), in{2} = 0:15;
 													elseif isnumeric(in{2}) && isequal(in{2}, 0), in{2} = 10;
-													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16; end
+													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16;
+													elseif isnumeric(in{2}) && isscalar(in{2}) && in{2}<0, in{2} = 0:-in{2}-1;
+													end
 													if numel(in{2})==1, out{1} = dec2base(in{:});
 													else d = in{1}(:); symbols = in{2}(:).'; b = numel(symbols);
 													if ~(isnumeric(d) || ischar(d)) || any(d ~= floor(d)) || any(d < 0) || any(d > 1/eps)
@@ -466,10 +468,12 @@ YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, fals
 													end
 													end
 % Adapted from dec2base
-ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (i, ii) Non-recognized digits are ignored. Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+YA+, \matl+Za+
+ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii) Non-recognized digits are ignored. Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+YA+, \matl+Za+
 													elseif islogical(in{2}) && isequal(in{2}, true), in{2} = 0:15;
 													elseif isnumeric(in{2}) && isequal(in{2}, 0), in{2} = 10;
-													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16; end
+													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16;
+													elseif isnumeric(in{2}) && isscalar(in{2}) && in{2}<0, in{2} = 0:-in{2}-1;
+													end
 													x = in{1};
 													a = in{2}; if numel(a)==1; b = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; a=b(1:a); x = upper(x); end
 													if ~iscell(x), x = mat2cell(x, ones(size(x,1),1), size(x,2)); end
