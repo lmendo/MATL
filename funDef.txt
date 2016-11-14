@@ -468,7 +468,7 @@ YA	2	3	2	3	1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, fals
 													end
 													end
 % Adapted from dec2base
-ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii) Non-recognized digits are ignored. Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+YA+, \matl+Za+
+ZA	2	2	2		1	1	1		true	true	true	true	if islogical(in{2}) && isequal(in{2}, false), in{2} = 0:9;	convert string in given base to decimal integer	(i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii, iii) Non-recognized digits are ignored. Base \matl+0+ is interpreted as \matl+10+, \matl+1+ as \matl+16+, \matl+F+ as \matl+0:9+, \matl+T+ as \matl+0:15+. \sa \matl+YA+, \matl+Za+
 													elseif islogical(in{2}) && isequal(in{2}, true), in{2} = 0:15;
 													elseif isnumeric(in{2}) && isequal(in{2}, 0), in{2} = 10;
 													elseif isnumeric(in{2}) && isequal(in{2}, 1), in{2} = 16;
@@ -555,7 +555,7 @@ D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display 
 													end
 													end
 													end
-													y = [y{:}]; % concatenate all strings
+													y = [y{:}];
 													out{1} = y;
 													clear x sep_noncell row_sep col_sep done s k str inde_sep step_sep y
 													end
@@ -1011,7 +1011,8 @@ Yb	1	inf	1	2	1	2	1		true	true	true	true	if isnumeric(in{1})	split string or nume
 													[out{:}] = strsplit(in{:});
 													end
 Zb
-c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character array	\matlab+char+. For cell array input, non-char cell contents are first converted to char
+c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character array	\matlab+char+. Sparse input is converted to full. For cell array input, non-char cell contents are first converted to char
+													if issparse(in{1}), in{1} = full(in{1}); end
 													out{1} = char(in{:});
 													else
 													for k = 1:numel(in{1}), if ~ischar(in{1}{k}), in{1}{k} = char(in{1}{k}); end; end
