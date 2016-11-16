@@ -836,13 +836,16 @@ XW
 YW
 ZW
 X
-XX	2	9	2	3	1	6	max(1,sum(ismember(cellfun(@num2str, in(3:end), 'uniformoutput', false), {'start' 'end' 'tokenExtents' 'match' 'tokens' 'split' '1' '2' '3' '5' '6' '7'})))		true	true	true	true	str = {'start' 'split' 'end' 'once' 'tokenExtents' 'tokens' 'match'};	match regular expression	\matlab+regexp+. With $2$ inputs: \matlab+regexp(..., ..., 'match')+. If first or second inputs are numeric they are converted to char. If they are numeric or char arrays they are linearized into a row. If they are cells their contents are converted to char. \matlab+'names'+ output is not supported. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'start'+, 2: \matlab+'split'+, 3: \matlab+'end'+, 4: \matlab+'once'+, 5: \matlab+'tokenExtents'+, 6: \matlab+'tokens'+, 7: \matlab+'match'+
+XX	2	9	2	3	1	6	max(1,sum(ismember(cellfun(@num2str, in(3:end), 'uniformoutput', false), {'start' 'end' 'tokenExtents' 'match' 'tokens' 'split' '1' '2' '3' '5' '6' '7'})))		true	true	true	true	str = {'start' 'split' 'end' 'once' 'tokenExtents' 'tokens' 'match'};	match regular expression	\matlab+regexp+. With $2$ inputs and $1$ output: \matlab+regexp(..., ..., 'match')+. If first or second inputs are numeric they are converted to char. If they are numeric or char arrays they are linearized into a row. If they are cells their contents are converted to char. \matlab+'names'+ output is not supported. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'start'+, 2: \matlab+'split'+, 3: \matlab+'end'+, 4: \matlab+'once'+, 5: \matlab+'tokenExtents'+, 6: \matlab+'tokens'+, 7: \matlab+'match'+
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
-													if numel(in)==2, in{3} = 'match'; end
+													if numel(in)==2 && nout==1, in{3} = 'match'; end
 													if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end
 													if size(in{1},1)>1, in{1} = in{1}(:).'; end; if size(in{2},1)>1, in{2} = in{2}(:).'; end
 													if iscell(in{1}), in{1} = cellfun(@char, in{1}, 'UniformOutput', false); end; if iscell(in{2}), in{2} = cellfun(@char, in{2}, 'UniformOutput', false); end;
-													[out{:}] = regexp(in{:});
+													if nout==6, skipNames = true; else skipNames = false; end
+													y = cell(1,nout+skipNames); [y{:}] = regexp(in{:});
+													if skipNames, out = y([1:5 7]); else out = y; end
+													clear y skipNames k
 YX	3	5	3	4	1	1	1		true	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; if isnumeric(in{2}), in{2}=char(in{2}); end; if isnumeric(in{3}), in{3}=char(in{3}); end	replace string using regular expression	\matlab+regexprep+. If first, second or third inputs are numeric they are converted to char. If they are numeric or char arrays they are linearized into a row. If they are cells their contents are converted to char
 													if size(in{1},1)>1, in{1} = in{1}(:).'; end; if size(in{2},1)>1, in{2} = in{2}(:).'; end; if size(in{3},1)>1, in{3} = in{3}(:).'; end;
 													if iscell(in{1}), in{1} = cellfun(@char, in{1}, 'UniformOutput', false); end; if iscell(in{2}), in{2} = cellfun(@char, in{2}, 'UniformOutput', false); end; if iscell(in{3}), in{3} = cellfun(@char, in{3}, 'UniformOutput', false); end
