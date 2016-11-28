@@ -97,7 +97,7 @@ elseif isMatlab % old Matlab version
 % else % Octave: seeds are set randomly automatically by Octave
 end
 if ~online
-    appendLines('delete inout; diary off; delete defout; diary defout', 0)
+    appendLines('diary off; delete defout; diary defout', 0)
 end
 % For user inputs or inputs to "str2num"
 appendLines('F = false; T = true; P = pi; Y = inf; N = NaN;', 0)
