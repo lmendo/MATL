@@ -1425,7 +1425,10 @@ Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1})	replace s
 													if isequal(t(1:min(m,end)), p)
 													y = [y r]; t = t(2:end); mem = true;
 													elseif mem
-													y = [y t(m)]; t = t(m+1:end); mem = false;
+													if numel(t)>=m
+													y = [y t(m)];
+													end
+													t = t(m+1:end); mem = false;
 													else
 													y = [y t(1)]; t = t(2:end);
 													end
