@@ -405,7 +405,7 @@ function newLines = funPre(minIn, maxIn, defIn, altIn, minOut, maxOut, defOut, a
 % produce that number of outputs. For MATL functions that simply call a MATLAB function,
 % this implies calling the MATLAB function with that number of outputs. For MATL functions
 % that are implemented "manually", it's their responsibility to produce `nout` outputs.
-%   If `n_out` is a logical array, the number of outputs produced by the function
+%   If `nout` is a logical array, the number of outputs produced by the function
 % should be the number of elements in the logical array. At the end (funPost), the
 % outputs corresponding to false values will be discarded.
 %   (2) For functions for which the default value of S_OUT depends on the
