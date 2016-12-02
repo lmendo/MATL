@@ -1220,12 +1220,12 @@ i	0	2	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; 
 Xi	1	5	1		1	2	1		true	true	true	false	[out{:}] = urlread(in{:});	read contents or a URL as a string	\matlab+urlread+
 Yi	1	inf	1		1	3	1		true	true	true	false	[out{:}] = imread(in{:});	read image from file	\matlab+imread+
 Zi
-j	0	1	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input string	\matlab+input(..., 's')+. If $0$ inputs: uses default prompt string. \sa \matl+i+.
+j	0	1	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input string	\matlab+input(..., 's')+. If $0$ inputs: uses default prompt string. \sa \matl+i+
 													out{1} = input(in{1},'s');
 													CB_G = [CB_G out(1)];
 Xj	1	1	1		1	1	1		true	true	true	true	out{1} = real(in{:});	real part	\matlab+real+
 Yj	1	1	1		1	1	1		true	true	true	true	out{1} = imag(in{:});	imaginary part	\matlab+imag+
-Zj	1	1	1		1	1	1		true	true	true	true	out{1} = conj(in{:});	complex conjugate	\matlab+conj+
+Zj	1	1	1		1	2	1	2	true	true	true	true	if nout==1, out{1} = conj(in{1}); elseif nout==2, out = {real(in{1}), imag(in{1})}; end	complex conjugate / real and imaginary parts	(i) With one output: complex conjugate (\matlab+conj+). (ii) With two outputs: real and imaginary parts (\matlab+real+, \matlab+imag+)
 k	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical arrays
 Xk	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical arrays
 Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}(:); [dmin, ind] = min(abs(bsxfun(@minus, x, y)),[],1);	closest value	closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements
