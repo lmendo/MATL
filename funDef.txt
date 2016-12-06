@@ -833,7 +833,7 @@ V	1	2	1	2	1	1	1		true	true	true	true	if numel(in)<2, in{2} = '%.15g '; end	conve
 XV
 YV
 ZV
-W	1	1	1		1	1	1		true	true	true	true	out{1} = 2.^in{1};	2 raised to array, element-wise	\matlab+2.^(...)+
+W	1	1	1		1	1	1		true	true	true	true	out{1} = 2.^in{1};	2 raised to array, element-wise	\matlab+2.^(...)+ (array power with base $2$)
 XW
 YW
 ZW
