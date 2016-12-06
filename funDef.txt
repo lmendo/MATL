@@ -806,7 +806,7 @@ T
 XT
 YT	1	2	2		1	1	1		true	true	true	true	out{1} = toeplitz(in{:});	Toeplitz matrix	\matlab+toeplitz+
 ZT
-U	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	convert string matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl+D+). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. (ii) For numeric input: \matlab+(...).^2+
+U	1	1	1		1	2	1		true	true	true	true	if isnumeric(in{1})	convert char matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl+D+). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. The second output is supported in all cases. (ii) For numeric input: \matlab+(...).^2+
 													out{1} = in{1}.^2;
 													else
 													in{1}(ismember(in{1},replaceBySpace)) = ' ';
@@ -817,12 +817,12 @@ U	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	convert string matrix to
 													if valid
 													[y, ok] = str2num(in{1});
 													if ~ok && size(in{1},1)==1
-													try y = eval(in{1}); catch y = []; end
+													try y = eval(in{1}); ok = true; catch, y = []; ok = false; end
 													end
 													else
-													y = [];
+													y = []; ok = false;
 													end
-													out{1} = y; clear ok r valid
+													out{1} = y; if nout>1, out{2} = ok; end; clear ok r valid
 													end
 XU	1	1	1		1	1	1		true	true	true	true	out{1} = str2double(in{:});	convert string to double precision value	\matlab+str2double+
 YU
