@@ -606,7 +606,7 @@ G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		tru
 													CB_G{1} = implInput;
 													end
 													if numel(in)==0, out = CB_G(1:nout); else out = CB_G(mod(in{1}-1,numel(CB_G))+1); end; clear implInput valid
-XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately
+XG	1	inf	1	2	0	0	0		true	true	true	true	plot(in{:}); if numel(in)==1 && ~isreal(in{1}), axis equal; end; drawnow	plot	\matlab+plot+. Calls \matlab+drawnow+ to update figure immediately. With one input, if the input is complex (even with zero imaginary part), \matlab+axis equal+ is also called.
 YG	2	inf	2	3	0	0	0		true	true	true	true	if isnumeric(in{end}) && numel(in{end})~=1	display or save image	\matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matl+imshow+ and \matl+imwrite+, if the second input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately
 													if numel(in)>=2 && isnumeric(in{2}) && ndims(in{2})==2 && size(in{2},2)==3 && any(in{2}(:)>1), in{2} = double(uint8(in{2}))/255; end
 													imshow(in{:}); drawnow
@@ -833,7 +833,7 @@ V	1	2	1	2	1	1	1		true	true	true	true	if numel(in)<2, in{2} = '%.15g '; end	conve
 XV
 YV
 ZV
-W	1	1	1		1	1	1		true	true	true	true	out{1} = 2.^in{1};	2 raised to array, element-wise	\matlab+2.^(...)+ (array power with base $2$)
+W	1	1	1		1	1	1		true	true	true	true	out{1} = 2.^in{1};	2 raised to array, element-wise	\matlab+2.^(...)+. Array power (or rather exponentiation) with base $2$
 XW
 YW
 ZW
@@ -1274,7 +1274,7 @@ n	1	1	1		1	inf	1	ndims(in{1})	true	true	true	true	if numel(out)==1	number of ele
 													else
 													[out{:}] = size(in{:});
 													end
-Xn	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==2	binomial coefficient (number of combinations)	(i) If $2$ inputs: \matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result is \matlab+0+. (ii) If $1$ input: multinomial coefficient. The input contains the lower terms; their sum is the upper term. \sa \matl|XN|
+Xn	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==2	binomial / multinomial coefficient (number of combinations)	(i) If $2$ inputs: \matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result is \matlab+0+. (ii) If $1$ input: multinomial coefficient. The input contains the lower terms; their sum is the upper term. \sa \matl|XN|
 													nd = max(ndims(in{1}), ndims(in{2})); sz1 = arrayfun(@(n)size(in{1},n), 1:nd); sz2 = arrayfun(@(n)size(in{2},n), 1:nd);
 													assert(all(sz1==sz2 | sz1==1 | sz2==1), 'MATL:runtime', 'MATL run-time error: inputs have incompatible sizes')
 													rm1 = ones(1,nd); rm1(sz1==1) = sz2(sz1==1); rm2 = ones(1,nd); rm2(sz2==1) = sz1(sz2==1);
