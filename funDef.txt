@@ -954,10 +954,13 @@ Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad 
 													end
 													out{1} = in{1};
 													end
-Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second input equals \matl+T+ or \matl+F+, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order. \sa \matl+YA+, \matl+ZA+
+Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second or third input equals \matl+T+ or \matl+F+, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order. \sa \matl+YA+, \matl+ZA+
 													if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
 													if islogical(in{2}) && isscalar(in{2})
 													if in{2}, in{2} = ' ':'~'; else in{2} = [' ':'&' '(':'~']; end
+													end
+													if islogical(in{3}) && isscalar(in{3})
+													if in{3}, in{3} = ' ':'~'; else in{3} = [' ':'&' '(':'~']; end
 													end
 													if numel(in{2})>1, ax = in{2}; bx=numel(ax); else bx = in{2}; ax = 0:bx-1; end
 													if numel(in{3})>1, az = in{3}; bz=numel(az); else bz = in{3}; az = 0:bz-1; end
