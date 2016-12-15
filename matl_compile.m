@@ -371,12 +371,14 @@ end
 % Write to file:
 
 if exist(cOutFile,'file')
-    delete(cOutFile) % even though `fwrite` discards the file's previous contents, and there's a `clear`
+    delete(which(cOutFile)) % even though `fwrite` discards the file's previous contents, and there's a `clear`
     % later, I delete the file initially here. I do it just in case: at some point I've
     % seen Octave run an old version of the compiled file after changing the source code (which produces
     % a new compiled file). I think this must a a file cache thing. (Even accidentally deleting a file
     % before attemtping to run it sometimes resulted in a successful run!) I'm not sure how helpful
     % deleting the file will be, though.
+    % Initially the line above was `delete(cOutFile)`. I changed to `delete(which(cOutFile))`
+    % following a conversation with Suever (https://chat.stackexchange.com/transcript/message/34122132#34122132)
 end
 fid = fopen(cOutFile,'w');
 for n = 1:numel(C)
