@@ -24,7 +24,7 @@
 													if isequal(in{2}, 1), in{2} = [1 3 2]; elseif isequal(in{2}, 2), in{2} = [3 2 1]; elseif isequal(in{2}, 3), in{2} = [2 1 3]; end
 													out{1} = permute(in{:});
 													end
-X!	1	2	2		1	1	1		true	true	true	true	out{1} = rot90(in{:});	rotate array 90 degrees	\matlab+rot90+
+X!	1	2	2		1	1	1		true	true	true	true	out{1} = rot90(in{:});	rotate array in steps of 90 degrees	\matlab+rot90+
 Y!	1	1	1		0	2	2		true	true	true	false	[out{:}] = system(in{:});	execute system command	\matlab+system+
 Z!	1	1	1		1	1	1		true	true	true	true	out{1} = full(in{1});	convert sparse matrix to full matrix	\matlab+full+
 "
@@ -204,9 +204,10 @@ Z(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													end
 													end
 													out{1} = array(indices{:});
-													if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
+													if nout>1, y = array; if ~isvector(y), y = y(:).'; end; y(indices{:}) = []; out{2} = y; end
 % This code above for ) indexing has been a little difficult. It had to correctly handle an arbitrary number of indices, possibly with partially linear indexing; and end-based indexing. Then I added modular indexing (for scalar indices). / Then I changed end-based indexing, which allowed me to modular indexing not only for scalar indices
 % Indexing can be done with chars, but then modulo and rounding are not applied (hence `if ~islogical(indices{n}) && ~ischar(indices{n})` and not just `if ~islogical(indices{n})`). This is because `':'` used as an index has a special meaning in Matlab, and also in MATL
+% That `isvector` above is needed because `y = [1 3 5; 2 4 6]; y([1 3 5]) = []` gives `[2 4 6]` in Matlab but `[2; 4; 6]` in Octave (4.0.0). The pattern seems to be: if ~isvector(y), Matlab reshapes as a row, whereas Octave reshapes as a column
 X)	2	inf	2		0	inf	-1		true	true	true	true	array = in{1};	reference {} indexing	reference \matlab+{ }+ indexing
 													assert(iscell(array), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
 													indices = in(2:end);
