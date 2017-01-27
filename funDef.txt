@@ -1442,7 +1442,7 @@ Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1})	replace s
 													if islogical(in{3}), y = logical(y); end
 													out{1} = y; clear t p r m n mem
 													end
-u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'rows'};	unique	\matlab+unique+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique element. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'rows'+. \sa \matl+Xu+
+u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'};	unique	\matlab+unique+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique element. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl+Xu+
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if numel(in)==1 || (numel(in)==2 && strcmp(in{2}, 'rows')), in{end+1} = 'stable'; end
 													if iscell(in{1}) && ~ischar(in{1}{1})
@@ -1465,7 +1465,7 @@ u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'rows'};	unique	\ma
 													out{4} = count; clear id count
 													end
 													end
-Xu	1	3	1		1	4	1		true	true	true	true	str = {'stable' 'sorted'};	unique rows	\matlab+unique(..., 'rows', ...)+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique row. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+. \sa \matl+u+
+Xu	1	3	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first'};	unique rows	\matlab+unique(..., 'rows', ...)+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique row. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+. \sa \matl+u+
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if numel(in)<=1, in{end+1} = 'stable'; end
 													[out{1:min(nout,3)}] = unique(in{1}, 'rows', in{2:end});

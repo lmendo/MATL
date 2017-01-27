@@ -1,7 +1,8 @@
 function varargout = unique(varargin)
-% - Adds support for 'stable' flag, with all three outputs
-% - The first ocurrence is returned, as in new Matlab versions. Octave, like old
-% Matlab version, returns the last.
+% - Adds support for 'stable' flag, with all three outputs. If 'stable' or 'sorted'
+% are used they must be the last input
+% - The first ocurrence is returned by default, as in new Matlab versions. Octave,
+% like old Matlab version, returns the last y default.
 % - Second and third outputs are column vectors, as in new Matlab versions. 
 if nargin>=2 && strcmp(varargin{end},'stable')
     if strcmp(varargin{2},'rows')
@@ -28,7 +29,7 @@ if nargin>=2 && strcmp(varargin{end},'stable')
 else
     if strcmp(varargin{end},'sorted'), varargin(end) = []; end
     varargout = cell(1,nargout);
-    if ~isequal(varargin{end},'first'), varargin{end+1} = 'first'; end
+    if ~any(cellfun(@(x) any(strcmp(x, {'first', 'last'})), varargin(2:end))), varargin{end+1} = 'first'; end
     [varargout{:}] = builtin('unique', varargin{:});
 end
 if nargout>=2, varargout{2} = varargout{2}(:); end
