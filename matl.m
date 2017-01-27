@@ -177,7 +177,7 @@ else
     if verbose
         fprintf('Loading help file ''%s''\n', helpFile)
     end
-    load help
+    load(helpFile)
 end
 if verbose
     fprintf('  %i help entries found\n', numel(H.source))

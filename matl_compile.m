@@ -85,6 +85,12 @@ appendLines('warningState = warning;', 0);
 appendLines('format compact; format long; warning(''off'',''all''); close all', 0) % clc
 appendLines('defaultColorMap = get(0, ''DefaultFigureColormap'');', 0)
 appendLines('set(0, ''DefaultFigureColormap'', gray(256));', 0)
+
+% Setup a few cleanup objects to reset settings even if there is an error
+appendLines('cleanup_warn = onCleanup(@()warning(warningState));', 0);
+appendLines('cleanup_diary = onCleanup(@()diary(''off''));', 0);
+appendLines('cleanup_cmap = onCleanup(@()set(0, ''DefaultFigureColormap'', defaultColorMap));', 0);
+
 if ~isMatlab
     appendLines('page_screen_output(false, ''local'');', 0)
     appendLines('page_output_immediately(true, ''local'');', 0)
@@ -327,11 +333,6 @@ for n = 1:numel(S)
     end
 end
 
-% Set final conditions
-appendLines('', 0)
-appendLines('% Set final conditions', 0)
-appendLines('diary off; warning(warningState);', 0);
-appendLines('set(0, ''DefaultFigureColormap'', defaultColorMap);', 0)
 appendLines('', 0)
 appendLines('end', 0) % close function, in case there are subfunctions
 
