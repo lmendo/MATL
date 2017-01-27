@@ -86,11 +86,20 @@ appendLines('warningState = warning;', 0);
 appendLines('format compact; format long; warning(''off'',''all''); close all', 0) % clc
 appendLines('defaultColorMap = get(0, ''DefaultFigureColormap'');', 0)
 appendLines('set(0, ''DefaultFigureColormap'', gray(256));', 0)
+<<<<<<< HEAD
 % Setup a few cleanup objects to reset initial conditions at the end of the program even if there
 % is an error. Thanks, Suever!
 appendLines('cleanup_warn = onCleanup(@()warning(warningState));', 0);
 appendLines('cleanup_diary = onCleanup(@()diary(''off''));', 0);
 appendLines('cleanup_cmap = onCleanup(@()set(0, ''DefaultFigureColormap'', defaultColorMap));', 0);
+=======
+
+% Setup a few cleanup objects to reset settings even if there is an error
+appendLines('cleanup_warn = onCleanup(@()warning(warningState));', 0);
+appendLines('cleanup_diary = onCleanup(@()diary(''off''));', 0);
+appendLines('cleanup_cmap = onCleanup(@()set(0, ''DefaultFigureColormap'', defaultColorMap));', 0);
+
+>>>>>>> origin/master
 if ~isMatlab
     appendLines('page_screen_output(false, ''local'');', 0)
     appendLines('page_output_immediately(true, ''local'');', 0)
@@ -333,9 +342,14 @@ for n = 1:numel(S)
     end
 end
 
+<<<<<<< HEAD
 % Close function, in case there are subfunctions
 appendLines('', 0)
 appendLines('end', 0) 
+=======
+appendLines('', 0)
+appendLines('end', 0) % close function, in case there are subfunctions
+>>>>>>> origin/master
 
 % Define subfunctions for compatibility with Octave
 % If any of the names in `fnames` is found, the content of the file
