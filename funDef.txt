@@ -97,15 +97,31 @@ Z'	0	1	0	1	1	1	1		true	true	true	true	if numel(in)==0, out{1} = now;	current dat
 													elseif numel(in)==1, c = clock; out{1} = c(in{1});
 													else error('MATL:runtime', 'MATL run-time error: too many inputs'); end
 (	3	inf	3	4	1	1	1		true	true	true	true	if numel(in)==3 && iscell(in{3})	assignment ( ) indexing	assignment \matlab+( )+ indexing. Null assignment (\matlab+x(...) = []+) can only be done with a single index. \sa \matl+Y(+, \matl+Z(+
-													sz = size(in{1}); inds = in{3};
-													cp = cumprod(sz(1:end-1));
-													linind = inds{1};
-													for n = 2:numel(inds)
-													linind = linind + cp(n-1)*(inds{n}-1);
+													arrayDestination = in{1};
+													arrayData = in{2};
+													indices = in{3};
+													Ni = numel(indices);
+													numelmax = max(cellfun(@numel, indices));
+													for n = 1:Ni
+													if isscalar(indices{n}), indices{n} = repmat(indices{n},1,numelmax); else indices{n} = reshape(indices{n},1,[]); end
+													end; clear numelmax
+													indmat = vertcat(indices{:});
+													for k = 1:size(indmat,2)
+													indcol = indmat(:,k);
+													sz = size(arrayDestination);
+													if Ni<numel(sz), sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ]; elseif Ni>numel(sz), sz = [ sz ones(1,Ni-numel(sz)) ]; end
+													indcol = round(indcol);
+													nonpos = indcol<=0;
+													indcol(nonpos) = mod(indcol(nonpos).'-1,sz(nonpos))+1;
+													indcol = num2cell(indcol);
+													if ~isempty(arrayData), arrayDestination(indcol{:}) = arrayData(k);
+													else arrayDestination(indcol{:}) = [];
 													end
-													in{3} = linind;
-													clear inds sz cp n
 													end
+													out{1} = arrayDestination;
+													clear arrayDestination arrayData indices indmat indcol nonpos Ni sz n k
+% Above is for "linear-like" indexing; below is "normal"
+													else
 													arrayDestination = in{1};
 													arrayData = in{2};
 													indices = in(3:end);
@@ -127,24 +143,41 @@ Z'	0	1	0	1	1	1	1		true	true	true	true	if numel(in)==0, out{1} = now;	current dat
 													else arrayDestination(indices{:}) = [];
 													end
 													out{1} = arrayDestination;
+													clear arrayDestination arrayData indices Ni sz n
+													end
 % This code above was easy, after the code for ) had been done
 % shiftdim is needed to preserve end-index shape (the colon operation gives a row vector both for say [1 0] and [1;0]). I realized this here, with assignment indexing. For referencing indexing and for curly-brace indexing it probably doesn't matter, but I also add the shiftdim operation there just in case
 % `data = []; x=[5 4 7]; x([1 3]) = data;` doesn't work. It has to be `data = []; x=[5 4 7]; x([1 3]) = [];`. In addition, for indexing with various indices, all of them except for one should be `:`. But MATL doesn't have `:`. So assignment with [] only works with one index.
-X(	3	inf	3		1	1	1		true	true	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{end};	assignment {} indexing	assignment \matlab+{ }+ indexing
+X(	3	inf	3		1	1	1		true	true	true	true	assert(iscell(in{1}), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')	assignment {} indexing	assignment \matlab+{ }+ indexing
+													if numel(in)==3, in{4} = 1; end; Ni = in{end};
 													if in{end}==1 && iscell(in{end-1})
-													sz = size(in{1}); inds = in{end-1};
-													cp = cumprod(sz(1:end-1));
-													linind = inds{1};
-													for n = 2:numel(inds)
-													linind = linind + cp(n-1)*(inds{n}-1);
+													indices = in{end-1};
+													Ni = numel(indices);
+													data = in(2:end-2);
+													arrayDestination = in{1};
+													numelmax = max(cellfun(@numel, indices));
+													for n = 1:Ni
+													if isscalar(indices{n}), indices{n} = repmat(indices{n},1,numelmax); else indices{n} = reshape(indices{n},1,[]); end
+													end; clear numelmax
+													indmat = vertcat(indices{:});
+													for k = 1:size(indmat,2)
+													indcol = indmat(:,k);
+													sz = size(arrayDestination);
+													if Ni<numel(sz), sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ]; elseif Ni>numel(sz), sz = [ sz ones(1,Ni-numel(sz)) ]; end
+													indcol = round(indcol);
+													nonpos = indcol<=0;
+													indcol(nonpos) = mod(indcol(nonpos).'-1,sz(nonpos))+1;
+													indcol = num2cell(indcol);
+													arrayDestination(indcol{:}) = data(k);
 													end
-													in{end-1} = linind;
-													clear inds sz cp n
-													end
+													out{1} = arrayDestination;
+													clear arrayDestination data indices indmat indcol nonpos Ni sz n k
+% Above is for "linear-like" indexing; below is "normal"
+													else
+													Ni = in{end};
 													indices = in(end-Ni:end-1);
 													data = in(2:end-Ni-1);
 													arrayDestination = in{1};
-													assert(iscell(arrayDestination), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
 													sz = size(arrayDestination);
 													if Ni<numel(sz), sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ]; elseif Ni>numel(sz), sz = [ sz ones(1,Ni-numel(sz)) ]; end
 													for n = 1:Ni
@@ -162,6 +195,8 @@ X(	3	inf	3		1	1	1		true	true	true	true	if numel(in)==3, in{4} = 1; end; Ni = in{
 													if numel(nei)==1, nei = [nei 1]; end
 													arrayDestination(indices{:}) = reshape(data, nei);
 													out{1} = arrayDestination;
+													clear arrayDestination data indices Ni sz n
+													end
 % This code above was based on that for (.
 % An added difficulty is that `[arrayDestination{indices{:}}] = deal(data{:})` doesn't work (but explicitly writing the indices does work!: [arrayDestination{1:2, 3:4}] = deal(data{:}) ). So I had to use () indexing on the LHS and reshape on the RHS
 % nnz works for numeric, logical or char indices
@@ -210,16 +245,20 @@ Z(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													out{1} = arrayDestination;
 % The code for Z( is the same as for ( except for the `indices = ...` line
 )	2	inf	2		1	2	1	2	true	true	true	true	if numel(in)==2 && iscell(in{2})	reference ( ) indexing / split array	reference \matlab+( )+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl+Y)+, \matl+Z)+
-													sz = size(in{1}); inds = in{2};
-													cp = cumprod(sz(1:end-1));
-													linind = inds{1};
-													for n = 2:numel(inds)
-													linind = linind + cp(n-1)*(inds{n}-1);
-													end
-													in{2} = linind;
-													clear inds sz cp n
-													end
-% Code above taken from `X]` (that is, like `sub2ind` but without input restrictions). It replaces a collection of indices contained in a cell array by an equivalent linear index
+													array = in{1};
+													indices = in{2};
+													Ni = numel(indices);
+													[~,nmax] = max(cellfun(@numel, indices));
+													for n = [1:nmax-1 nmax+1:Ni]
+													if isscalar(indices{n}), indices{n} = repmat(indices{n}, size(indices{nmax})); else indices{n} = reshape(indices{n}, size(indices{nmax})); end
+													end; clear nmax
+													sz = size(array);
+													if Ni<numel(sz), sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ]; elseif Ni>numel(sz), sz = [ sz ones(1,Ni-numel(sz)) ]; end
+													if numel(sz)==1, sz = [sz 1]; end
+													for n = 1:Ni, indices{n} = mod(round(indices{n})-1,sz(n))+1; end
+													indices = {sub2ind(sz, indices{:})};
+% Above is for "linear-like" indexing; below is "normal"
+													else
 													array = in{1};
 													indices = in(2:end);
 													Ni = numel(indices);
@@ -234,21 +273,29 @@ Z(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													indices{n} = mod(round(indices{n})-1,sz(n))+1;
 													end
 													end
+													end
 													out{1} = array(indices{:});
 													if nout>1, y = array; if ~isvector(y), y = y(:).'; end; y(indices{:}) = []; out{2} = y; end
-% This code above for ) indexing has been a little difficult. It had to correctly handle an arbitrary number of indices, possibly with partially linear indexing; and end-based indexing. Then I added modular indexing (for scalar indices). / Then I changed end-based indexing, which allowed me to modular indexing not only for scalar indices
+													clear indices array Ni sz n
+% This code above for ) indexing has been a little difficult. It had to correctly handle an arbitrary number of indices, possibly with partially linear indexing; and end-based indexing. Then I added modular indexing (for scalar indices). / Then I changed end-based indexing, which allowed me to modular indexing not only for scalar indices. Then came linear-like indexing
 % Indexing can be done with chars, but then modulo and rounding are not applied (hence `if ~islogical(indices{n}) && ~ischar(indices{n})` and not just `if ~islogical(indices{n})`). This is because `':'` used as an index has a special meaning in Matlab, and also in MATL
 % That `isvector` above is needed because `y = [1 3 5; 2 4 6]; y([1 3 5]) = []` gives `[2 4 6]` in Matlab but `[2; 4; 6]` in Octave (4.0.0). The pattern seems to be: if ~isvector(y), Matlab reshapes as a row, whereas Octave reshapes as a column
-X)	2	inf	2		0	inf	-1		true	true	true	true	if numel(in)==2 && iscell(in{2})	reference {} indexing	reference \matlab+{ }+ indexing
-													sz = size(in{1}); inds = in{2};
-													cp = cumprod(sz(1:end-1));
-													linind = inds{1};
-													for n = 2:numel(inds)
-													linind = linind + cp(n-1)*(inds{n}-1);
-													end
-													in{2} = linind;
-													clear inds sz cp n
-													end
+X)	2	inf	2		0	inf	-1		true	true	true	true	assert(iscell(in{1}), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')	reference {} indexing	reference \matlab+{ }+ indexing
+													if numel(in)==2 && iscell(in{2})
+													array = in{1};
+													indices = in{2};
+													Ni = numel(indices);
+													[~,nmax] = max(cellfun(@numel, indices));
+													for n = [1:nmax-1 nmax+1:Ni]
+													if isscalar(indices{n}), indices{n} = repmat(indices{n}, size(indices{nmax})); else indices{n} = reshape(indices{n}, size(indices{nmax})); end
+													end; clear nmax
+													sz = size(array);
+													if Ni<numel(sz), sz = [ sz(1:Ni-1) prod(sz(Ni:end)) ]; elseif Ni>numel(sz), sz = [ sz ones(1,Ni-numel(sz)) ]; end
+													if numel(sz)==1, sz = [sz 1]; end
+													for n = 1:Ni, indices{n} = mod(round(indices{n})-1,sz(n))+1; end
+													indices = {sub2ind(sz, indices{:})};
+% Above is for "linear-like" indexing; below is "normal"
+													else
 													array = in{1};
 													assert(iscell(array), 'MATL:runtime', 'MATL run-time error: a cell array is needed as first input')
 													indices = in(2:end);
@@ -264,8 +311,10 @@ X)	2	inf	2		0	inf	-1		true	true	true	true	if numel(in)==2 && iscell(in{2})	refer
 													indices{n} = mod(round(indices{n})-1,sz(n))+1;
 													end
 													end
+													end
 													out = reshape(array(indices{:}),1,[]);
 													if nout>=0, out = out(1:nout); end
+													clear indices array Ni sz n
 Y)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing with final colon	reference \matlab+(..., :)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind,:)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl+)+, \matl+Z)+
 													indices = [in(2:end) {':'}];
 													Ni = numel(indices);
