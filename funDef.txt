@@ -1601,7 +1601,7 @@ Xw
 Yw
 Zw
 x	0	inf	1		0	0	0		true	true	false	true	;	delete	delete from stack
-Xx	0	1	0	1	0	0	0		true	true	true	true	if numel(in)==1, pause(in{1}/10); end; clc	clear window	\matlab+clc+. With $1$ input \matlab+x+: \matlab+pause(x/10)+ and then \matlab+clc+
+Xx	0	1	0	1	0	0	0		true	true	true	true	if numel(in)==1, if islogical(in{1}) && in{1}, in{1} = 10; end, pause(in{1}/10); end; clc	clear window	\matlab+clc+. With $1$ input \matlab+x+: \matlab+pause(x/10)+ and then \matlab+clc+. Input \matl+T+ is interpreted as \matl+10+
 Yx
 Zx
 y	0	inf	2	3	0	0	0		false	true	false	true	out = in(1);	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs
