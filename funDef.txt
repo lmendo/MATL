@@ -37,8 +37,30 @@ Z"	1	1	1		1	1	1		true	true	true	true	S = ' ';	string or array of blanks	\matlab+
 													out{1} = y; clear S
 #
 X#	0	0	0		0	0	0		false	false	false	true	disp('/-------'), celldisp(STACK), disp('-------/')	display stack contents	display stack as a cell array
-Y#
-Z#	1	3	1	2	0	0	0		true	true	true	false	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Writes first input to file \comp{inout}, creating it if necessary. If the file exists, by default its previous contents are overwritten. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies filename; it is converted to char is necessary; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether previous contents of the file should be kept
+Y#	2	inf	2	3	0	0	0		true	true	true	true	if numel(in)==2	sound / soundsc / audiowrite	(i) With $2$ inputs: \matlab+sound+. If second input is \matl+T+, it is interpreted as \matl+44100+. If second input is \matl+F+, it is interpreted as \matl+44100+ and \matlab+audiowrite+ is called instead of \matlab+sound+, with file name \matlab+'audio.wav'+. (ii) With $3$ inputs: if third input is a truthy scalar, \matlab+soundsc+ is called with the first two inputs. If third input is a numeric vector of size $2$, \matlab+soundsc+ is called with the three inputs. In both cases, \matl+T+ in second input is interpreted as \matl+44100+. If third input is a string, it defines a file name, and \matlab+audiowrite+ is called with that file name and the other two inputs. (iii) With more than $3$ inputs: \matlab+audiowrite+ is called using the third input as file name. Further inputs specify parameter-value pairs. \matl+T+ in second input is interpreted as \matl+44100+. 
+													if islogical(in{2})&&isscalar(in{2})&&in{2}
+													sound(in{1},44100)
+													elseif islogical(in{2})&&isscalar(in{2})&&~in{2}
+													audiowrite('audio.wav',in{1},44100);
+													else
+													sound(in{:})
+													end
+													elseif numel(in)==3
+													if islogical(in{2})&&isscalar(in{2})&&in{2}, in{2} = 44100; end
+													if isscalar(in{3})&&in{3}
+													soundsc(in{1},in{2})
+													elseif isnumeric(in{3})&&numel(in{3})==2
+													soundsc(in{:})
+													elseif ischar(in{3})
+													audiowrite(in{3},in{1},in{2})
+													else
+													error('MATL:runtime', 'MATL run-time error: input not allowed');
+													end
+													else
+													if islogical(in{2})&&isscalar(in{2})&&in{2}, in{2} = 44100; end
+													audiowrite(in{3},in{1},in{2},in{4:end})
+													end
+Z#	1	3	1	2	0	0	0		true	true	true	false	data = in{1}; if ~iscell(data), data = {data}; end	write to file	Writes first input to file \comp{inout}, creating it if necessary. If the file exists, by default its previous contents are overwritten. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies file name; it is converted to char is necessary; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether previous contents of the file should be kept
 													sep = char(10);
 													if numel(in)>=2 && ~isempty(in{2}), file = in{2}; else file = 'inout'; end
 													if numel(in)>=3 && in{3}, perm = 'a'; else perm = 'w'; end
@@ -467,7 +489,7 @@ X9	1	1	1		1	1	1		true	true	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1},
 													out{1} = preLit.(fn).val{k};
 Y9
 Z9
-:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1	range; vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+  if \matlab+x+ is char.
+:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1	range; vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+ if \matlab+x+ is char.
 													if ischar(in{1}), s = ' '; else s = 1; end
 													out{1} = colon(s,in{:}); clear s
 													else

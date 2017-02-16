@@ -119,6 +119,9 @@ X6
 23	'InitialMagnification'
 24	'Parent'
 25	'Reduce'
+30	'BitsPerSample'
+31	'BitRate'
+32	'Quality'
 
 
 X7
