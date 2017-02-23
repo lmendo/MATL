@@ -1,0 +1,263 @@
+\matl{!} & 1--2 (1 / 2) & 1 & If $1$ input: \matlab+.'+ (\matlab+transpose+), or \matlab+permute(..., [2 1 ...])+ for multidimensional arrrays. If $2$ inputs: \matlab+permute+. If the second input is 1, 2 or 3 it indicates which dimension is not permuted for a 3D array; that is, it corresponds to [1 3 2], [3 2 1] or [2 1 3] respectively \\
+\matl{X!} & 1--2 (2) & 1 & \matlab+rot90+ \\
+\matl{Y!} & 1 & 0--2 (2) & \matlab+system+ \\
+\matl{Z!} & 1 & 1 & \matlab+full+ \\
+\matl{X"} & 2-- (3) & 1 & \matlab+repmat+ \\
+\matl{Y"} & 2-- (2 / 3) & 1 & \matlab+repelem+ (run-length decoding) \\
+\matl{Z"} & 1 & 1 & \matlab+blanks+. It allows vector input, and in that case it produces a matrix or multidimensional array \\
+\matl{X\#} & 0 & 0 & display stack as a cell array \\
+\matl{Y\#} & 2-- (2 / 3) & 0 & (i) With $2$ inputs: \matlab+sound+. If second input is \matl{T}, it is interpreted as \matl{44100}. If second input is \matl{F}, it is interpreted as \matl{44100} and \matlab+audiowrite+ is called instead of \matlab+sound+, with file name \matlab+'audio.wav'+. (ii) With $3$ inputs: if third input is a truthy scalar, \matlab+soundsc+ is called with the first two inputs. If third input is a numeric vector of size $2$, \matlab+soundsc+ is called with the three inputs. In both cases, \matl{T} in second input is interpreted as \matl{44100}. If third input is a string, it defines a file name, and \matlab+audiowrite+ is called with that file name and the other two inputs. (iii) With more than $3$ inputs: \matlab+audiowrite+ is called using the third input as file name. Further inputs specify parameter-value pairs. \matl{T} in second input is interpreted as \matl{44100}.  \\
+\matl{Z\#} & 1--3 (1 / 2) & 0 & Writes first input to file \comp{inout}, creating it if necessary. If the file exists, by default its previous contents are overwritten. If the input is an array it is converted to char and written. If the input is a cell array input, the contents of each cell are converted to char and written, with a newline (character 10) in between. With $2$ inputs: second input specifies file name; it is converted to char is necessary; if empty defaults to \comp{inout}. With $3$ inputs: third input specifies whether previous contents of the file should be kept \\
+\matl{X\$} & 1-- (2 / 2) & 0-- (1) & execute Matlab function specified by first input, using the rest of the inputs as arguments. \\
+\matl{Y\$} & 1--2 (2) & 1 & \matlab+char(vpa(...))+ \\
+\matl{Z\$} & 0--1 (0 / 1) & 1 & Reads bytes from specifed file. The output is a row vector of char. If $0$ inputs or empty input: file name is \comp{inout}. \\
+\matl{X\%} & 1 & 1 & class of input (\matlab+class+ with one input) \\
+\matl{Y\%} & 2--3 (2) & 1 & \matlab+cast+. This function allows strings in second input to be replaced by numbers, as follows: 1: \matlab+'uint8'+, 2: \matlab+'int8'+, 3: \matlab+'uint64'+, 4: \matlab+'int64'+, 5: \matlab+'uint16'+, 6: \matlab+'int16'+, 7: \matlab+'uint32'+, 8: \matlab+'int32'+, 9: \matlab+'double'+, 10: \matlab+'single'+ \\
+\matl{Z\%} & 2 & 1 & \matlab+typecast+. This function allows strings in second input to be replaced by numbers, as follows: 1: \matlab+'uint8'+, 2: \matlab+'int8'+, 3: \matlab+'uint64'+, 4: \matlab+'int64'+, 5: \matlab+'uint16'+, 6: \matlab+'int16'+, 7: \matlab+'uint32'+, 8: \matlab+'int32'+, 9: \matlab+'double'+, 10: \matlab+'single'+ \\
+\matl{X\&} & 2--4 (2 / 3) & 1--3 (1) & \matlab+intersect+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{Y\&} & 0-- (2 / $^\ddagger$) & 1 & \matlab+&+ (\matlab+and+), element-wise with singleton expansion \\
+\matl{Z\&} & 2--3 (2) & 1 & \matlab+bitand+, element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl{Z|}, \matl{Z\textasciitilde{}} \\
+\matl{Y'} & 1 & 2 (2 / 2nd) & run-length encoding (inverse of \matlab+repelem+). Input may be an array or cell array. Numeric values must be finite \\
+\matl{Z'} & 0--1 (0 / 1) & 1 & \matlab+now+. With $1$ input: the input should be numeric with values from 1 to 6, which are used as indices into the output of \matlab+clock+ \\
+\matl{(} & 3-- (3 / 4) & 1 & assignment \matlab+( )+ indexing. Null assignment (\matlab+x(...) = []+) can only be done with a single index. \sa \matl{Y(}, \matl{Z(} \\
+\matl{X(} & 3-- (3) & 1 & assignment \matlab+{ }+ indexing \\
+\matl{Y(} & 2-- (3) & 1 & assignment \matlab+(..., :)+ indexing. Null assignment (\matlab+x(..., :) = []+) can only be done with a single index (in addition to the implicit colon). \sa \matl{(}, \matl{Z(} \\
+\matl{Z(} & 2-- (3) & 1 & assignment \matlab+(:, ...)+ indexing. Null assignment (\matlab+x(:, ...) = []+) can only be done with a single index (in addition to the implicit colon). \sa \matl{(}, \matl{Y(} \\
+\matl{)} & 2-- (2) & 1--2 (1 / 2) & reference \matlab+( )+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl{Y)}, \matl{Z)} \\
+\matl{X)} & 2-- (2) & 0-- ($^\bigtriangledown$) & reference \matlab+{ }+ indexing \\
+\matl{Y)} & 1-- (2) & 1--2 (1 / 2) & reference \matlab+(..., :)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind,:)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl{)}, \matl{Z)} \\
+\matl{Z)} & 1-- (2) & 1--2 (1 / 2) & reference \matlab+(:, ...)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(:,ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl{)}, \matl{Y)} \\
+\matl{*} & 1-- (2 / 1) & 1 & \matlab+.*+ (\matlab+times+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{X*} & 2 & 1 & \matlab+kron+ \\
+\matl{Y*} & 2 & 1 & matrix product, \matlab+*+ (\matlab+mtimes+) \\
+\matl{Z*} & 1-- (2 / $^\ddagger$) & 1 & Cartesian product. Given a number $n$ of arrays of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those arrays \\
+\matl{+} & 1-- (2 / 1) & 1 & \matlab|+| (\matlab+plus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{Y+} & 2--3 (2 / 3) & 1 & \matlab+conv2+. Doesn't allow two-vector and one matrix mode. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl{Z+} \\
+\matl{Z+} & 2 & 1 & \matlab+conv2(..., 'same')+. Converts inputs to \matlab+double+. \sa \matl{Y+} \\
+\matl{X,} & 1 & 1 & \matlab+cos+ \\
+\matl{Y,} & 1 & 1 & \matlab+sin+ \\
+\matl{Z,} & 1 & 1 & \matlab+tan+ \\
+\matl{-} & 1--2 (2 / 1) & 1 & \matlab+-+ (\matlab+minus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{X-} & 2--4 (2 / 3) & 1--2 (1) & \matlab+setdiff+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{Y-} & 2 & 1--2 (2 / 1) & \matlab+deconv+ \\
+\matl{Y.} & 0--1 (1) & 0 & \matlab+pause+ (without outputs) \\
+\matl{Z.} & 2--3 (2) & 1 & \matlab+bitget+. If first input is \matlab+char+ it is automatically converted to \matlab+double+ \\
+\matl{/} & 2 & 1 & \matlab+./+ (\matlab+rdivide+), element-wise with singleton expansion \\
+\matl{X/} & 1 & 1 & \matlab+angle+ \\
+\matl{Y/} & 2 & 1 & right matrix division, \matlab+/+ (\matlab+mrdivide+) \\
+\matl{Z/} & 1--3 (1) & 1 & \matlab+unwrap+ \\
+\matl{X0} & 1 & 1 & predefined literal depending on input \\
+\matl{Y0} & 1 & 1 & predefined literal depending on input \\
+\matl{X1} & 1 & 1 & predefined literal depending on input \\
+\matl{Y1} & 1 & 1 & predefined literal depending on input \\
+\matl{X2} & 1 & 1 & predefined literal depending on input \\
+\matl{Y2} & 1 & 1 & predefined literal depending on input \\
+\matl{X3} & 1 & 1 & predefined literal depending on input \\
+\matl{Y3} & 1 & 1 & predefined literal depending on input \\
+\matl{X4} & 1 & 1 & predefined literal depending on input \\
+\matl{Y4} & 1 & 1 & predefined literal depending on input \\
+\matl{X5} & 1 & 1 & predefined literal depending on input \\
+\matl{Y5} & 1 & 1 & predefined literal depending on input \\
+\matl{X6} & 1 & 1 & predefined literal depending on input \\
+\matl{Y6} & 1 & 1 & predefined literal depending on input \\
+\matl{X7} & 1 & 1 & predefined literal depending on input \\
+\matl{X8} & 1 & 1 & predefined literal depending on input \\
+\matl{X9} & 1 & 1 & predefined literal depending on input \\
+\matl{:} & 1--3 (1 / 2) & 1 & \matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+ if \matlab+x+ is char. \\
+\matl{X:} & 1 & 1 & linearize to column array (index with \matlab+(:)+) \\
+\matl{Y:} & 1 & 0-- ($^\triangle$) & generate comma-separated list from cell array (index with \matlab+{:}+) and push each element onto stack \\
+\matl{Z:} & 2--4 (3) & 1 & \matlab+bitset+. If first input is \matlab+char+ it is automatically converted to \matlab+double+ \\
+\matl{X;} & 1 & 1 & \matlab+acos+ \\
+\matl{Y;} & 1 & 1 & \matlab+asin+ \\
+\matl{Z;} & 2 & 1 & \matlab+atan2+, element-wise with singleton expansion \\
+\matl{<} & 1--2 (2 / 1) & 1 & \matlab+<+ (\matlab+lt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{X<} & 1--3 (1) & 1--2 (1 / 2nd) & \matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl{[]}. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if input is. \sa \matl{X>}, \matl{Xl} \\
+\matl{Y<} & 1--3 (1 / 2) & 1 & \matlab+cummin+. Output is \matlab+char+ if input is. \sa \matl{Y>} \\
+\matl{=} & 1--2 (2 / 1) & 1 & \matlab+==+ (\matlab+eq+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{X=} & 0-- (2 / $^\ddagger$) & 1 & \matlab+isequal+. Works for any number of inputs \\
+\matl{Y=} & 2 & 1 & \matlab+strcmp+. If first or second inputs are numeric they are converted to char \\
+\matl{>} & 1--2 (2 / 1) & 1 & \matlab+>+ (\matlab+gt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{X>} & 1--3 (1) & 1--2 (1 / 2nd) & \matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl{[]}. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if input is. \sa \matl{X<}, \matl{Xl} \\
+\matl{Y>} & 1--3 (1 / 2) & 1 & \matlab+cummax+. Output is \matlab+char+ if input is. \sa \matl{Y<} \\
+\matl{Y?} & 0 & 1 & answer why. Sort of \\
+\matl{Z?} & 1--6 (3) & 1 & \matlab+sparse+ \\
+\matl{Y@} & 1--2 (1 / 2) & 1 & If $1$ input: \matlab+perms+. If $2$ inputs: variations (without repetition). In either case, the results are sorted \\
+\matl{Z@} & 1--3 (1 / 2) & 1 & \matlab+randperm+ (produces a row vector as output). If $3$ inputs: third input indicates number of permutations, each on a different row. If first input is char it is interpreted as population (not as size) \\
+\matl{A} & 1--2 (1 / 2) & 1 & \matlab+all+. \sa \matl{XA} \\
+\matl{XA} & 1 & 1 & \matlab+all(..., 1)+. \sa \matl{A} \\
+\matl{YA} & 2--3 (2 / 3) & 1 & (i) \matlab+dec2base+. (ii) If second input has more than one element: it defines the symbols, which can be characters or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii) Base \matl{0} is interpreted as \matl{10}, \matl{1} as \matl{16}, \matl{F} as \matl{0:9}, \matl{T} as \matl{0:15}. \sa \matl{ZA}, \matl{Za} \\
+\matl{ZA} & 2 & 1 & (i) \matlab+base2dec+. (ii) If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$. (iii) If second input is a negative number \matlab+-n+: it is interpreted as symbols \matlab+0:n-1+ (case ii). (i, ii, iii) Non-recognized digits are ignored. Base \matl{0} is interpreted as \matl{10}, \matl{1} as \matl{16}, \matl{F} as \matl{0:9}, \matl{T} as \matl{0:15}. \sa \matl{YA}, \matl{Za} \\
+\matl{B} & 1--2 (1 / 2) & 1 & \matlab|logical(dec2bin(...)-'0')|. \sa \matl{YB} \\
+\matl{XB} & 1 & 1 & \matlab|bin2dec(char(logical(...)+'0'))|. Works also for cell array input. \sa \matl{ZB} \\
+\matl{YB} & 1--2 (1 / 2) & 1 & \matlab|dec2bin|. \sa \matl{B} \\
+\matl{ZB} & 1 & 1 & \matlab|bin2dec|. \sa \matl{XB} \\
+\matl{XC} & 1--7 (2) & 1--3 (1) & \matlab+histcounts+ \\
+\matl{YC} & 2--4 (2) & 1 & \matlab+im2col+. If the second input is a scalar \matlab+n+, it is transformed into \matlab+[1 n]+ if the first input is a row vector, or to \matlab+[n 1]+ otherwise. First input can also be a cell array. \sa \matl{ZC} \\
+\matl{ZC} & 2--3 (2) & 1 & \matlab+im2col(..., 'distinct')+. If the second input is a scalar n, it is transformed into [1 n] if the first input is a row vector, or to [n 1] otherwise. First input can also be a cell array. \sa \matl{YC} \\
+\matl{D} & 0-- (1) & 0--1 (0 / 1) & (i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. (ii) With $1$ output: \matlab+mat2str+. Empty arrays are always shown as \matlab+[]+, \matlab+''+ or \matlab+{}+. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the column separator should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl{XD}, \matl{YD}, \matl{ZD} \\
+\matl{XD} & 0-- ($^\ddagger$ / 1) & 0 & \matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl{D}, \matl{YD}, \matl{ZD} \\
+\matl{YD} & 1-- (2) & 0--2 (1) & \matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl{D}, \matl{XD}, \matl{ZD} \\
+\matl{ZD} & 0-- (1) & 0 & \matlab+disp+ for each input. For char input, most characters below 32 are replaced by space. \sa \matl{D}, \matl{XD}, \matl{YD} \\
+\matl{E} & 1 & 1 & \matlab|(...)*2| \\
+\matl{XE} & 3 & 1 & With numeric or char inputs, replace in first input all occurrences of each element of the second input by the corresponding element of the third input. The third input may be longer than the second, and then the extra elements are ignored. Or it may have a single element, and then it is implicitly replicated. Output has the same class and size as the first input. If the three inputs are cell arrays of strings (the second may also be a string instead of a cell array of strings), each string of the first input is considered atomic, that is, replacing is based on whole strings. If the first input is a cell array and the others are numeric or char, replacing is done on each cell's contents as if the cell's contents were the first input \\
+\matl{YF} & 1 & 1--2 (1 / 2) & (i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. (ii) With $2$ outputs: first output gives the prime factors, second is as before. \sa \matl{Yf} \\
+\matl{G} & 0--1 ($^\sqcup$ / 0) & 0-- ($^\sqcap$) & paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level \\
+\matl{XG} & 1-- (1 / 2) & 0 & \matlab+plot+. Calls \matlab+drawnow+ to update figure immediately. With one input, if the input is complex (even with zero imaginary part), \matlab+axis equal+ is also called. \\
+\matl{YG} & 2-- (2 / 3) & 0 & \matlab+imwrite+, \matlab+imagesc+, \matlab+image+ or \matlab+imshow+. (i) If last input is a scalar: \matlab+0+ corresponds to \matlab+imwrite+, \matlab+1+ to \matlab+imagesc+, \matlab+2+ to \matlab+image+ and \matlab+3+ to \matlab+imshow+. The corresponding function is called with the remaining inputs. (ii) If last input is numeric and not a scalar: \matlab+imshow+ is called with all inputs. (iii) If last input is char: \matlab+imwrite+ is called with all inputs. (i, iii) For \matlab+imwrite+, the first input of type char is interpreted as file name. If it has no extension '.png' is added; if it's empty it is replaced by 'image.png'; and if non existent 'image.png' is used as final input. (i, ii, iii) For \matl{imshow} and \matl{imwrite}, if the second input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. For \matlab+imagesc+ and \matlab+image+, the function call is followed by \matlab+axis ij, axis image+. For \matlab+imagesc+, \matlab+image+ and \matlab+imshow+, \matlab+drawnow+ is called to update figure immediately \\
+\matl{ZG} & 1-- (2 / 3) & 0--1 (0) & Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately. Flag strings in first to second-last inputs can be replaced by numbers, as follows: 1: \matlab+'equal'+, 2: \matlab+'image'+, 3: \matlab+'square'+, 4: \matlab+'ij'+, 5: \matlab+'xy'+, 6: \matlab+'normal'+, 7: \matlab+'off'+, 8: \matlab+'on'+, 9: \matlab+'tight'+, 10: \matlab+'manual'+, 11: \matlab+'fill'+, 12: \matlab+'auto'+, 13: \matlab+'vis3d'+.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+ \\
+\matl{H} & 0 & 0-- ($^\dagger$) & paste from clipboard H \\
+\matl{XH} & 0-- (1 / 2) & 0 & copy to clipboard H \\
+\matl{I} & 0 & 0-- ($^\dagger$) & paste from clipboard I \\
+\matl{XI} & 0-- (1) & 0 & copy to clipboard I \\
+\matl{YI} & 3--4 (3 / 4) & 1 & \matlab+col2im+. Uses \matlab+'distinct'+ option by default. Second and third inputs may be scalars, and then they are interpreted as numbers of columns. Third input may be a two-vector with product less then the number of elements of first input, and then it is appropriately scaled. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'distinct'+, 2: \matlab+'sliding'+ \\
+\matl{J} & 0 & 0-- ($^\dagger$) & paste from clipboard J \\
+\matl{XJ} & 0-- (1) & 0 & copy to clipboard J \\
+\matl{K} & 0 & 0-- ($^\dagger$) & paste from clipboard K \\
+\matl{XK} & 0-- (1) & 0 & copy to clipboard K \\
+\matl{L} & 1 & 0-- ($^\dagger$) & paste from multi-level clipboard L. Input specifies level \\
+\matl{XL} & 1-- (2 / 3) & 0 & copy to multi-level clipboard L. Topmost input specifies level \\
+\matl{YL} & 1-- (2 / 3) & 1-- (1) & \matlab+gallery+ with matrix name as last input. Also includes \matlab+magic+, \matlab+hilb+, \matlab+invhilb+, \matlab+hadamard+, \matlab+pascal+, \matlab+spiral+. This function allows some strings in last input to be replaced by numbers, as follows:  1: \matlab+'spiral'+, 2: \matlab+'pascal'+, 3: \matlab+'magic'+, 4: \matlab+'hadamard'+, 5: \matlab+'circul'+, 6: \matlab+'gcdmat'+, 7: \matlab+'minij'+, 8: \matlab+'hilb'+, 9: \matlab+'invhilb'+, 10: \matlab+'tridiag'+, 11: \matlab+'ris'+ \\
+\matl{M} & 1 & 0-- ($^\ast$) & paste from function-input clipboard M. Input specifies level ($1$ to $4$) or individual input ($5$ or larger) \\
+\matl{XM} & 1--2 (1) & 1--3 (1) & \matlab+mode+. First input can be a cell array of strings \\
+\matl{N} & 0 & 1 & number of elements in the stack \\
+\matl{XN} & 2 & 1 & \matlab+nchoosek+. This interprets first input as an array (even if it is a single number). For inputs \matlab+x+ and \matlab+k+, if \matlab+x+ has less than \matlab+k+ elements or if \matlab+k+ is non-positive the result is an empty array. \sa \matl{Xn} \\
+\matl{YN} & 0-- (0) & 1 & \matlab+NaN+ function. If $0$ inputs: produces literal \matlab+NaN+. \\
+\matl{ZN} & 1 & 1 & \matlab+isnan+ \\
+\matl{O} & 0-- (0 / 2) & 1 & \matlab+zeros+ (if $0$ inputs: produces output $0$) \\
+\matl{XO} & 1--4 (2) & 1 & \matlab+datestr+ \\
+\matl{YO} & 1--6 (1 / 2) & 1 & \matlab+datenum+. With $2$ inputs, if the second input is numeric it is interpreted as a format specifier as in \matlab+datestr+ \\
+\matl{ZO} & 1--3 (1 / 2) & 1--6 (1) & \matlab+datevec+ \\
+\matl{P} & 1--2 (1 / 2) & 1 & \matlab+flip+. \sa \matl{XP} \\
+\matl{XP} & 1 & 1 & \matlab+flipud+. \sa \matl{P} \\
+\matl{YP} & 0 & 1 & \matlab+pi+ \\
+\matl{ZP} & 2--5 (2 / 3) & 1--2 (1) & \matlab+pdist2+. Only predefined distance functions are allowed. This function allows flag strings in the third input to be replaced by numbers, as follows:  1: \matlab+'cityblock'+, 2: \matlab+'hamming'+, 3: \matlab+'chebychev'+, 4: \matlab+'correlation'+, 5: \matlab+'cosine'+, 6: \matlab+'seuclidean'+, 7: \matlab+'minkowski'+, 8: \matlab+'mahalanobis'+, 9: \matlab+'spearman'+, 10: \matlab+'jaccard'+, 11: \matlab+'euclidean'+ \\
+\matl{Q} & 1 & 1 & \matlab|(...)+1| \\
+\matl{XQ} & 2--6 (3) & 1 & \matlab+accumarray+. If first input is \matlab+char+ it is converted to \matlab+double+. The third input may be omitted, and then it is interpreted as \matlab+[]+. Fourth/third argument specifies an anonymous function, as follows:  1: \matlab+'@sum'+, 2: \matlab+'@mean'+, 3: \matlab+'@(x){sort(x).'}'+, 4: \matlab+'@max'+, 5: \matlab+'@min'+, 6: \matlab+'@prod'+, 7: \matlab+'@(x){x.'}'+, 8: \matlab+'@(x){x}'+, 9: \matlab+'@(x){sort(x)}'+, 10: \matlab+'@(x)x(1)'+, 11: \matlab+'@(x)x(end)'+, 12: \matlab+'@(x){cumsum(x).'}'+, 13: \matlab+'@(x){cumprod(x)}'+, 14: \matlab+'@nansum'+, 15: \matlab+'@nanmean'+, 16: \matlab+'@nanmax'+, 17: \matlab+'@nanmin'+, 18: \matlab+'@(x){cummax(x).'}'+, 19: \matlab+'@(x){cummin(x)}'+, 20: \matlab+'@(x){cummax(x).'}'+, 21: \matlab+'@(x){cummin(x)}'+ \\
+\matl{ZQ} & 1--3 (2 / 1) & 1 & (i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+ \\
+\matl{R} & 1--2 (1 / 2) & 1 & \matlab+triu+. \sa \matl{XR}. \\
+\matl{XR} & 1--2 (1 / 2) & 1 & \matlab+triu(..., 1)+. If $2$ inputs: builds an upper triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl{R}, \matl{ZR} \\
+\matl{YR} & 1--2 (1 / 2) & 1 & \matlab+tril+. \sa \matl{ZR}. \\
+\matl{ZR} & 1--2 (1 / 2) & 1 & \matlab+tril(..., -1)+. If $2$ inputs: builds a lower triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl{XR}, \matl{YR}. \\
+\matl{S} & 1--3 (1) & 1--2 (1 / 2nd) & sort an array (\matlab+sort+) / sort an array based on another. (i) Single-array mode works like Matlab's \matlab+sort+. If $2$ inputs, a negative value of the second input corresponds to descending order. If first input is a cell array and the first cell contains a char array, the rest of the cells' contents are converted to char. (ii) If the first input is a cell array and the first cell contains a numeric array, single-array numeric mode is used. The first input is linearized if it's not a vector, and its contents are linearized for the purposes of sorting. The first input is then sorted in lexicographic order, ignoring other inputs. (iii) In two-array mode, this function takes as first $2$ inputs an array and a vector array which is not char. If the first array is not a vector it is linearized. The second vector is sorted and its order is applied to the first. An optional third input specifies direction as a string, or as a negative number in the non-singleton dimension of the second vector. The outputs are the two sorted arrays. (In two-array mode, if the two input arrays are scalar the result is the same as if the second input is interpreted as dimension, corresponding to single array mode). \sa \matl{XS} \\
+\matl{XS} & 1--2 (1) & 1--2 (1 / 2nd) & \matlab+sortrows+. \sa \matl{S} \\
+\matl{YS} & 2--3 (2 / 3) & 1 & \matlab+circshift+. If second input is a scalar and there's no third input, the shift is applied along the first non-singleton dimension. This function also allows first input a 2D array; third input a scalar specifying dimension; and second input a vector or array specifying the shift for each position in the other dimension \\
+\matl{ZS} & 1 & 1 & \matlab+sign+ \\
+\matl{YT} & 1--2 (2) & 1 & \matlab+toeplitz+ \\
+\matl{U} & 1 & 1--2 (1) & (i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl{D}). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. The second output is supported in all cases. (ii) For numeric input: \matlab+(...).^2+ \\
+\matl{XU} & 1 & 1 & \matlab+str2double+ \\
+\matl{V} & 1--2 (1 / 2) & 1 & \matlab+num2str+. Uses format \matlab+'%.15g '+ by default. To get Matlab's default format use \matlab+[]+ as format specification \\
+\matl{W} & 1 & 1 & \matlab+2.^(...)+. Array power (or rather exponentiation) with base $2$ \\
+\matl{XX} & 2--9 (2 / 3) & 1--6 ($^\Diamond$) & \matlab+regexp+. With $2$ inputs and $1$ output: \matlab+regexp(..., ..., 'match')+. If first or second inputs are numeric they are converted to char. If they are numeric or char arrays they are linearized into a row. If they are cells their contents are converted to char. \matlab+'names'+ output is not supported. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'start'+, 2: \matlab+'split'+, 3: \matlab+'end'+, 4: \matlab+'once'+, 5: \matlab+'tokenExtents'+, 6: \matlab+'tokens'+, 7: \matlab+'match'+ \\
+\matl{YX} & 3--5 (3 / 4) & 1 & \matlab+regexprep+. If first, second or third inputs are numeric they are converted to char. If they are numeric or char arrays they are linearized into a row. If they are cells their contents are converted to char \\
+\matl{YY} & 0-- (0) & 1 & \matlab+inf+ function. If $0$ inputs: produces literal \matlab+inf+. \\
+\matl{ZY} & 1 & 1 & \matlab+isinf+ \\
+\matl{X[} & 2 & 1-- ($^\triangle$) & \matlab+ind2sub+ without input restrictions \\
+\matl{\textbackslash } & 2 & 1--2 (1 / 2) & \matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. \sa \matl{X\textbackslash }, \matl{o} \\
+\matl{X\textbackslash } & 2 & 1 & \matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl{\textbackslash } \\
+\matl{Y\textbackslash } & 2 & 1 & left matrix division, \matlab+\+ (\matlab+mldivide+) \\
+\matl{Z\textbackslash } & 1 & 1 & divisors of a number. For negative input the absolute value is used \\
+\matl{X]} & 3-- (3) & 1 & \matlab+sub2ind+ without input restrictions \\
+\matl{\textasciicircum{}} & 2 & 1 & \matlab+.^+ (\matlab+power+), element-wise with singleton expansion \\
+\matl{X\textasciicircum{}} & 1 & 1 & \matlab+sqrt+ \\
+\matl{Y\textasciicircum{}} & 2 & 1 & \matlab+^+ (\matlab+mpower+) \\
+\matl{Z\textasciicircum{}} & 2 & 1 & (i) Given an array and a number $n$, computes the Cartesian power of the array times itself $n$ times. (ii) If the first input is a number and the second input is an array of at least two elements, the inputs are interpreted in reverse order. When using this mode, caution is needed in case the second input (array) may become a scalar, because then mode (i) will be used. \sa \matl{Z*} \\
+\matl{\_} & 1 & 1 & unary \matlab+-+ (\matlab+uminus+) \\
+\matl{Y`} & 0 & 0--1 (0) & \matlab+tic+. \sa \matl{Z`} \\
+\matl{Z`} & 0--1 (0) & 0--1 (1) & \matlab+toc+. \sa \matl{Y`} \\
+\matl{a} & 1--2 (1 / 2) & 1 & \matlab+any+. \sa \matl{Xa} \\
+\matl{Xa} & 1 & 1 & \matlab+any(..., 1)+. \sa \matl{a} \\
+\matl{Ya} & 2--4 (2 / 3) & 1 & (i) \matlab+padarray+. It allows the first input to be \matlab+char+; and then the output is also \matlab+char+. If the second input is \matlab+logical+ or the pad value is \matlab+char+ they are converted to \matlab+double+. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'pre'+, 2: \matlab+'post'+, 3: \matlab+'both'+. (ii) If the second input contains at least one negative or complex value, the array in the first input is unpadded. The array can only have two dimensions. The second input can have one or two entries, specifying dimensions. A negative value indicates unpad along that dimension. A complex value indicates unpad along the two dimensions. The third input specifies which values are considered padding; by default $0$ \\
+\matl{Za} & 3--4 (3 / 4) & 1 & Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second or third input equals \matl{T} or \matl{F}, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order. \sa \matl{YA}, \matl{ZA} \\
+\matl{b} & 0-- (3 / 4) & 0 & bubble up element in stack \\
+\matl{Yb} & 1-- (1 / 2) & 1--2 (1) & (i) \matlab+strsplit+. If second input is numeric it is converted to char. This function allows flag strings in third, fifth etc inputs to be replaced by numbers, as follows: 1: \matlab+'CollapseDelimiters'+, 2: \matlab+'DelimiterType'+, 3: \matlab+'RegularExpression'+, 4: \matlab+'Simple'+. (ii) First input can be numeric. In this mode the default delimiter is 0, and the parameter \matlab+'CollapseDelimiters'+ can be used. The second input (delimiter) can be a single number or a numeric array, and in the latter case each element is a possible delimiter. If the first input is a row array the output will contain row arrays; otherwise it will contain column arrays \\
+\matl{c} & 1-- (1) & 1 & \matlab+char+. Sparse input is converted to full. For cell array input, non-char cell contents are first converted to char \\
+\matl{Xc} & 3-- (3 / $^\ddagger$) & 1 & \matlab+cat+. The dimension is the last input \\
+\matl{Yc} & 1-- (2 / $^\ddagger$) & 1 & \matlab+strcat+. If not all inputs are numerical or logical, numerical or logical inputs are converted to char. If all inputs are numerical or logical the result is numerical or logical (with singleton expansion along the first dimension), and no trailing values are removed  \\
+\matl{Zc} & 1--2 (1 / 2) & 1 & \matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored \\
+\matl{d} & 1--3 (1 / 2) & 1 & \matlab+diff+ with second and third input interchanged: second specifies dimension, third specifies difference order. \\
+\matl{Xd} & 1--4 (1 / 2) & 1--2 (1) & If $1$ input and $1$ output: \matlab+diag+. Otherwise: \matlab+spdiags+, with char inputs automatically converted to \matlab+double+ \\
+\matl{Yd} & 1-- (2 / $^\ddagger$) & 1 & \matlab+blkdiag+ \\
+\matl{Zd} & 1--2 (2 / 1) & 1--3 (1) & \matlab+gcd+, element-wise with singleton expansion. With $1$ input and $1$ output, computes the greatest common divisor of all elements of the input \\
+\matl{e} & 1-- (2 / 1) & 1 & (i) With $1$ input: \matlab+squeeze+. (ii) With more than $1$ input: \matlab+reshape+. If second input is logical, contiguous equal values indicate dimensions that will be collapsed; and a final \matlab+[]+ is implicit. If second input is a (non-logical) scalar, a final \matlab+[]+ is implicit. If size specification doesn't contain \matlab+[]+ (explicit or implicit), the first input is padded or truncated if needed; padding is done with \matlab+0+, \matlab+false+, \matlab+char(0)+ or \matlab+{[]}+ according to type of first input. If size specification contains \matlab+[]+ (explicit or implicit), the first input is padded if needed \\
+\matl{Ze} & 1 & 1 & \matlab+exp+ \\
+\matl{f} & 1--3 (1) & 1--3 (1 / 2) & \matlab+find+ \\
+\matl{Xf} & 1--4 (2 / 1) & 1 & (i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: output is a cell array of all non-empty substrings. Works also for numeric or cell arrays \\
+\matl{Yf} & 1 & 1 & \matlab+factor+. For input $1$ it returns an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ produces $1$). \sa \matl{YF} \\
+\matl{g} & 1 & 1 & (i) For non-cell input: \matlab+logical+. Works also for complex numbers, using their absolute value. (ii) For cell input: \matlab+cell2mat+ \\
+\matl{Xg} & 1-- (2) & 1-- ($^\square$) & \matlab+ndgrid+ \\
+\matl{Yg} & 1--3 (1) & 1 & \matlab+gamma+ / \matlab+gammainc+ / \matlab+betainc+, depending on number of inputs \\
+\matl{Zg} & 1--2 (1 / 2) & 1 & \matlab+gammaln+ / \matlab+betaln+, depending on number of inputs \\
+\matl{h} & 0-- (2 / $^\ddagger$) & 1 & \matlab+horzcat+. If inputs are matrices with non-matching sizes they are linearized \\
+\matl{Xh} & 0-- ($^\ddagger$) & 1 & concatenate into cell array (\matlab+{..., ...}+) \\
+\matl{Yh} & 1--2 (2 / 1) & 1 & \matlab+hankel+. If any input is of type char: returns char output \\
+\matl{Zh} & 3 & 1 & \matlab+hypergeom+. If a numerator coefficient is a nonpositive integer the series is truncated at the first index for which a zero appears in the numerator, regardless of the denominator \\
+\matl{i} & 0--2 (0) & 1 & \matlab+input+ with content checking. If $0$ inputs: uses default prompt string. \sa \matl{j}. \\
+\matl{Xi} & 1--5 (1) & 1--2 (1) & \matlab+urlread+ \\
+\matl{Yi} & 1-- (1) & 1--3 (1) & \matlab+imread+ \\
+\matl{j} & 0--1 (0) & 1 & \matlab+input(..., 's')+. If $0$ inputs: uses default prompt string. \sa \matl{i} \\
+\matl{Xj} & 1 & 1 & \matlab+real+ \\
+\matl{Yj} & 1 & 1 & \matlab+imag+ \\
+\matl{Zj} & 1 & 1--2 (1 / 2) & (i) With one output: complex conjugate (\matlab+conj+). (ii) With two outputs: real and imaginary parts (\matlab+real+, \matlab+imag+) \\
+\matl{k} & 1 & 1 & \matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical arrays \\
+\matl{Xk} & 1 & 1 & \matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical arrays \\
+\matl{Yk} & 2 & 1--3 (1 / 3rd) & closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements \\
+\matl{l} & 0-- (0 / 2) & 1 & \matlab+ones+ (if $0$ inputs: produces output $1$) \\
+\matl{Xl} & 2--3 (2 / 3) & 1 & (i) With $2$ inputs, the minimum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the minimum between the first and the second, and then the maximum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl{X<}, \matl{X>} \\
+\matl{Yl} & 1--2 (1 / 2) & 1 & \matlab+log+. If $2$ inputs: second input specifies logarithm base \\
+\matl{Zl} & 1 & 1--2 (1) & \matlab+log2+ \\
+\matl{m} & 2--4 (2) & 1--2 (1 / 2nd) & \matlab+ismember+. It also works for cell arrays with numeric content, or with mixed char/numeric content. \sa \matl{Xm} \\
+\matl{Xm} & 2--3 (2) & 1--2 (1 / 2nd) & \matlab+ismember(..., 'rows', ...)+. \sa \matl{m} \\
+\matl{Ym} & 1--4 (1 / 2) & 1 & \matlab+mean+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+ \\
+\matl{Zm} & 1--2 (2 / 1) & 1 & \matlab+lcm+, element-wise with singleton expansion. With $1$ input, computes the least common multiple of all elements of the input \\
+\matl{n} & 1 & 1-- (1 / $^\times$) & \matlab+numel+. For several outputs, or a single output other than the first, gives \matlab+size+ along those dimensions \\
+\matl{Xn} & 1--2 (2 / 1) & 1 & (i) If $2$ inputs: \matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result is \matlab+0+. (ii) If $1$ input: multinomial coefficient. The input contains the lower terms; their sum is the upper term. \sa \matl{XN} \\
+\matl{Yn} & 1--5 (2 / 4) & 1 & (i) If $1$ input: \matlab+poly+. (ii) If $2$ or more inputs: \matlab+interp1+. With $2$ or $3$ numeric inputs, flags \matlab+'linear'+ and \matlab+'extrap'+ are assumed. \matlab+'pp'+ option not supported. A finite numeric value in the fourth input is replaced by a flag string, as follows: 1: \matlab+'linear'+, 2: \matlab+'nearest'+, 3: \matlab+'next'+, 4: \matlab+'previous'+, 5: \matlab+'spline'+, 6: \matlab+'pchip'+, 7: \matlab+'cubic'+, 8: \matlab+'v5cubic'+ \\
+\matl{o} & 1--3 (1 / 2) & 1 & (i) \matlab+double+. (ii) For cell array input behaves similarly to \matlab+char+: linearizes cell array, converts cell contents to \matlab+double+ and concatenates vertically, padding if needed. By default, padding is with zeros on the right. Optional second input indicates fill side: left if it evaluates to \matlab+false+, right if it evaluates to \matlab+true+. Third optional input specifies fill value. (iii) If input is already of type \matlab+double+: \matlab+mod(..., 2)+  \\
+\matl{Xo} & 1 & 1 & \matlab+int64+ \\
+\matl{Yo} & 1--3 (1 / 2) & 1 & (i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case \\
+\matl{Zo} & 1 & 1 & \matlab+fix+ \\
+\matl{p} & 1--3 (1 / 2) & 1 & \matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl{Xp} \\
+\matl{Xp} & 1--3 (1) & 1 & \matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl{p}. \\
+\matl{Yp} & 1--4 (1 / 2) & 1 & \matlab+cumprod+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the product at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively \\
+\matl{Zp} & 1 & 1 & For input with non-negative entries: \matlab+isprime+. For input with non-positive entries: Euler's totient function for absolute value of each entry \\
+\matl{q} & 1 & 1 & \matlab+(...)-1+ \\
+\matl{Xq} & 2--3 (2 / 3) & 1 & \matlab+quantile+ \\
+\matl{Yq} & 1 & 1 & For input with positive entries: $n$-th prime for each value $n$ in the input array. For input with non-positive entries: next prime for absolute value of each entry \\
+\matl{Zq} & 1 & 1 & \matlab+primes+ \\
+\matl{r} & 0-- (0) & 1 & \matlab+rand+ \\
+\matl{Xr} & 0-- (0) & 1 & \matlab+randn+ \\
+\matl{Yr} & 1-- (1 / 2) & 1 & \matlab+randi+. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+ \\
+\matl{Zr} & 2--4 (2 / 3) & 1 & \matlab+randsample+. Does not support stream specification \\
+\matl{s} & 1--4 (1 / 2) & 1 & \matlab+sum+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+. \sa \matl{Xs} \\
+\matl{Xs} & 1--3 (1) & 1 & \matlab+sum(..., 1, ...)+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+. \sa \matl{s} \\
+\matl{Ys} & 1--4 (1 / 2) & 1 & \matlab+cumsum+. Allows first input to be char. Optional third and fourth numerical scalar inputs are interpreted as minimum and maximum values, which are applied after the sum at each position. These can be substituted by a 2-element numerical array as second or third input \\
+\matl{Zs} & 1--4 (1 / 2) & 1 & \matlab+std+. With $2$ inputs \matlab+x+, \matlab+f+ and \matlab+f+ equal to $2$ or $3$, gives \matlab+cov(x, f-2)+ \\
+\matl{t} & 0-- (1) & 0 & duplicate elements in stack. The duplicated elements are those specified as inputs \\
+\matl{Zt} & 3 & 1 & (i) If first input is char or a cell array: \matlab+strrep+. Numerical second and third inputs are converted to char. (ii) The first input can be a numerical or logical array (not a cell array of numeric or logical arrays). In this case the other inputs can be char, numeric or logical (not cell); each input array is linearized; result is a row vector; and result has the type of the third input, even if no substitutions have been actually done \\
+\matl{u} & 1--4 (1) & 1--4 (1) & \matlab+unique+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique element. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl{Xu} \\
+\matl{Xu} & 1--3 (1) & 1--4 (1) & \matlab+unique(..., 'rows', ...)+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique row. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+. \sa \matl{u} \\
+\matl{Zu} & 1--2 (1) & 1 & \matlab+strjust+ \\
+\matl{v} & 0-- ($^\ddagger$ / 2) & 1 & \matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized \\
+\matl{Yv} & 1--2 (1) & 1--3 (1 / 2nd) & (i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. (ii) If input is a string or cell array of strings: \matlab+strtrim+. For string or char array input, char $0$ also counts as whitespace \\
+\matl{Zv} & 1 & 1 & (i) For numeric input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For string or cell array input: \matlab+deblank+ \\
+\matl{w} & 0-- (2) & 0 & swap elements in stack \\
+\matl{x} & 0-- (1) & 0 & delete from stack \\
+\matl{Xx} & 0--1 (0 / 1) & 0 & \matlab+clc+. With $1$ input \matlab+x+: \matlab+pause(x/10)+ and then \matlab+clc+. Inputs \matl{F} and \matl{T} are interpreted as \matl{2.5} and \matl{10} respectively \\
+\matl{y} & 0-- (2 / 3) & 0 & duplicate one element in stack. The duplicated element is the lowest among those specified as inputs \\
+\matl{Xy} & 1--4 (1) & 1 & \matlab+eye+ \\
+\matl{Yy} & 2 & 1 & \matlab+hypot+, element-wise with singleton expansion \\
+\matl{Zy} & 1--2 (1) & 1-- (1) & \matlab+size+ \\
+\matl{z} & 1 & 1 & \matlab+nnz+ \\
+\matl{Xz} & 1 & 1 & \matlab+nonzeros+. If input is a string or char array: removes whitespace, including \matlab+char(0)+; the result is a string. If input is cell array of strings: operates on each string \\
+\matl{X\{} & 1--2 (1 / 2) & 1 & \matlab+num2cell+ \\
+\matl{Y\{} & 2-- (3 / 2) & 1 & \matlab+mat2cell+ \\
+\matl{Z\{} & 1 & 1 & \matlab+mat2cell(x, ones(size(x,1),1), size(x,2),...,size(x,ndims(x)))+. It's a generalization of \matlab+cellstr+ that works for numeric, logical or char arrays of any number of dimensions \\
+\matl{|} & 1--2 (1 / 2) & 1 & If $1$ input: \matlab+abs+. If $2$ inputs, second input non-zero: \matlab+norm+. If $2$ inputs, second input zero: \matlab+det+, or \matlab+sqrt(det(A*A.'))+ for first input \matlab+A+ non-square \\
+\matl{X|} & 2--4 (2 / 3) & 1--3 (1) & \matlab+union+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{Y|} & 0-- (2 / $^\ddagger$) & 1 & \matlab+|+ (\matlab+or+), element-wise with singleton expansion \\
+\matl{Z|} & 2--3 (2) & 1 & \matlab+bitor+, element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl{Z\&}, \matl{Z\textasciitilde{}} \\
+\matl{Z\}} & 1--2 (1 / 2) & 0-- ($^\bigtriangledown$) & split array into subarrays along the first non-singleton dimension. With $2$ inputs: split into subarrays along the dimension indicated by the second input \\
+\matl{\textasciitilde{}} & 1 & 1 & \matlab+~+ (\matlab+not+) \\
+\matl{X\textasciitilde{}} & 2--4 (2 / 3) & 1--3 (1) & \matlab+setxor+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{Y\textasciitilde{}} & 2 & 1 & \matlab+xor+, element-wise with singleton expansion \\
+\matl{Z\textasciitilde{}} & 2--3 (2) & 1 & \matlab+bitxor+, element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl{Z\&}, \matl{Z|} \\

@@ -1,0 +1,45 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{The name}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Notation}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Examples}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{The stack. Data types}{}% 5
+\BOOKMARK [1][-]{section.3}{Statements and separators}{}% 6
+\BOOKMARK [1][-]{section.4}{Literals}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{Numbers}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{Numerical arrays}{section.4}% 9
+\BOOKMARK [2][-]{subsection.4.3}{Logical arrays}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.4}{Character arrays}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.5}{Cell arrays}{section.4}% 12
+\BOOKMARK [1][-]{section.5}{Functions}{}% 13
+\BOOKMARK [2][-]{subsection.5.1}{Normal functions}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Meta-functions}{section.5}% 15
+\BOOKMARK [2][-]{subsection.5.3}{Stack rearranging functions}{section.5}% 16
+\BOOKMARK [2][-]{subsection.5.4}{Clipboard functions}{section.5}% 17
+\BOOKMARK [3][-]{subsubsection.5.4.1}{Standard clipboards}{subsection.5.4}% 18
+\BOOKMARK [3][-]{subsubsection.5.4.2}{Automatic clipboards}{subsection.5.4}% 19
+\BOOKMARK [2][-]{subsection.5.5}{Indices and indexing functions}{section.5}% 20
+\BOOKMARK [3][-]{subsubsection.5.5.1}{Basic indexing functions}{subsection.5.5}% 21
+\BOOKMARK [3][-]{subsubsection.5.5.2}{Colon indexing functions}{subsection.5.5}% 22
+\BOOKMARK [1][-]{section.6}{Control flow: conditional branches and loops}{}% 23
+\BOOKMARK [2][-]{subsection.6.1}{Conditional branches: ``if\203else''}{section.6}% 24
+\BOOKMARK [2][-]{subsection.6.2}{Loops: ``for'', ``do\203while'' and ``while''}{section.6}% 25
+\BOOKMARK [1][-]{section.7}{Implicit actions}{}% 26
+\BOOKMARK [2][-]{subsection.7.1}{Initial actions}{section.7}% 27
+\BOOKMARK [2][-]{subsection.7.2}{Final actions}{section.7}% 28
+\BOOKMARK [2][-]{subsection.7.3}{Implicit inputs}{section.7}% 29
+\BOOKMARK [2][-]{subsection.7.4}{Automatic file input and output}{section.7}% 30
+\BOOKMARK [1][-]{section.8}{Table of functions}{}% 31
+\BOOKMARK [1][-]{section.9}{The MATL compiler}{}% 32
+\BOOKMARK [2][-]{subsection.9.1}{Usage}{section.9}% 33
+\BOOKMARK [2][-]{subsection.9.2}{Structure}{section.9}% 34
+\BOOKMARK [1][-]{section.10}{Compatibility with Octave}{}% 35
+\BOOKMARK [2][-]{subsection.10.1}{Compiler}{section.10}% 36
+\BOOKMARK [2][-]{subsection.10.2}{MATL functions}{section.10}% 37
+\BOOKMARK [1][-]{section.11}{Running MATL online}{}% 38
+\BOOKMARK [1][-]{section.12}{Example programs explained}{}% 39
+\BOOKMARK [2][-]{subsection.12.1}{Example 1: infinite loop}{section.12}% 40
+\BOOKMARK [2][-]{subsection.12.2}{Example 2: first 10 Fibonacci numbers}{section.12}% 41
+\BOOKMARK [2][-]{subsection.12.3}{Example 3: unique characters from string in original order}{section.12}% 42
+\BOOKMARK [2][-]{subsection.12.4}{Example 4: unique characters from string in original order, manual approach}{section.12}% 43
+\BOOKMARK [1][-]{section.13}{Acknowledgments}{}% 44
+\BOOKMARK [1][-]{Appendix.a.A}{Appendix Detailed function definitions}{}% 45
