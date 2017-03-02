@@ -138,7 +138,7 @@ Z'	0	1	0	1	1	1	1		true	true	true	true	if numel(in)==0, out{1} = now;	current dat
 													nonpos = indcol<=0;
 													indcol(nonpos) = mod(indcol(nonpos).'-1,sz(nonpos))+1;
 													indcol = num2cell(indcol);
-													if ~isempty(arrayData), arrayDestination(indcol{:}) = arrayData(k);
+													if ~isempty(arrayData), arrayDestination(indcol{:}) = arrayData((k-1)*(numel(arrayData)>1)+1);
 													else arrayDestination(indcol{:}) = [];
 													end
 													end
@@ -192,7 +192,7 @@ X(	3	inf	3		1	1	1		true	true	true	true	assert(iscell(in{1}), 'MATL:runtime', 'MA
 													nonpos = indcol<=0;
 													indcol(nonpos) = mod(indcol(nonpos).'-1,sz(nonpos))+1;
 													indcol = num2cell(indcol);
-													arrayDestination(indcol{:}) = data(k);
+													arrayDestination(indcol{:}) = data((k-1)*(numel(data)>1)+1);
 													end
 													out{1} = arrayDestination;
 													clear arrayDestination data indices indmat indcol nonpos Ni sz n k
