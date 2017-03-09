@@ -1112,7 +1112,7 @@ Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1},
 													out{1} = Z; clear x ax bx z Z az bz y t r q k m n c done_outer done_inner valid L
 b	0	inf	3	4	0	0	0		false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb
-Yb	1	inf	1	2	1	2	1		true	true	true	true	if isnumeric(in{1})	split string or numeric array at delimiter	(i) \matlab+strsplit+. If second input is numeric it is converted to char. This function allows flag strings in third, fifth etc inputs to be replaced by numbers, as follows: 1: \matlab+'CollapseDelimiters'+, 2: \matlab+'DelimiterType'+, 3: \matlab+'RegularExpression'+, 4: \matlab+'Simple'+. (ii) First input can be numeric. In this mode the default delimiter is 0, and the parameter \matlab+'CollapseDelimiters'+ can be used. The second input (delimiter) can be a single number or a numeric array, and in the latter case each element is a possible delimiter. If the first input is a row array the output will contain row arrays; otherwise it will contain column arrays
+Yb	1	inf	1	2	1	2	1		true	true	true	true	if isnumeric(in{1})	split string or numeric array at delimiter	(i) \matlab+strsplit+. If second input is numeric it is converted to char. This function allows flag strings in third, fifth etc inputs to be replaced by numbers, as follows: 1: \matlab+'CollapseDelimiters'+, 2: \matlab+'DelimiterType'+, 3: \matlab+'RegularExpression'+, 4: \matlab+'Simple'+. (ii) First input can be a cell array of strings, and then the result is a cell array of cell arrays of strings. Only one output is supported in this mode. (iii) First input can be numeric. In this mode only one output is supported, the default delimiter is 0, and the parameter \matlab+'CollapseDelimiters'+ can be used. The second input (delimiter) can be a single number or a numeric array, and in the latter case each element is a possible delimiter. If the first input is a row array the output will contain row arrays; otherwise it will contain column arrays
 													if numel(in)==1, in{2} = 0; end
 													collapse = true; c = find(strcmp(in(3:end), 'CollapseDelimiters')); if ~isempty(c), collapse = in{c+3}; end
 													isRow = isrow(in{1}); x = in{1}(:); d = in{2};
@@ -1131,7 +1131,13 @@ Yb	1	inf	1	2	1	2	1		true	true	true	true	if isnumeric(in{1})	split string or nume
 													str = {'CollapseDelimiters' 'DelimiterType' 'RegularExpression' 'Simple'};
 													for k = 3:2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end;
+													if ~iscell(in{1})
 													[out{:}] = strsplit(in{:});
+													elseif nout==1
+													out{1} = cellfun(@(x) strsplit(x, in{2:end}), in{1}, 'UniformOutput', false);
+													else
+													error('MATL:runtime', 'MATL run-time error: only one output is supported with cell array input');
+													end
 													end
 Zb
 c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character array	\matlab+char+. Sparse input is converted to full. For cell array input, non-char cell contents are first converted to char
