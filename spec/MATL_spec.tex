@@ -1355,7 +1355,7 @@ In Octave, \matlab+pdist2+ allows fewer distance functions than \matlab+pdist+ d
 \item
 Some functions in Matlab automatically convert input to \matlab+double+ if needed, and in Octave don't. This has been solved. These functions include \matlab+cumsum+, \matlab+cumprod+, \matlab+kron+.
 \item
-Octave's \matlab+datestr+ with input format \matlab+16+ (\matlab+'HH:MM PM'+) produces hour numbers greater than \matlab+12+. This has been corrected.
+Octave's \matlab+datestr+ with input format \matlab+16+ (\matlab+'HH:MM PM'+) produced hour numbers greater than \matlab+12+. This was initially corrected. Then an Octave patch\footnote{\url{https://savannah.gnu.org/bugs/index.php?50673}} came out that corrects a different issue related to rounding, and that apparently incorporates the correction for input format \matlab+16+ too. So the function from that patch is used.
 \item
 MATLAB's \matlab+regexp+ and \matlab+regexprep+ produce empty outputs or do nothing, respectively, if the regular expression is invalid; whereas Octave's give an error. This has been solved.
 \item
