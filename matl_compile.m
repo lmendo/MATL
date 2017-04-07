@@ -336,13 +336,17 @@ appendLines('', 0)
 appendLines('end', 0) 
 
 % Define subfunctions for compatibility with Octave
-% If any of the names in `fnames` is found, the content of the file
-% '..._comp.m' will be included in the compiled file. That '..._comp.m' file may
-% contain one or several functions; each of those functions (even if there's only one) should
-% have an 'end' statement
 if ~isMatlab
     appendLines('', 0)
     appendLines('% Define subfunctions', 0)
+    appendLines('function y = e()', 0)
+    appendLines('error(''Number e not recognized'')', 1)
+    appendLines({'end' ''}, 0)
+    
+    % If any of the names in `fnames` is found, the content of the file
+    % '..._comp.m' will be included in the compiled file. That '..._comp.m' file may
+    % contain one or several functions; each of those functions (even if there's only one) should
+    % have an 'end' statement
     fnames = {'num2str' 'im2col' 'spiral' 'unique' 'union' 'intersect' 'setdiff' 'setxor' 'ismember' ...
         'triu' 'tril' 'randsample' 'nchoosek' 'vpa' 'sum' 'mean' 'diff' 'mod' 'repelem' 'dec2bin' 'dec2base' ...
         'hypergeom' 'disp' 'str2func' 'logical' 'circshift' 'pdist2' 'strsplit' 'max' 'min' 'strncmp' 'round'...
