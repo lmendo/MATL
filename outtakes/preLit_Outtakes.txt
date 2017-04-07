@@ -1,0 +1,13 @@
+X9
+
+1	'shuffle'
+2	'default'
+3	'twister'
+4	'simdTwister'
+5	'combRecursive'
+6	'multFibonacci'
+10	'v5uniform'
+11	'v5normal'
+12	'v4'
+
+

@@ -656,7 +656,7 @@ Clipboard M automatically stores all \parte{function inputs} from the $4$ most r
 Function \matl{M} is used for pasting from clipboard M. It takes one numeric input, which can be interpreted in two different ways depending on its value:
 \begin{itemize}
 \item
-\emph{Combined addressing}: \matl{M} takes as input a number $1$, \ldots, $4$. The number defines the addressed level. The default number of outputs is the number elements stored in that level (that is, the number of inputs of the function call used). So for example \matl{[3 7 0 5]u1Mf} produces the vectors \matl{[3 7 0 5]} (\matlab+unique([3 7 0 5])+) and \matl{[1 2 4]} (\matlab+find([3 7 0 5])+); and \matl{3 4+ 1M*} produces \matl{7} and \matl{12}.
+\emph{Combined addressing}: \matl{M} takes as input a number $1$, \ldots, $4$. The number defines the addressed level. The default number of outputs is the number of elements stored in that level (that is, the number of inputs of the function call used). So for example \matl{[3 7 0 5]u1Mf} produces the vectors \matl{[3 7 0 5]} (\matlab+unique([3 7 0 5])+) and \matl{[1 2 4]} (\matlab+find([3 7 0 5])+); and \matl{3 4+ 1M*} produces \matl{7} and \matl{12}.
 
 If the referred function call hasn't actually occurred, \matl{M} produces no outputs. For example, \matl{3M} does nothing if there have been less than three normal function calls with inputs. However, any output specification other than \matl{0} gives rise to an error in this case.
 \item
@@ -1366,7 +1366,7 @@ Octave's \matlab+strsplit+ gives an error when trying to split on \matlab|+|. Th
 \item
 Octave's \matlab+str2num+ gives an error with certain inputs. This has been fixed.
 \item
-In Octave, \matlab+str2num+ with input \matlab+'e'+ produces number $e$. In Matlab it produces an empty array (the string is not recognized as a number). This difference isn't addressed by the compiler.
+In Octave, \matlab+str2num+ with input \matlab+'e'+ produces number $e$ (and similarly for inputs like \matlab+'[1; e]'+). In Matlab it produces an empty array, that is, the string is not recognized as a number. This difference is addressed by the compiler, so that the behaviour in Octave is as in MATLAB.
 \item
 MATLAB's \matlab+imshow+, by default, produces one screen pixel for each image pixel. On the other hand, Octave's \matlab+imshow+ scales the image on the screen. This has been partly fixed, so image pixels and screen pixels coincide. ``Partly'' means that the fix only works in some platforms, for reasons unknown (at least by me).
 \item

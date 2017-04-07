@@ -1,5 +1,7 @@
 function [m, state] = str2num (s)
 % Uses `try eval(x); catch ...; end instead of `eval(x,y)`, which seems to be buggy
+% Defines (shadows) e so that a loose 'e' in the input string doesn't give exp(1)
+  e = @()[];
   if (nargin != 1)
     print_usage ();
   elseif (! ischar (s))

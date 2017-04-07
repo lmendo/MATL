@@ -1,0 +1,140 @@
+
+X0	0	0	0	1	1	1	false	true	out{1} = 'stable';	literal string: 'stable'	literal string: \matlab+'stable'+
+Y0	0	0	0	1	1	1	false	true	out{1} = 'rows';	literal string: 'rows'	literal string: \matlab+'rows'+
+Z0	0	0	0	1	1	1	false	true	out{1} = 'legacy';	literal string: 'legacy'	literal string: \matlab+'legacy'+
+_	1	1	1	1	1	1	true	true	out{1} = -in{1};	unary minus	unary \matlab+-+ (\matlab+uminus+)
+_	1	1	1	1	1	1	true	true	n = find(in{1}==preLitKey); assert(~isempty(n), 'MATL:runtime', 'MATL run-time error: predefined literal not found'); out = preLitVal(n, 1);	predefined literals	produces a predefined literal depending on the number used as input
+X0	0	0	0	1	1	1	true	true	out{1} = [1 0];	literal [1 0]	produces literal \matlab+[1 0]+
+X1	0	0	0	1	1	1	true	true	out{1} = [0 -1 1];	literal [0 -1 1]	produces literal \matlab+[0 -1 1]+				
+X2	0	0	0	1	1	1	true	true	out{1} = [1 2 0];	literal [1 2 0]	produces literal \matlab+[1 2 0]+
+X3	0	0	0	1	1	1	true	true	out{1} = [2 2 0];	literal [2 2 0]	produces literal \matlab+[2 2 0]+
+X4	0	0	0	1	1	1	true	true	out{1} = [1 -1j];	literal [1 -1j]	produces literal \matlab+[1 -1j]+
+X5	0	0	0	1	1	1	true	true	out{1} = pi;	pi	\matlab+pi+
+X6	0	0	0	1	1	1	true	true	out{1} = 100;	literal 100	produces literal \matlab+100+
+X7	0	0	0	1	1	1	true	true	out{1} = 1000;	literal 1000	produces literal \matlab+1000+
+X8	0	0	0	1	1	1	true	true	out{1} = [1 3 2];	literal [1 3 2]	produces literal \matlab+[1 3 2]+
+X9	0	0	0	1	1	1	true	true	out{1} = [3 1 2];	literal [3 1 2]	produces literal \matlab+[3 1 2]+
+X1	0	0	0	1	1	1	true	true	out{1} = (1+sqrt(5))/2;	golden ratio (phi)	produces literal \matlab|(1+sqrt(5))/2|
+X2	0	0	0	1	1	1	true	true	out{1} = 0.577215664901533;	Euler-Mascheroni constant (gamma)	produces literal \matlab+0.577215664901533+ (Euler-Mascheroni constant)
+Yu	1	3	1	1	1	1	true	true	out{1} = mat2str(in{:});	convert matrix to string	\matlab+mat2str+
+Zl	1	1	1	1	1	1	true	true	[out{:}] = log10(in{:});	base 10 logarithm	\matlab+log10+
+%**Generalize randsample to included weighted smapling without replacement. Not tested. I wrote it but then I wasn't sure it would be useful**:
+									if ~(numel(in)>3 && (isequal(in{3},false)||isequal(in{3},'false')||isequal(in{3},0)))	random sample	\matlab+randsample+. Does not support stream specification. Supports weighted sampling without replacement, by means of \matlab+datasample+
+									out{1} = randsample(in{:});
+									else if isnumeric(in{1})&&numel(in{1})==1, in{1} = 1:in{1}; end
+									if isequal(in{3},'false'), in{3} = false; end; if isequal(in{3},'true'), in{3} = true; end; in{3} = logical(in{3});
+									out{1} = datasample(in{1}, in{2}, 'Replace', in{3}, 'Weights', in{4});
+									end
+XP	1	2	1	1	1	1	true	true	out{1} = pdist(in{:});	pairwise distances between points	\matlab+pdist+. Only pre-defined distance functions are allowed.
+ZS	1	2	1	1	1	1	true	true	out{1} = squareform(in{:});	reformat distance matrix between upper triangular and square form	\matlab+squareform+
+YC	1	inf	2	1	1	1	true	true	out{1} = cell(in{:});	create cell array	\matlab+cell+
+X@	1	1	1	1	1	1	true	true	out{1} = spiral(in{:});	matrix with spiral pattern	\matlab+spiral+
+#	1	1	1	0	0	0	false	false	S_OUT = STACK{end}; STACK(end) = [];	output specification	specify outputs for next function
+$	1	1	1	0	0	0	false	false	S_IN = STACK{end}; STACK(end) = [];	input specification	specify inputs for next function
+Y#	1	2	1	0	0	0	true	true	rng(in{:});	control the random number generator	\matlab+rng+
+Z}	1	1	1	0	inf	numel(in{1})	true	true	outall = mat2cell(in{1}(:), ones(1,numel(in{1}))).';	split array into elements	split array into its elements in linear order
+									out = outall(1:nout);
+Z}	1	2	1	0	inf	***	true	true	if numel(in)==1, dim = [find(size(in{1})-1,1) repmat(1,1,numel(in{1})==1)];%	split array along a dimension	split array into elements in linear order. With $2$ inputs: split into subarrays along the dimension indicated by the second input
+									elseif numel(in)==2, dim = in{2}(1);
+									else error('MATL:runtime', 'MATL run-time error: too many inputs'); end
+									s = num2cell(size(in{1})); s{dim} = ones(1,size(in{1}, dim)); outall = reshape(mat2cell(in{1}, s{:}),1,[]);
+									out = outall(1:nout);
+									clear dim s
+Yz	1	1	1	1	1	1	true	true	out{1} = isempty(in{:});	true for empty array	\matlab+isempty+
+YG	0	3	1	0	0	0	true	true	image(in{:}); axis ij, axis image, drawnow	display image	\matlab+image(...), axis ij, axis image+. Calls \matlab+drawnow+ to update figure immediately
+ZG	1	1	1	0	1	0	true	true	true	[out{:}] = colormap(in{:}); if isempty(out), drawnow, end	color look-up table	\matlab+colormap+. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately
+Yq	1	2	1	1	1	1	true	true	true	true	if numel(in)==1 || in{2}==1%	n-th prime / other related functions	With $1$ input: $n$-th prime for each value $n$ in the input array. With $2$ inputs: second input specifies function.  $1$: $n$-th prime function.  $2$: Euler's totient function applied element-wise to first input.  $3$: next-prime function applied element-wise to first input
+											N = max(in{1}(:)); p = primes(max(11,ceil(N*log(N*log(N))))); out{1} = reshape(p(in{1}), size(in{1})); clear N p
+											elseif in{2}==2
+											tot = NaN(size(in{1})); for n = 1:numel(in{1}), tot(n) = sum(gcd(in{1}(n),1:in{1}(n))==1); end, out{1} = tot;
+											elseif in{2}==3
+											np = NaN(size(in{1}));
+											for k=1:numel(np), np(k) = in{1}(k)+1; while ~isprime(np(k)), np(k)=np(k)+1; out{1} = np; end, end, clear k np, end
+M	1	1	1	0	inf	numel(CB_M{in{1}})	true	true	false	true	out = [CB_M{in{1}}(1:nout)];	paste from function-input clipboard M	paste from function-input clipboard M. Input specifies level
+G	0	1	double(numel(CB_G)>1)	0	inf	1+(numel(CB_G)-1)*(numel(in)==0)	true	true	false	true	if numel(in)==0, out = CB_G(1:nout); else out = CB_G(in{1}); end	paste from user-input clipboard G	paste from user-input clipboard. With 0 input arguments: addresses all levels. With 1 input argument: addresses level specified by the input
+|	3	3	3	1	1	1	true	true	true	true	if(in{2}), out{1}=in{1}; else, out{1}=in{3}; end	ternary 'if' with literals	if second input produce first input, else produce third input
+Y[	1	1	1	1	1	1	true	true	true	true	out{1} = floor(in{:});	round towards minus infinity	\matlab+floor+
+Y]	1	1	1	1	1	1	true	true	true	true	out{1} = ceil(in{:});	round towards infinity	\matlab+ceil+
+e	1	inf	3	1	1	1	true	true	true	true	if numel(in)>1, out{1} = reshape(in{:});	reshape array / remove singleton dimensions	With more than $1$ input: \matlab+reshape+. With $1$ input: \matlab+squeeze+.
+											else out{1} = squeeze(in{:}); end
+Yb	1	inf	1	1	2	1	true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; [out{:}] = strsplit(in{:});	split string at delimiter	\matlab+strsplit+. If second input is numeric it is converted to char
+Yb	1	inf	1	1	2	1	true	true	true	true	if isnumeric(in{1})	split string or numeric array at delimiter	\matlab+strsplit+. If second input is numeric it is converted to char. This function also allows first input to be numeric; in this case the default delimiter is 0, and the parameter \matlab+'CollapseDelimiters'+ can be used
+											if numel(in)==1, in{2} = 0; end
+											collapse = true; c = find(strcmp(in(3:end), 'CollapseDelimiters')); if ~isempty(c), collapse = in{c+3}; end
+											x = in{1}; d = in{2};
+											ind = [d x d]==d;
+											x(ind(2:end-1)) = [];
+											y = mat2cell(x, 1, diff(find(ind))-1);
+											if collapse
+											e = ~cellfun(@isempty, y); e(1) = true; e(end) = true;
+											y = y(e);
+											end
+											out{1} = y;
+											clear x y collapse d ind e
+											else
+											if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end;
+											[out{:}] = strsplit(in{:});
+											end
+Zc	1	2	1	1	1	1	true	true	true	true	for k = 1:numel(in{1}), if isnumeric(in{1}{k}), in{1}{k} = char(in{1}{k}); end; end; if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strjoin(in{:});	join cell array of strings into single string	\matlab+strjoin+. If first input contains numeric arrays they are converted to char arrays. If second input is numeric it is converted to char
+ZA	2	2	2	1	1	1	true	true	true	true	if numel(in{2})==1, out{1} = base2dec(in{:});	convert string in given base to decimal integer	\matlab+base2dec+. If second input has more than one element: it defines the symbols, which can be characters (case-sensitive) or numbers. The number of symbols defines the base, which can exceed $36$
+											else h = char(in{1}); symbols = double(in{2}); b = numel(symbols);
+											if ~isempty(find(h==' ' | h==0,1)), 
+											h = strjust(h); h(h==' ' | h==0) = '0'; end
+											[m,n] = size(h);
+											bArr = [ones(m,1) cumprod(b(ones(m,n-1)),2)];
+											values = -1*ones(256,1);
+											values(symbols) = 0:b-1;
+											if any(any(values(h) >= b | values(h) < 0))
+											error(message('MATLAB:base2dec:NumberOutsideRange', h,b));
+											end
+											a = fliplr(reshape(values(abs(h)),size(h)));
+											out{1} = sum((bArr .* a),2); end
+o	1	1	1	1	1	1	true	true	true	true	if ~iscell(in{1})	convert to double precision	\matlab+double+. For cell array input behaves analogously to \matlab+char+: linearizes cell array, converts cell contents to double, and concatenates vertically padding with zeros if needed
+											out{1} = double(in{1});
+											else
+											in{1} = in{1}(:);
+											n = max(cellfun(@(c) size(c,2), in{1}));
+											fill = 0;
+											for k = 1:numel(in{1}), in{1}{k} = [double(in{1}{k}) repmat(fill, size(in{1}{k},1), n-size(in{1}{k},2))]; end
+											out{1} = vertcat(in{1}{:});
+											end
+u	1	4	1	1	3	1	true	true	true	true	[out{:}] = unique(in{:});	unique	\matlab+unique+. \sa \matl+Xu+.
+Z}	1	2	1	0	inf	prod(size(in{:}))	true	true	true	true	if numel(in)==1, outall = mat2cell(in{1}(:), ones(1,numel(in{1}))).';	split array	split array into elements in linear order. With $2$ inputs: split into subarrays along the dimension indicated by the second input
+											elseif numel(in)==2, d = num2cell(size(in{1})); d{in{2}} = ones(1,size(in{1},in{2})); outall = mat2cell(in{1}, d{:}); outall = outall(:).'; clear d
+											else error('MATL:runtime', 'MATL run-time error: too many inputs'); end
+											out = outall(1:nout);
+% The default nout, prod(size(in{:})), is either numel(in{1}) o size(in{1}, in{2})
+% I considered defining Z} such that with 1 input it split along the first non-singleton dimension. But that gave me trouble. : The default nout should have been the size along the first non-singleton dimension or along the dimension indicated by the first output. : I didn't see how to define the default nout in a single statement. I tried size(in{1}, (numel(in)>1)*in{end} + (numel(in)==1)*[find(size(in{1})-1,1) repmat(1,1,numel(in{1})==1)]); but it didn't work when the first input was a cell array and there was no second input: in that case in{end} was not a number
+YF	0	1	1	0	0	0	true	true	true	true	format(in{:})	set output format	\matlab+format+
+Y}	1	1	1	1	1	1	true	true	true	true	out{1} = cell2mat(in{:});	convert contents of cell array into single array	\matlab+cell2mat+
+Zn	1	2	1	1	1	1	true	true	true	true	if in{2} || diff(size(in{1})), out{1} = norm(in{:});	matrix or vector norm / determinant of square matrix	\matlab+norm+. For second input 0 and first input square matrix (or scalar): \matlab+det+
+											else, out{1} = det(in{1}); end
+Xv	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1}=char(in{1}); end; out{1} = regexprep(in{1}, '[\s\0]', '');	remove whitespace	remove whitespace, including \matlab+char(0)+, from input string or cell array strings. If input is a numeric array, it is converted to char
+X+	2	3	2	3	1	1	1		true	true	true	true	str = {'same' 'valid' 'full'};	convolution	\matlab+conv+. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl|Y+|, \matl|Z+|
+													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
+													out{1} = conv(double(in{1}), double(in{2}), in{3:end});
+Xn	2	2	2		1	1	1		true	true	true	true	nd = max(ndims(in{1}), ndims(in{2})); sz1 = arrayfun(@(n)size(in{1},n), 1:nd); sz2 = arrayfun(@(n)size(in{2},n), 1:nd);	binomial coefficient (number of combinations)	\matlab+nchoosek+. This interprets first input as number(s). If the inputs are arrays, the function is computed element-wise with singleton expansion. For values \matlab+n+ and \matlab+k+ in first and second inputs, if \matlab+n+ is less than \matlab+k+ the result is \matlab+0+. \sa \matl|XN|
+													assert(all(sz1==sz2 | sz1==1 | sz2==1), 'MATL:runtime', 'MATL run-time error: inputs have incompatible sizes')
+													rm1 = ones(1,nd); rm1(sz1==1) = sz2(sz1==1); rm2 = ones(1,nd); rm2(sz2==1) = sz1(sz2==1);
+													insx1 = repmat(in{1}, rm1); insx2 = repmat(in{2}, rm2);
+													y = zeros(size(insx1)); ind = insx1>=insx2; y(ind) = arrayfun(@nchoosek, insx1(ind), insx2(ind));
+													out{1} = y; clear nd sz1 sz2 rm1 rm2 insx1 insx2
+XM	1	2	1		1	3	1		true	true	true	true	[out{:}] = mode(in{:});	mode (most frequent value)	\matlab+mode+
+X]	3	inf	3		1	1	1		true	true	true	true	out{1} = sub2ind(in{:});	convert subscripts into linear index	\matlab+sub2ind+
+X[	2	2	2		1	inf	2		true	true	true	true	[out{:}] = ind2sub(in{:});	convert linear index into subscripts	\matlab+ind2sub+
+Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; end; out{1} = strcat(in{:});	concatenate strings	\matlab+strcat+. If not all inputs are numeric, numeric inputs are converted to char
+U	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), in{1} = char(in{1}); end	convert string matrix to numeric array, or to general array	\matlab+str2num+ with content checking. If input is not char, it is automatically converted to char. Then content checking is applied. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned
+													valid = true;
+													for r = 1:size(in{1},1)
+													valid = valid && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-df-ik-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(in{1}(r,:), '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
+													end
+													if valid
+													[y, ok] = str2num(in{1});
+													if ~ok && size(in{1},1)==1
+													try y = eval(in{1}); catch y = []; end
+													end
+													else
+													y = [];
+													end
+													out{1} = y; clear ok r valid
+Z=	3	3	3		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strncmp(in{:});	compare first characters of strings	\matlab+strncmp+. If first or second inputs are numeric they are converted to char
