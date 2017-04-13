@@ -110,6 +110,7 @@
 \matl{I} & 0 & 0-- ($^\dagger$) & paste from clipboard I \\
 \matl{XI} & 0-- (1) & 0 & copy to clipboard I \\
 \matl{YI} & 3--4 (3 / 4) & 1 & \matlab+col2im+. Uses \matlab+'distinct'+ option by default. Second and third inputs may be scalars, and then they are interpreted as numbers of columns. Third input may be a two-vector with product less then the number of elements of first input, and then it is appropriately scaled. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'distinct'+, 2: \matlab+'sliding'+ \\
+\matl{ZI} & 1-- (2 / 3) & 1-- (1) & Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+. \\
 \matl{J} & 0 & 0-- ($^\dagger$) & paste from clipboard J \\
 \matl{XJ} & 0-- (1) & 0 & copy to clipboard J \\
 \matl{K} & 0 & 0-- ($^\dagger$) & paste from clipboard K \\
