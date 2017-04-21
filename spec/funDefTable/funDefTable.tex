@@ -189,7 +189,7 @@
 \matl{Yg} & 1--3 (1) & 1 & \matlab+gamma+ / \matlab+gammainc+ / \matlab+betainc+, depending on number of inputs \\
 \matl{Zg} & 1--2 (1 / 2) & 1 & \matlab+gammaln+ / \matlab+betaln+, depending on number of inputs \\
 \matl{h} & 0-- (2 / $^\ddagger$) & 1 & \matlab+horzcat+. If inputs are matrices with non-matching sizes they are linearized \\
-\matl{Xh} & 0-- ($^\ddagger$) & 1 & concatenate into cell array (\matlab+{..., ...}+) \\
+\matl{Xh} & 0-- ($^\ddagger$ / 2) & 1 & concatenate into cell array (\matlab+{..., ...}+) \\
 \matl{Yh} & 1--2 (2 / 1) & 1 & \matlab+hankel+. If any input is of type char: returns char output \\
 \matl{Zh} & 3 & 1 & \matlab+hypergeom+. If a numerator coefficient is a nonpositive integer the series is truncated at the first index for which a zero appears in the numerator, regardless of the denominator \\
 \matl{i} & 0--2 (0) & 1 & \matlab+input+ with content checking. If $0$ inputs: uses default prompt string. \sa \matl{j}. \\

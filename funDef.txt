@@ -1326,7 +1326,7 @@ h	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if any(diff(nonzeros(cellfun(@
 													end
 													end
 													out{1} = horzcat(in{:}); clear k
-Xh	0	inf	numel(STACK)		1	1	1		true	true	true	true	out{1} = in;	concatenate into cell array	concatenate into cell array (\matlab+{..., ...}+)
+Xh	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	out{1} = in;	concatenate into cell array	concatenate into cell array (\matlab+{..., ...}+)
 Yh	1	2	2	1	1	1	1		true	true	true	true	y = hankel(in{:}); if any(cellfun(@ischar,in)), y = char(y); end; out{1} = y; clear y	Hankel matrix	\matlab+hankel+. If any input is of type char: returns char output
 Zh	3	3	3		1	1	1		true	true	true	true	if any( ~mod(in{1},1) & (in{1}<=0) )	hypergeometric function	\matlab+hypergeom+. If a numerator coefficient is a nonpositive integer the series is truncated at the first index for which a zero appears in the numerator, regardless of the denominator
 													a = in{1}; b = in{2}; z = in{3};
