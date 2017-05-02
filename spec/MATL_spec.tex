@@ -1368,6 +1368,8 @@ Octave's \matlab+str2num+ gives an error with certain inputs. This has been fixe
 \item
 In Octave, \matlab+str2num+ with input \matlab+'e'+ produces number $e$ (and similarly for inputs like \matlab+'[1; e]'+). In Matlab it produces an empty array, that is, the string is not recognized as a number. This difference is addressed by the compiler, so that the behaviour in Octave is as in MATLAB.
 \item
+In Matlab, \matlab+str2double+ linearizes char input into a row, whereas in Octave it doesn't. This has been solved.
+\item
 MATLAB's \matlab+imshow+, by default, produces one screen pixel for each image pixel. On the other hand, Octave's \matlab+imshow+ scales the image on the screen. This has been partly fixed, so image pixels and screen pixels coincide. ``Partly'' means that the fix only works in some platforms, for reasons unknown (at least by me).
 \item
 Octave's \matlab+mat2str+ doesn't handle char input. This has been fixed for inputs containing printable ASCII chars.
