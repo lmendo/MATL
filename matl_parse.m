@@ -113,7 +113,6 @@ while pos<=L
         S(n).nesting = parseNesting;
         pos = pos + fin;
         n = n + 1;
-    elseif any(s(pos)==['!()*+,-/:;<=>\^_|~' 'A':'W' 'a':'z'])
         S(n).type = 'function';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
@@ -151,6 +150,15 @@ while pos<=L
         % the "for", "while" or "if" statement) and "from" (in the "end"
         %    Nesting level is recorded, so that indentation can ba applied
         S(n).type = 'controlFlow.for';
+        S(n).source = s(pos);
+        S(n).nesting = parseNesting;
+        S(n).end = 0; % will be filled when a matching "end" is found
+        parseNesting = parseNesting + 1; % increase nesting level
+        parseControlStack(parseNesting) = n; % take note of opening statement
+        pos = pos + 1;
+        n = n + 1;
+    elseif s(pos)==',' % doTwice
+        S(n).type = 'controlFlow.doTwice';
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         S(n).end = 0; % will be filled when a matching "end" is found
@@ -196,7 +204,7 @@ while pos<=L
         S(n).from = m; % associate this with opening statement
         pos = pos + 1;
         n = n + 1;
-    elseif s(pos)=='@' % value of for / index of do...while/while iteration
+    elseif s(pos)=='@' % value of for or do twice / index of do...while/while iteration
         assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''@'' found outside any control flow structure')
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
@@ -204,6 +212,9 @@ while pos<=L
         for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
             if strcmp(S(m).type,'controlFlow.for')
                 S(n).type = 'controlFlow.forValue';
+                success = true;
+            elseif strcmp(S(m).type,'controlFlow.doTwice')
+                S(n).type = 'controlFlow.doTwiceValue';
                 success = true;
             elseif strcmp(S(m).type,'controlFlow.doWhile')
                 S(n).type = 'controlFlow.doWhileIndex';
@@ -218,7 +229,7 @@ while pos<=L
             end
         end
         if ~success
-            error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'', ''while'' or ''do...while'' loop')
+            error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'', ''do twice'', ''while'' or ''do...while'' loop')
         end
         pos = pos + 1;
         n = n + 1;
@@ -229,7 +240,7 @@ while pos<=L
         S(n).nesting = parseNesting;
         success = false;
         for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
-            if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doWhile' 'controlFlow.while'}))
+            if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doTwice' 'controlFlow.doWhile' 'controlFlow.while'}))
                 S(n).from = m; % associate this with opening statement
                 success = true;
                 break % no need to look for any longer in the control stack
@@ -240,7 +251,7 @@ while pos<=L
         end
         pos = pos + 1;
         n = n + 1;  
-    elseif s(pos)==']' % end (of for, do...while, while, if)
+    elseif s(pos)==']' % end (of for, doTwice, do...while, while, if)
         assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''end'' found outside any control flow structure')
         m = parseControlStack(parseNesting); % innermost control structure that is open
         S(m).end = n; % associate opening with this
@@ -277,7 +288,7 @@ while pos<=L
             S(n).nesting = parseNesting;
             success = false;
             for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
-                if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doWhile' 'controlFlow.while'}))
+                if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doTwice' 'controlFlow.doWhile' 'controlFlow.while'}))
                     S(n).from = m; % associate this with opening statement
                     success = true;
                     break % no need to look for in the control stack any longer
@@ -287,7 +298,7 @@ while pos<=L
                 error('MATL:parser', 'MATL error while parsing: ''continue'' is not within any ''for'' loop')
             end
         elseif s(pos+1)=='@' % index of for
-            assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''@'' found outside any control flow structure')
+            assert(parseNesting>0, 'MATL:parser', 'MATL error while parsing: ''X@'' found outside any control flow structure')
             S(n).source = s([pos pos+1]);
             S(n).nesting = parseNesting;
             success = false;
@@ -302,7 +313,7 @@ while pos<=L
                 end
             end
             if ~success
-                error('MATL:parser', 'MATL error while parsing: ''@'' is not within any ''for'' loop') % Change this if I include while, do...while for `X@`
+                error('MATL:parser', 'MATL error while parsing: ''X@'' is not within any ''for'' loop') % Change this if I include while, do...while for `X@`
             end
         elseif any(s(pos+1)==' ') % Not currently used after X. We can filter here or leave it to the compiler
             error('MATL:parser', 'MATL error while parsing: %s%s%s not recognized at position %d', strongBegin, s([pos pos+1]), strongEnd, pos)

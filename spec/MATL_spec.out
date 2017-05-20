@@ -22,7 +22,7 @@
 \BOOKMARK [3][-]{subsubsection.5.5.2}{Colon indexing functions}{subsection.5.5}% 22
 \BOOKMARK [1][-]{section.6}{Control flow: conditional branches and loops}{}% 23
 \BOOKMARK [2][-]{subsection.6.1}{Conditional branches: ``if\203else''}{section.6}% 24
-\BOOKMARK [2][-]{subsection.6.2}{Loops: ``for'', ``do\203while'' and ``while''}{section.6}% 25
+\BOOKMARK [2][-]{subsection.6.2}{Loops: ``for'', ``do twice'', ``do\203while'' and ``while''}{section.6}% 25
 \BOOKMARK [1][-]{section.7}{Implicit actions}{}% 26
 \BOOKMARK [2][-]{subsection.7.1}{Initial actions}{section.7}% 27
 \BOOKMARK [2][-]{subsection.7.2}{Final actions}{section.7}% 28

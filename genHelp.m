@@ -27,6 +27,10 @@ F(end+1).source = '"';
 F(end).comment = 'for';
 F(end).description = '\matlab+for+ (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X@+, \matl+.+, \matl+X.+';
 
+F(end+1).source = ',';
+F(end).comment = 'do twice';
+F(end).description = 'do twice (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X@+, \matl+.+, \matl+X.+';
+
 F(end+1).source = '`';
 F(end).comment = 'do...while';
 F(end).description = 'do...while (control flow: loop). \sa \matl+X`+, \matl+]+, \matl+@+, \matl+.+, \matl+X.+';
@@ -44,8 +48,8 @@ F(end).comment = 'else / finally';
 F(end).description = '\matlab+else+ (control flow: conditional branch) or \matlab+finally+ (control flow: do...while or while loop). \sa \matl+?+, \matl+`+, \matl+X`+';
 
 F(end+1).source = '@';
-F(end).comment = 'for loop variable or do...while / while loop iteration index';
-F(end).description = 'for loop variable, do...while loop iteration index or while loop iteration index of innermost loop. \sa \matl+X@+';
+F(end).comment = 'for loop / do twice variable or do...while / while loop iteration index';
+F(end).description = 'for loop variable, do twice variable, do...while loop iteration index or while loop iteration index of innermost loop. \sa \matl+X@+';
 
 F(end+1).source = 'X@';
 F(end).comment = 'for loop iteration index';

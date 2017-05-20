@@ -214,6 +214,10 @@ for n = 1:numel(S)
             % newLines{1} = sprintf('STACK{end+1} = varFor%i;', S(n).nesting);
             newLines = sprintf('indFor%i = indFor%i+1;', S(n).nesting, S(n).nesting);
             appendLines(newLines, S(n).nesting+1)
+        case 'controlFlow.doTwice'
+            newLines = sprintf('for varDoTwice%i = [false true]', S(n).nesting);
+            appendLines(newLines, S(n).nesting)
+            % newLines{1} = sprintf('STACK{end+1} = varDoTwice%i;', S(n).nesting);
         case 'controlFlow.doWhile' % '`'
             newLines = { sprintf('indDoWhile%i = 0;', S(n).nesting) ...
                 sprintf('condDoWhile%i = true;', S(n).nesting) ...
@@ -289,6 +293,9 @@ for n = 1:numel(S)
                 newLines = { 'end' ...
                     sprintf('clear indFor%i', S(n).nesting) };
                 appendLines(newLines, S(n).nesting)
+            elseif strcmp(S(S(n).from).type, 'controlFlow.doTwice')
+                newLines = 'end';
+                appendLines(newLines, S(n).nesting)
             elseif strcmp(S(S(n).from).type, 'controlFlow.if')
                 newLines = 'end';
                 appendLines(newLines, S(n).nesting);
@@ -302,6 +309,9 @@ for n = 1:numel(S)
         case 'controlFlow.forValue'
             k = S(S(n).from).nesting;
             appendLines(sprintf('STACK{end+1} = varFor%i;', k), S(n).nesting)
+        case 'controlFlow.doTwiceValue'
+            k = S(S(n).from).nesting;
+            appendLines(sprintf('STACK{end+1} = varDoTwice%i;', k), S(n).nesting)
         case 'controlFlow.doWhileIndex'
             k = S(S(n).from).nesting;
             appendLines(sprintf('STACK{end+1} = indDoWhile%i;', k), S(n).nesting)

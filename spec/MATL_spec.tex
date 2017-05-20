@@ -876,20 +876,22 @@ The functions \matl{Y(} and \matl{Z(} support null assignment, with the usual re
 An ``if'' branch is begun with \matl{?}, ended by \matl{]}, and can optionally contain \matl{\}}. These correspond to MATLAB's \matlab+if+, \matlab+end+ and \matlab+else+ respectively. \matl{?} pops (consumes) the top array from the stack, and the statements until \matl{\}} or \matl{]} are executed if the real part of that array has all nonzero elements\footnote{This used to be MATLAB's behaviour in the past, if I recall correctly. Recent versions give an error when the expression has complex values.}. Otherwise the statements between \matl{\}} and \matl{]}, if any, are executed.
 
 
-\subsection{Loops: ``for'', ``do\ldots{}while'' and ``while''}
+\subsection{Loops: ``for'', ``do twice'', ``do\ldots{}while'' and ``while''}
 
-A ``for'' loop is begun by \matl{"} (double quotation symbol) and ended by \matl{]}. The statement \matl{"} takes (consumes) the top array from the stack. That element array is split into pieces, namely the columns of the array (or in general second-dimension slices, like MATLAB's \matlab+for+); and those pieces are iterated on (loop variable). In each iteration, all statements until \matl{]} are executed. The current piece of the array can be obtained with the statement \matl{@}; see below. The loop normally ends when all pieces have been iterated on. However, statements \matl{.} (\matlab+break+) and \matl{X.} (\matlab+continue+) can modify this behaviour, as will be discussed later.
+A ``for'' loop is begun by \matl{"} (double quotation symbol) and ended by \matl{]}. The statement \matl{"} takes (consumes) the top array from the stack. That element array is split into pieces, namely the columns of the array (or in general second-dimension slices, like with MATLAB's \matlab+for+); and those pieces are iterated on (loop variable). In each iteration, all statements until \matl{]} are executed. The current piece of the array can be obtained with the statement \matl{@}; see below. The loop normally ends when all pieces have been iterated on. However, statements \matl{.} (\matlab+break+) and \matl{X.} (\matlab+continue+) can modify this behaviour, as will be discussed later.
+
+A ``do twice'' loop is begun by \matl{,} and ended by \matl{]}. The statement \matl{,} is equivalent to \matl{FT"}; that is, it produces a ``for'' loop with two iterations. The statements \matl{.}, \matl{X.} and \matl{@} can be used as in a ``for'' loop. In particular, \matl{@} will push \matl{F} in the first iteration and \matl{T} in the second.
 
 A ``do\ldots{}while'' loop is begun by \matl{`} (back tick) and ended by \matl{]}. A ``do\ldots{}while'' loop is different from MATLAB's ``while'' loop in that the loop condition is evaluated at the end, not at the beginning. MATL initially executes all statements between \matl{`} and \matl{]}. It then takes (consumes) the top array of the stack and checks if its real part has all nonzero elements (like MATLAB's \matlab+while+ does). If so it goes back to the beginning of the loop; else it exits the loop. As an example, \matl{10`1-t]} counts from \matl{9} down to \matl{0}. Statements \matl{.} and \matl{X.} can also be used in ``do\ldots{}while'' loops. \matl{@} in this type of loops pushes the current iteration index.
 
 A ``while'' loop is begun by \matl{X`} and ended by \matl{]}. In this case the loop condition is evaluated at the beginning, as happens with MATLAB's \matlab+while+ loops. Statements \matl{.} and \matl{X.} can also be used, and \matl{@} pushes the current iteration index.
 
-The statement \matl{@} within a ``for'' loop pushes the current value of the loop variable, that is, the current part of the array that is being iterated on. Within a ``do\ldots{}while'' or ``while'' loop it pushes the current iteration index, starting at $1$. The output of \matl{@} is that corresponding to the \emph{innermost} loop.
+The statement \matl{@} within a ``for'' or ``do twice'' loop pushes the current value of the loop variable, that is, the current part of the array that is being iterated on. Within a ``do\ldots{}while'' or ``while'' loop it pushes the current iteration index, starting at $1$. The output of \matl{@} is that corresponding to the \emph{innermost} loop.
 
-The statement \matl{X@} pushes the current iteration index of the innermost ``for'' loop, starting at $1$. If \matl{X@} is within a ``do\ldots{}while'' or ``while'' loop, it still refers to the innermost ``for'' loop which contains it. That is, ``do\ldots{}while'' and ``while'' loops are ``transparent'' for \matl{X@}.
+The statement \matl{X@} pushes the current iteration index of the innermost ``for'' loop, starting at $1$. If \matl{X@} is within a ``do twice'', ``do\ldots{}while'' or ``while'' loop, it still refers to the innermost ``for'' loop which contains it. That is, ``do twice'', ``do\ldots{}while'' and ``while'' loops are ``transparent'' for \matl{X@}.
 \label{parte: @}
 
-The statement \matl{.} (``break'') causes the program to exit the innermost ``for'', ``do\ldots{}while'' or ``while'' loop.
+The statement \matl{.} (``break'') causes the program to exit the innermost ``for'', ``do twice'', ``do\ldots{}while'' or ``while'' loop.
 
 The statement \matl{X.} (``continue'') ends the current iteration of the innermost loop, and the loop proceeds with the next iteration, if any.
 
@@ -900,7 +902,9 @@ Statements \matl{]} at the very end of the program can be omitted; see \S\ref{pa
 \begin{pending}
 % The iteration index of a ``for'' loop could be added, but it's probably less useful. It would require an additional character or pair of characters.
 
-I initially defined MATL with ```for'' and ``while'' loops only, as in MATLAB. But I realized that all ``while'' loops I was writing had a \matl{T} before \matl{`} to force the loop code to be executed at least once. So I introduced ``do\ldots{}while'' loops. The ``finally'' statement was a later addition.
+I initially defined MATL with ``for'' and ``while'' loops only, as in MATLAB. But I realized that all ``while'' loops I was writing had a \matl{T} before \matl{`} to force the loop code to be executed at least once. So I introduced ``do\ldots{}while'' loops. The ``finally'' statement was a later addition.
+
+The ``do twice'' loop modifies the semantics of \matl{@}, but not of \matl{X@} (which will still refer to the minimally outer ``for'' loop). Another possibility would have been to also leave \matl{@} unaffected by ``do twice'' loops, thus allowing access to the variable of an outer ``for'' loop. However, it is sometimes useful to have information about the iteration index of the ``do twice'' loop. In addition, having \matl{@} push \matl{F} in the first iteration and \matl{T} in the second allows writing partially repeated code with the pattern \matl{aabbaacc} (where \matl{aa} etc represent different code parts) as \matl{,aa@?cc\}bb]}.
 \end{pending}
 
 
