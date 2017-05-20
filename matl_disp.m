@@ -55,6 +55,7 @@ if listing && ~isempty(S)
         texts(strcmp(Stype, 'metaFunction.outSpec')) = {'output specification'};
         texts(strcmp(Stype, 'metaFunction.altInOut')) = {'alternative input/output specification'};
         texts(strcmp(Stype, 'controlFlow.for')) = {'for'};
+        texts(strcmp(Stype, 'controlFlow.doTwice')) = {'do twice'};
         texts(strcmp(Stype, 'controlFlow.doWhile')) = {'do...while'};
         texts(strcmp(Stype, 'controlFlow.while')) = {'while'};
         texts(strcmp(Stype, 'controlFlow.if')) = {'if'};
@@ -62,6 +63,7 @@ if listing && ~isempty(S)
         texts(strcmp(Stype, 'controlFlow.finally')) = {'finally'};
         texts(strcmp(Stype, 'controlFlow.forValue')) = {'for loop variable'};
         texts(strcmp(Stype, 'controlFlow.forIndex')) = {'for loop index'};
+        texts(strcmp(Stype, 'controlFlow.doTwiceValue')) = {'do twice variable'};
         texts(strcmp(Stype, 'controlFlow.doWhileIndex')) = {'do...while loop iteration index'};
         texts(strcmp(Stype, 'controlFlow.whileIndex')) = {'while loop iteration index'};
         texts(strcmp(Stype, 'controlFlow.end')) = {'end'};
