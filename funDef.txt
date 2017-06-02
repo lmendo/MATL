@@ -860,9 +860,10 @@ XQ	2	6	3		1	1	1		true	true	true	true	str = {'@sum' '@mean' '@(x){sort(x).''}' '@
 													if numel(in)>=4, in{4} = str2func(str{in{4}}); end; clear str
 													out{1} = accumarray(in{:});
 YQ	1	2	1		1	2	2		true	true	true	true	[out{:}] = rat(in{:});	rational approximation	\matlab+rat+
-ZQ	1	3	2	1	1	1	1		true	true	true	true	if numel(in)==1, out{1} = roots(in{1});	polynomial roots / evaluate polynomial / fit polynomial	(i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+
+ZQ	1	4	2	1	1	2	1		true	true	true	true	if numel(in)==1, out{1} = roots(in{1});	polynomial roots / evaluate polynomial / fit polynomial	(i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+. If $4$ inputs: \matlab+inpolygon+
 													elseif numel(in)==2, out{1} = polyval(in{:});
 													elseif numel(in)==3, out{1} = polyfit(in{:});
+													elseif numel(in)==4, [out{:}] = inpolygon(in{:});
 													else error('MATL:runtime', 'MATL run-time error: incorrect number of inputs'), end
 R	1	2	1	2	1	1	1		true	true	true	true	out{1} = triu(in{:});	upper triangular part	\matlab+triu+. \sa \matl+XR+.
 XR	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	upper triangular part, above diagonal / build matrix	\matlab+triu(..., 1)+. If $2$ inputs: builds an upper triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl+R+, \matl+ZR+

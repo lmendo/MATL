@@ -110,7 +110,7 @@
 \matl{I} & 0 & 0-- ($^\dagger$) & paste from clipboard I \\
 \matl{XI} & 0-- (1) & 0 & copy to clipboard I \\
 \matl{YI} & 3--4 (3 / 4) & 1 & \matlab+col2im+. Uses \matlab+'distinct'+ option by default. Second and third inputs may be scalars, and then they are interpreted as numbers of columns. Third input may be a two-vector with product less then the number of elements of first input, and then it is appropriately scaled. This function allows flag strings in fourth input to be replaced by numbers, as follows: 1: \matlab+'distinct'+, 2: \matlab+'sliding'+ \\
-\matl{ZI} & 1-- (2 / 3) & 1-- (1) & Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+. \\
+\matl{ZI} & 1-- (2 / 3) & 1-- (1) & Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.  $2$: \matlab+imdilate+.  $3$: \matlab+imerode+. \\
 \matl{J} & 0 & 0-- ($^\dagger$) & paste from clipboard J \\
 \matl{XJ} & 0-- (1) & 0 & copy to clipboard J \\
 \matl{K} & 0 & 0-- ($^\dagger$) & paste from clipboard K \\
@@ -135,7 +135,7 @@
 \matl{Q} & 1 & 1 & \matlab|(...)+1| \\
 \matl{XQ} & 2--6 (3) & 1 & \matlab+accumarray+. If first input is \matlab+char+ it is converted to \matlab+double+. The third input may be omitted, and then it is interpreted as \matlab+[]+. Fourth/third argument specifies an anonymous function, as follows:  1: \matlab+'@sum'+, 2: \matlab+'@mean'+, 3: \matlab+'@(x){sort(x).'}'+, 4: \matlab+'@max'+, 5: \matlab+'@min'+, 6: \matlab+'@prod'+, 7: \matlab+'@(x){x.'}'+, 8: \matlab+'@(x){x}'+, 9: \matlab+'@(x){sort(x)}'+, 10: \matlab+'@(x)x(1)'+, 11: \matlab+'@(x)x(end)'+, 12: \matlab+'@(x){cumsum(x).'}'+, 13: \matlab+'@(x){cumprod(x)}'+, 14: \matlab+'@nansum'+, 15: \matlab+'@nanmean'+, 16: \matlab+'@nanmax'+, 17: \matlab+'@nanmin'+, 18: \matlab+'@(x){cummax(x).'}'+, 19: \matlab+'@(x){cummin(x)}'+, 20: \matlab+'@(x){cummax(x).'}'+, 21: \matlab+'@(x){cummin(x)}'+ \\
 \matl{YQ} & 1--2 (1) & 1--2 (2) & \matlab+rat+ \\
-\matl{ZQ} & 1--3 (2 / 1) & 1 & (i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+ \\
+\matl{ZQ} & 1--4 (2 / 1) & 1--2 (1) & (i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+. If $4$ inputs: \matlab+inpolygon+ \\
 \matl{R} & 1--2 (1 / 2) & 1 & \matlab+triu+. \sa \matl{XR}. \\
 \matl{XR} & 1--2 (1 / 2) & 1 & \matlab+triu(..., 1)+. If $2$ inputs: builds an upper triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl{R}, \matl{ZR} \\
 \matl{YR} & 1--2 (1 / 2) & 1 & \matlab+tril+. \sa \matl{ZR}. \\
