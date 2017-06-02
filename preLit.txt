@@ -243,6 +243,9 @@ Y2
 14	'bcdfghjklmnpqrstvwxyz'
 15	'BCDFGHJKLMNPQRSTVWXYZ'
 16	'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ'
+17	'aeiouy'
+18	'AEIOUY'
+19	'aeiouyAEIOUY'
 20	['Mon'; 'Tue'; 'Wed'; 'Thu'; 'Fri'; 'Sat'; 'Sun']
 21	[298 302 288 305 289 296 310]
 22	{'January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December'}
