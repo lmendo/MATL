@@ -1500,8 +1500,8 @@ Yq	1	1	1		1	1	1		true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For
 													error('MATL:runtime', 'MATL run-time error: input should have all entries positive or all non-positive')
 													end
 Zq	1	1	1		1	1	1		true	true	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+
-r	0	inf	0		1	1	1		true	true	true	true	out{1} = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
-Xr	0	inf	0		1	1	1		true	true	true	true	if numel(in)==0, in{1} = 1; end; out{1} = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
+r	0	inf	0	2	1	1	1		true	true	true	true	out{1} = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
+Xr	0	inf	0	2	1	1	1		true	true	true	true	if numel(in)==0, in{1} = 1; end; out{1} = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
 Yr	1	inf	1	2	1	1	1		true	true	true	true	if numel(in)==2 && isscalar(in{2}), in{2} = [1 in{2}]; end	pseudorandom integers from uniform discrete distribution	\matlab+randi+. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+
 													out{1} = randi(in{:});
 Zr	2	4	2	3	1	1	1		true	true	true	true	out{1} = randsample(in{:});	random sample	\matlab+randsample+. Does not support stream specification

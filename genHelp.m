@@ -29,7 +29,7 @@ F(end).description = '\matlab+for+ (control flow: loop). \sa \matl+]+, \matl+@+,
 
 F(end+1).source = ',';
 F(end).comment = 'do twice';
-F(end).description = 'do twice (control flow: loop). \sa \matl+]+, \matl+@+, \matl+X@+, \matl+.+, \matl+X.+';
+F(end).description = 'do twice (control flow: loop). \sa \matl+]+, \matl+@+, \matl+.+, \matl+X.+';
 
 F(end+1).source = '`';
 F(end).comment = 'do...while';
