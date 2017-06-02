@@ -122,6 +122,9 @@ X6
 30	'BitsPerSample'
 31	'BitRate'
 32	'Quality'
+33	'maximal'
+34	'ispacked'
+35	'notpacked'
 
 
 X7

@@ -784,12 +784,16 @@ YI	3	4	3	4	1	1	1		true	true	true	true	str = {'distinct' 'sliding'};	rearrange ma
 													if isscalar(in{3}), in{3}(2) = numel(in{1})/in{3}; end
 													if prod(in{3})~=numel(in{1}), in{3} = round(in{3}*sqrt(numel(in{1})/prod(in{3}))); end
 													out{1} = col2im(in{:});
-ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functions	Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.
+ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functions	Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.  $2$: \matlab+imdilate+.  $3$: \matlab+imerode+.
 													case 0
 													if islogical(in{1}) || ischar(in{1}), in{1} = double(in{1}); end
 													[out{:}] = imfill(in{1:end-1});
 													case 1
 													[out{:}] = bwlabeln(in{1:end-1});
+													case 2
+													[out{:}] = imdilate(in{1:end-1});
+													case 3
+													[out{:}] = imerode(in{1:end-1});
 													otherwise
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
