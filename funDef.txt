@@ -701,7 +701,8 @@ YE
 ZE
 F
 XF
-YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutput', false);	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. (ii) With $2$ outputs: first output gives the prime factors, second is as before. \sa \matl+Yf+
+YF	1	1	1		1	2	1	2	true	true	true	true	trim = (any(in{1}<0) && (nout==1)) || (~any(in{1}<0) && (nout==2)); in{1} = abs(in{1});	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. If any entry in the input is negative, the absolute value is taken, and the output contains only non-zero exponents. (ii) With $2$ outputs: first output gives the prime factors, second gives the exponents. Primes that are not factors are skipped, as are their zero exponents. If any entry in the input is negative, the absolute value is taken, and all intermediate primes are included, possibly with zero exponents. \sa \matl+Yf+
+													f = arrayfun(@factor, in{1}, 'uniformoutput', false);
 													p = primes(max([f{:}]));
 													y = zeros(numel(f), numel(p));
 													for k = 1:numel(f);
@@ -711,7 +712,8 @@ YF	1	1	1		1	2	1	2	true	true	true	true	f = arrayfun(@factor, in{1}, 'uniformoutpu
 													elseif nout==2, out = {p, y};
 													else error('MATL:runtime', 'MATL run-time error: number of outputs not supported');
 													end
-													clear f p y k
+													if trim, out = cellfun(@(c) c(:, any(y>0, 1)), out, 'UniformOutput', false); end
+													clear f p y k trim
 ZF
 G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		true	true	false	true	if numel(CB_G)==0	paste from user-input clipboard G	paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level
 													implInput = input(implicitInputPrompt,'s');
