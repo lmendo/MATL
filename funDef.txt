@@ -1511,7 +1511,8 @@ Yq	1	1	1		1	1	1		true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For
 Zq	1	1	1		1	1	1		true	true	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+
 r	0	inf	0	2	1	1	1		true	true	true	true	out{1} = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
 Xr	0	inf	0	2	1	1	1		true	true	true	true	if numel(in)==0, in{1} = 1; end; out{1} = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
-Yr	1	inf	1	2	1	1	1		true	true	true	true	if numel(in)==2 && isscalar(in{2}), in{2} = [1 in{2}]; end	pseudorandom integers from uniform discrete distribution	\matlab+randi+. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+
+Yr	1	inf	1	2	1	1	1		true	true	true	true	if numel(in)==2 && isscalar(in{2}), in{2} = [1 in{2}]; end	pseudorandom integers from uniform discrete distribution	\matlab+randi+. If the first input is a vector of $2$ elements it is automatically sorted. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+
+													if numel(in{1})==2, in{1} = sort(in{1}); end
 													out{1} = randi(in{:});
 Zr	2	4	2	3	1	1	1		true	true	true	true	out{1} = randsample(in{:});	random sample	\matlab+randsample+. Does not support stream specification
 s	1	4	1	2	1	1	1		true	true	true	true	str = {'omitnan' 'includenan' 'double' 'native' 'default'};	sum	\matlab+sum+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+. \sa \matl+Xs+
