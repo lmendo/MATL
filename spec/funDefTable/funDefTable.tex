@@ -38,7 +38,7 @@
 \matl{Y,} & 1 & 1 & \matlab+sin+ \\
 \matl{Z,} & 1 & 1 & \matlab+tan+ \\
 \matl{-} & 1--2 (2 / 1) & 1 & \matlab+-+ (\matlab+minus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
-\matl{X-} & 2--4 (2 / 3) & 1--2 (1) & \matlab+setdiff+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{X-} & 2--4 (2 / 3) & 1--2 (1) & \matlab+setdiff+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+. \sa \matl{X\textasciitilde{}} \\
 \matl{Y-} & 2 & 1--2 (2 / 1) & \matlab+deconv+ \\
 \matl{Y.} & 0--1 (1) & 0 & \matlab+pause+ (without outputs) \\
 \matl{Z.} & 2--3 (2) & 1 & \matlab+bitget+. If first input is \matlab+char+ it is automatically converted to \matlab+double+ \\
@@ -260,6 +260,6 @@
 \matl{Z|} & 2--3 (2) & 1 & \matlab+bitor+ (bitwise 'or'), element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl{Z\&}, \matl{Z\textasciitilde{}} \\
 \matl{Z\}} & 1--2 (1 / 2) & 0-- ($^\bigtriangledown$) & split array into subarrays along the first non-singleton dimension. With $2$ inputs: split into subarrays along the dimension indicated by the second input \\
 \matl{\textasciitilde{}} & 1 & 1 & \matlab+~+ (\matlab+not+) \\
-\matl{X\textasciitilde{}} & 2--4 (2 / 3) & 1--3 (1) & \matlab+setxor+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+ \\
+\matl{X\textasciitilde{}} & 2--4 (2 / 3) & 1--3 (1) & \matlab+setxor+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+. \sa \matl{X-} \\
 \matl{Y\textasciitilde{}} & 2 & 1 & \matlab+xor+, element-wise with singleton expansion \\
 \matl{Z\textasciitilde{}} & 2--3 (2) & 1 & \matlab+bitxor+ (bitwise 'xor'), element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl{Z\&}, \matl{Z|} \\
