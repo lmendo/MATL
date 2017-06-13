@@ -468,8 +468,9 @@ Some normal functions simply push fixed, predefined literals onto the stack depe
 \subsection{Meta-functions}
 \label{parte: meta-functions}
 
-Meta-functions are \matl{\$}, \matl{\#} and \matl{\&}. The first two are used for specifying the number of inputs and outputs that will be used by the next function, whether it's a normal, stack rearranging or clipboard function. The third specifies a certain number of inputs and outputs, as an alternative or secondary default input/output configuration.
-\emph{The input/output specifications done with meta-functions} \matl{\$}, \matl{\#} and \matl{\&} \emph{are consumed (deleted)} by the next \emph{normal, stack rearranging or clipboard function}. If that function doesn't allow the number of inputs or outputs specified by \matl{\$} or \matl{\#} an error occurs. If a \matl{\$}, \matl{\#} or \matl{\&} specification is issued before the previous one has been consumed by a function, the new specification replaces the previous one.
+Meta-functions are \matl{\$}, \matl{\#} and \matl{\&}. The first two are used for specifying the number of inputs and outputs that will be used by the next function, whether it's a normal, stack rearranging or clipboard function. The third specifies a certain number of inputs and outputs, as an alternative or secondary default input/output configuration for some functions.
+
+\emph{The input/output specifications done with meta-functions} \matl{\$}, \matl{\#} and \matl{\&} \emph{are consumed (deleted)} by the next \emph{normal, stack rearranging or clipboard function}. If that function doesn't allow the number of inputs or outputs specified by \matl{\$} or \matl{\#} an error occurs. Using \matl{\&} with a function that doesn't have a secondary default specification gives an error too. If a \matl{\$}, \matl{\#} or \matl{\&} specification is issued before the previous one has been consumed by a function, the new specification replaces the previous one.
 
 The \matl{\$} meta-function \parte{specifies the inputs} to be used by the next function. \matl{\$} takes as argument the top element of the stack, and consumes it. That element can be a \emph{number} such as \matl{3}, or a \emph{logical array} such as \matl{TTF}. In the first case, the next function will use the three highest elements on the stack as inputs. In the second case, the logical values are interpreted as a logical index into the stack elements, starting from the top. So \matl{TTF\$} indicates that the function will use as inputs the two elements below the top element.
 
@@ -503,7 +504,7 @@ The ``\matl{6\#}'' notation in the preceding example is shorter, whereas ``\matl
 
 Note that, even if the function inputs can be taken from arbitrary positions of the stack (using \matl{\$} with a logical array), the outputs are always pushed onto the top of the stack.
 
-The \matl{\&} meta-function causes the next function to use its \parte{alternative or secondary default input/output configuration}. Specifically, it sets a number of inputs and a number of outputs that are fixed for each function. For example, for \matl{f} the meta-function \matl{\&} specifies $1$ input and $2$ outputs. So \matl{[0 4 7 0]\&f} would produce the arrays \matl{[1 1]} and \matl{[2 3]}.
+The \matl{\&} meta-function causes the next function to use its \parte{alternative or secondary default input/output configuration}. Specifically, it sets an input specification and an output specification that are fixed for each function. For example, for \matl{f} the meta-function \matl{\&} specifies $1$ input and $2$ outputs. So \matl{[0 4 7 0]\&f} would produce the arrays \matl{[1 1]} and \matl{[2 3]}.
 
 When MATL processes a function, if no \matl{\$}, \matl{\#} or \matl{\&} specifications exist (for example, because they have been consumed by a previous function call), the default number of inputs or outputs is used for the current function. If \matl{\$}, \matl{\#} or \matl{\&} specifications are actually issued, they don't need to be right before the function. For example, there can be literals in between (but not another function, as it would consume those specifications). So, if the stack contains \matl{[0 4 7 0]}, \matl{1}, after executing \matl{TTF\$'abc'FTT\#f} it will contain \matl{'abc'}, \matl{4}, \matl{2}.
 
@@ -534,9 +535,9 @@ These functions rearrange the elements in the stack (by duplicating, moving, del
 
 If a logical array is used as argument to \matl{\$}, it specifies which elements should be copied, maintaining their relative order. For example, \matl{TTF\$t} would copy the third- and second-highest elements and paste them at the top of the stack.
 \item
-\matl{y} (duplicate element). This function is similar to \matl{t}, but it only duplicates the lowest element among those specified as inputs. It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $2$. Or a logical array can be used as input specification. For example, if the stack contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'b'}, either \matl{3\$y} or \matl{TTF\$y} would leave the stack as \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'a'}. Without input specification, \matl{k} duplicates the second element from the top.
+\matl{y} (duplicate element). This function is similar to \matl{t}, but it only duplicates the lowest element among those specified as inputs. It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $2$; secondary default $3$. Or a logical array can be used as input specification. For example, if the stack contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'b'}, either \matl{3\$y} or \matl{TTF\$y} would leave the stack as \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'a'}. Without input specification, \matl{k} duplicates the second element from the top.
 \item
-\matl{b} (bubble up). It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $3$. It makes the $n$-th highest element ``bubble up'' to the top, shifting elements $1$, \ldots, $n-1$ one position down. For $n=0$ it does nothing.
+\matl{b} (bubble up). It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $3$; secondary default $4$. It makes the $n$-th highest element ``bubble up'' to the top, shifting elements $1$, \ldots, $n-1$ one position down. For $n=0$ it does nothing.
 
 If a logical array is used as argument to \matl{\$}, the bubbling is done only for the indicated stack elements. For example, if the stack initially contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'d'} from bottom to top, \matl{TTFT\$b} would leave the stack as \matl{'b'}, \matl{'d'}, \matl{'c'}, \matl{'a'}.
 \item
@@ -561,7 +562,7 @@ The first four clipboards behave as would be expected: they store values that ca
 Access to the clipboards is provided by means of the following functions:
 \begin{itemize}
 \item
-\matl{XH}, \matl{XI}, \matl{XJ}, \matl{XK} (copy to specified clipboard): copy a number of elements from the stack to one of the clipboards, without removing them from the stack. These functions have an arbitrary number of inputs $0, 1, 2 \ldots$, and no outputs. How many or which elements should be copied to the given clipboard is specified with \matl{\$}. For example, \matl{2\$XH} indicates copy the two top elements to clipboard H; and \matl{TF\$XH} indicates copy the element right below the top. By default the top element is copied, corresponding to \matl{1\$}.
+\matl{XH}, \matl{XI}, \matl{XJ}, \matl{XK} (copy to specified clipboard): copy a number of elements from the stack to one of the clipboards, without removing them from the stack. These functions have an arbitrary number of inputs $0, 1, 2 \ldots$, and no outputs. How many or which elements should be copied to the given clipboard is specified with \matl{\$}. For example, \matl{2\$XH} indicates copy the two top elements to clipboard H; and \matl{TF\$XH} indicates copy the element right below the top. By default the top element is copied, corresponding to \matl{1\$}; secondary default (specified with \matl{\&}) is \matl{2\$}.
 
 Copying elements to a clipboard removes its previous contents.
 
@@ -649,7 +650,7 @@ With $1$ input argument, \matl{G} retrieves the contents of the clipboard level 
 
 If clipboard G has no levels (no user-input has occurred yet), calling \matl{G} causes one user-input to be implicitly taken (see \S\ref{parte: implicit inputs}) in order to fill the first level.
 
-This function by default has $0$ input arguments if clipboard G currently has zero or one levels, and $1$ input argument otherwise. This is intended to facilitate clipboard handling: when there are zero or one levels there is no need to specify which level to paste from. So without \matl{\$}, \matl{\#} or \matl{\&} specifications, function \matl{G} behaves as follows: if no input has been asked from the user yet \matl{G} takes one user-input implicitly and pushes it; if one user-input has been asked \matl{G} pushes it; and if more two or more user-inputs have been asked \matl{G} takes one argument that specifies which one will be pushed.
+This function by default has $0$ input arguments if clipboard G currently has zero or one levels, and $1$ input argument otherwise. This is intended to facilitate clipboard handling: when there are zero or one levels there is no need to specify which level to paste from. So without \matl{\$}, \matl{\#} or \matl{\&} specifications, function \matl{G} behaves as follows: if no input has been asked from the user yet \matl{G} takes one user-input implicitly and pushes it; if one user-input has been asked \matl{G} pushes it; and if two or more user-inputs have been asked \matl{G} takes one argument that specifies which one will be pushed. Secondary default (\matl{\&}) is $0$ input arguments.
 
 Clipboard M automatically stores all \parte{function inputs} from the $4$ most recent calls to \emph{normal} functions that took \emph{at least one} input from the stack. The inputs corresponding to each function call are stored on a different level, by increasing order of age. So clipboard level $1$ contains all inputs of the most recent call (to a normal function that used inputs); level $2$ from the second most recent call, etc.
 
@@ -680,7 +681,7 @@ In this scenario, \matl{4M} would push \matl{10}, \matl{20}, \matl{30} onto the 
 
 Note the similarity of \matl{M} with function \matl{L}, which is used for pasting from multi-level clipboard L. In both cases, the input argument to the function specifies the clipboard level which is being addressed, and the output specification controls which of the multiple elements (arrays) existing in that level are pushed to the stack. In function \matl{G}, on the other hand, both the input argument and the output specification specify which levels are pushed, each level containing only one element (array). Another difference between clipboards G and M is that the former uses chronological order, whereas the latter uses reverse chronological order.
 
-Clipboards G and M differ from H,\ldots,L in that here copying is done automatically, and it doesn't use or consume any \matl{\$} or \matl{\#} specifications. But pasting with functions \matl{G} and \matl{M} does consume \matl{\$} and \matl{\#} specifications, like paste functions of standard clipboards do.
+Clipboards G and M differ from H,\ldots,L in that here copying is done automatically, and it doesn't use or consume any \matl{\$} or \matl{\#} specifications. But pasting with functions \matl{G} and \matl{M} does consume \matl{\$} and \matl{\#} specifications, like pasting from standard clipboards does.
 
 \begin{pending}
 The default number of inputs and outputs of \matl{G} has been defined such that, in normal usage, an input number is used to address the intended level; but this number is spared when it's not needed because there is only one level. Note that with this function there may be several ways of obtaining the same result using different input and output specifications. For example, if clipboard G has two levels, \matl{0\$1\#G} is equivalent to \matl{1\$1G}.
@@ -796,11 +797,11 @@ Quite independently of the above, an index can refer to one or several dimension
 
 As an example with modular indexing, if the top of the stack is a $6\times 7$ array \matlab+a+, \matl{8[3 -1]3\$)} would produce \matlab+a(2,[3 6])+.
 
-The function \matl{)} can also be used with $2$ outputs. The simplest case is when only one input index is used. The first output is the same as described above, and the second is the ``complementary'' array formed by the index values not present in the input index. For example, \matl{[2 4 6 8][2 3]2\#)} produces the arrays \matl{[4 6]} and \matl{[2 8]}, as does \matl{[2 4 6 8]FTT2\#)}.
+The function \matl{)} can also be used with $2$ outputs. The simplest case is when only one input index is used. This is the secondary default input/output configuration. The first output is the same as described above, and the second is the ``complementary'' array formed by the index values not present in the input index. For example, \matl{[2 4 6 8][2 3]2\#)} produces the arrays \matl{[4 6]} and \matl{[2 8]}, as does \matl{[2 4 6 8]FTT2\#)}.
 
 In general, the second output of \matl{)} is obtained by means of a \emph{null assignment} of the form \matlab+a(...) = []+, which removes the indicated elements from the input array. In MATLAB, given a $3\times 4$ array \matlab+a+, neither \matlab+a(1:3,[2 4]) = []+ nor even \matlab+a(1:end,[2 4]) = []+ are allowed. Instead, a \emph{colon} needs to be explicitly used: \matlab+a(:,[2 4]) = []+. The general rule is that, if several indices are used, all but one need to be \matlab+:+ (colon). As mentioned earlier, the string \matlab+':'+ can be used in MATL (as in MATLAB) as equivalent to a colon. Thus, \matl{':'[2 4]3\$2\#)} is valid code, which produces as first output an array with columns 2 and 4 from the input, and as second output the input array with those columns removed.
 
-\matl{(} takes an arbitrary number of inputs, by default $3$. The first input is the array to which values will be assigned; the second is an array containing the values to be assigned to the first; and the following inputs are the indices into the first array. Consider for example \matlab+a(5,6) = b+. In MATL, if the stack contains \matl{a} and \matl{b} on top, the corresponding assignment would be \matl{5 6 4\$(}. Or, combining this with reference indexing into the right-hand size, \matlab+a(5,[6 7]) = b(8,[9 10])+ would be \matl{8 [9 10] 3\$) 5 [6 7] 4\$(}. Note that the initial \matl{8 [9 10] 3\$(} replaces the top of the stack \matlab+b+  by \matlab+b(8, [9 10])+.
+\matl{(} takes an arbitrary number of inputs, by default $3$, secondary default $4$. The first input is the array to which values will be assigned; the second is an array containing the values to be assigned to the first; and the following inputs are the indices into the first array. Consider for example \matlab+a(5,6) = b+. In MATL, if the stack contains \matl{a} and \matl{b} on top, the corresponding assignment would be \matl{5 6 4\$(}. Or, combining this with reference indexing into the right-hand size, \matlab+a(5,[6 7]) = b(8,[9 10])+ would be \matl{8 [9 10] 3\$) 5 [6 7] 4\$(}. Note that the initial \matl{8 [9 10] 3\$(} replaces the top of the stack \matlab+b+  by \matlab+b(8, [9 10])+.
 
 The order of inputs used by \matl{(}, namely ``destination'', ``data'', ``indices'', naturally adapts to certain situations, such as processing in a loop: in each iteration some processing is done, resulting in the data to be assigned to a destination array that was previously pushed onto the stack. The index of the assignment is then pushed onto the stack and \matl{(} is called.
 
@@ -858,7 +859,7 @@ As an example with assignment indexing, \matl{[10 20 30; 40 50 60][7 8]\{[-2 3] 
 
 \matl{Z)} is analogous to \matl{Y)} except that the colon index is added \emph{before} the specified index or indices. Thus if the stack contains the array \matl{[1 2; 3 4]}, the code \matl{1Z)} produces the first column of the array, \matl{[1;3]}. The equivalent code using \matl{)} would be \matl{':'1 3\$)} or \matl{[1 j]1 3\$)}.
 
-The functions \matl{Y)} and \matl{Z)} also have $2$-output versions, analogous to that of \matl{)}. In this case only one input index can be different from \matl{':'}, and the second output is the ``complementary'' array. For example, \matl{[1 2; 3 4; 5 6] [1 3]2\#Y)} produces the arrays \matl{[1 2; 5 6]} and \matl{[3 4]}.
+The functions \matl{Y)} and \matl{Z)} also have $2$-output versions, analogous to that of \matl{)}. In this case only one input index can be different from \matl{':'}, and the second output is the ``complementary'' array. For example, \matl{[1 2; 3 4; 5 6] [1 3]2\#Y)} produces the arrays \matl{[1 2; 5 6]} and \matl{[3 4]}. The secondary default configuration for these functions is $1$ input and $2$ outputs.
 
 \matl{Y(} and \matl{Z(} add a final or initial colon respectively in assignment indexing. They take at least $2$ inputs; by default $3$, corresponding to destination array, data, and one specified index. They produce $1$ output. For example, if the stack contains \matl{[1 2; 3 4]}, the code \matl{5,1Y(} produces the array \matl{[5 5; 3 4]}. It is thus equivalent to the more cumbersome \matl{5 1':'4\$(} or \matl{5 1[1 j]4\$(}.
 
@@ -1074,7 +1075,7 @@ matrix inverse: not used very often; and can be done with \matlab+eye+ and matri
 
 \subsection{Usage}
 
-The official MATL compiler is written in MATLAB R2015b. It takes a source program in MATL and produces an output (compiled) program that is run in MATLAB. It requires version R105b or newer, although most of the functionality probably works in older versions too. The compiler can also work on Octave; see \S\ref{parte: compatibility with Octave}. In addition, an online compiler is available; see \S\ref{parte: online}.
+The official MATL compiler is written in MATLAB R2015b. It takes a source program in MATL and produces an output (compiled) program that is run in MATLAB. It requires version R105b or newer, although most of the functionality probably works in older versions too. The compiler can also work on Octave; see \S\ref{parte: compatibility with Octave}. In addition, online compilers are available; see \S\ref{parte: online}.
 
 The compiler can be used in any of the following ways:
 \begin{itemize}
@@ -1124,7 +1125,7 @@ As happens with \matlab+l+, if options \matlab+c+, \matlab+r+ or \matlab+d+ have
 \item
 \matlab+h+: help. provides command-line help.
 \item
-\matlab+o+: online. This option is used in the online compiler. It produces the following changes:
+\matlab+o+: online. This option is used in online compilers. It produces the following changes:
 \begin{itemize}
 \item
 removes the default input prompts;
@@ -1394,9 +1395,9 @@ In Matlab, \matlab+input(..., 's')+ (unevaluated input) interprets input consist
 MATL code can be executed online in the following two awesome platforms. Many thanks to \user{@Dennis} and \user{@Suever} for providing them!
 \begin{itemize}
 \item
-\user{@Dennis}' \emph{Try it online!} platform\footnote{\url{https://tio.run/nexus/matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
+\user{@Dennis}' \emph{Try It Online} platform\footnote{\url{https://tio.run/nexus/matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
 \item
-\user{@Suever}'s \emph{MATL online} interpreter\footnote{\url{https://matl.suever.net/}}. This platform is MATL-specific and allows real-time text output, graphical output and documentation search, among other features.
+\user{@Suever}'s \emph{MATL Online} interpreter\footnote{\url{https://matl.suever.net/}}. This platform is MATL-specific and allows real-time text output, graphical output and documentation search, among other features.
 \end{itemize}
 
 
@@ -1462,7 +1463,7 @@ Thanks to the following people (in alphabetical order) for their contributions:
 \item
 \user{@David} for finding a good implementation of the ``$n$-th prime'' function, as well as some errata in this document. Also for suggesting that \matl{G} should take implicit input if needed, and for finding a bug in Octave's \matlab+datestr+ function.
 \item
-\user{@Dennis} for hosting MATL in his wonderful \emph{Try it online!} platform\footnote{\url{http://tryitonline.net}}. Also for suggesting modular indexing and bit-wise operations with negative values.
+\user{@Dennis} for hosting MATL in his wonderful \emph{Try It Online} platform\footnote{\url{http://tryitonline.net}}. Also for suggesting modular indexing, and bit-wise operations with negative values.
 \item
 \user{@DJMcMayhem} for finding some errata, and also for suggesting that a square-power and a divisors function be added.
 %http://chat.stackexchange.com/transcript/message/30482878#30482878
@@ -1487,7 +1488,7 @@ Thanks to the following people (in alphabetical order) for their contributions:
 \user{@Suever} for his help in finding several differences between Octave and MATLAB,
 % regarding the $0$ character, as well as the \matlab+max+ and \matlab+min+ functions;
 % concatenation of chars and logical doesn't work in Matlab
-and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\matlab+imshow+), and in Octave's compatibility patch for \matl{u} and \matl{Xu} (\matlab+unique+). Also for suggesting that \matl{\&} should produce a ``secondary default'' input/output specification, adapted to each function (my initial idea was to simply have it increase the number of inputs by $1$), and for his valuable help in finding the most appropriate secondary specification for each function, including a very useful script to get information from MATL answers posted in the Programming Puzzles and Code Golf site. Thanks too for his suggestion to have automatic input transposition for single-input versions of addition, multiplication and other functions, and for his suggestion which led to the name ``element-wise indexing''. And, specially, thanks for creating and maintaining the awesome \emph{MATL online} platform\footnote{\url{https://matl.suever.net/}}.
+and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\matlab+imshow+), and in Octave's compatibility patch for \matl{u} and \matl{Xu} (\matlab+unique+). Also for suggesting that \matl{\&} should produce a ``secondary default'' input/output specification, adapted to each function (my initial idea was to simply have it increase the number of inputs by $1$), and for his valuable help in finding the most appropriate secondary specification for each function, including a very useful script to get information from MATL answers posted in the Programming Puzzles and Code Golf site. Thanks too for his suggestion to have automatic input transposition for single-input versions of addition, multiplication and other functions, and for his suggestion which led to the name ``element-wise indexing''. And, specially, thanks for creating and maintaining the awesome \emph{MATL Online} platform\footnote{\url{https://matl.suever.net/}}.
 % http://chat.stackoverflow.com/transcript/message/29716461#29716461
 % http://chat.stackoverflow.com/transcript/message/29717853#29717853
 % http://chat.stackoverflow.com/transcript/message/29835862#29835862
@@ -1503,7 +1504,7 @@ and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\ma
 
 MATL functions are defined in Table~\ref{tab: funDef}.
 
-The notation for allowed, default and alternative numbers of inputs and outputs is as follows. Consider for example the \matl{p} function (which corresponds to MATLAB's \matlab+prod+). Then ``\matl{p}\ \ 1--3 (1 / 2)\ 1'' means that this function can accept $1$ to $3$ inputs, with $1$ as default and $2$ as alternative (secondary default); and produces $1$ output. This notation may be abbreviated if the number of inputs or outputs is unbounded or is fixed: ``\matl{(}\ \ 3-- (3 / 4)\ \ 1'' means that the number of inputs can be any integer starting at $3$, the number of outputs is always $1$, and as alternative the number of inputs is $4$.
+The notation for allowed, default and alternative numbers of inputs and outputs is as follows. Consider for example the \matl{p} function (which corresponds to MATLAB's \matlab+prod+). Then ``\matl{p}\ \ 1--3 (1 / 2)\ 1'' means that this function can accept $1$ to $3$ inputs, with $1$ as default and $2$ as secondary default; and produces $1$ output. This notation may be abbreviated if the number of inputs or outputs is unbounded or is fixed: ``\matl{(}\ \ 3-- (3 / 4)\ \ 1'' means that the number of inputs can be any integer starting at $3$, the number of outputs is always $1$; the default is $3$ inputs, and the secondary default is $4$ inputs.
 
 
 \begin{small}
