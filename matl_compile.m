@@ -215,7 +215,7 @@ for n = 1:numel(S)
             newLines = sprintf('indFor%i = indFor%i+1;', S(n).nesting, S(n).nesting);
             appendLines(newLines, S(n).nesting+1)
         case 'controlFlow.doTwice'
-            newLines = sprintf('for varDoTwice%i = [false true]', S(n).nesting);
+            newLines = sprintf('for varDoTwice%i = [0 1]', S(n).nesting);
             appendLines(newLines, S(n).nesting)
             % newLines{1} = sprintf('STACK{end+1} = varDoTwice%i;', S(n).nesting);
         case 'controlFlow.doWhile' % '`'
