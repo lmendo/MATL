@@ -3,7 +3,7 @@
 \matl{Y!} & 1 & 0--2 (2) & \matlab+system+ \\
 \matl{Z!} & 1 & 1 & \matlab+full+ \\
 \matl{X"} & 2-- (3) & 1 & \matlab+repmat+ \\
-\matl{Y"} & 2-- (2 / 3) & 1 & \matlab+repelem+ (run-length decoding). With $2$ inputs: second input is linearized if needed. If the first input is shorter than the second the entries of the first input are repeated cyclically to match the length of the second \\
+\matl{Y"} & 2-- (2 / 3) & 1 & \matlab+repelem+ (run-length decoding). With $2$ inputs: second input is linearized if needed. If the first or second input is shorter than the other, entries are repeated cyclically to match lengths \\
 \matl{Z"} & 1 & 1 & \matlab+blanks+. It allows vector input, and in that case it produces a matrix or multidimensional array \\
 \matl{X\#} & 0 & 0 & display stack as a cell array \\
 \matl{Y\#} & 2-- (2 / 3) & 0 & (i) With $2$ inputs: \matlab+sound+. If second input is \matl{T}, it is interpreted as \matl{44100}. If second input is \matl{F}, it is interpreted as \matl{44100} and \matlab+audiowrite+ is called instead of \matlab+sound+, with file name \matlab+'audio.wav'+. (ii) With $3$ inputs: if third input is a truthy scalar, \matlab+soundsc+ is called with the first two inputs. If third input is a numeric vector of size $2$, \matlab+soundsc+ is called with the three inputs. In both cases, \matl{T} in second input is interpreted as \matl{44100}. If third input is a string, it defines a file name, and \matlab+audiowrite+ is called with that file name and the other two inputs. (iii) With more than $3$ inputs: \matlab+audiowrite+ is called using the third input as file name. Further inputs specify parameter-value pairs. \matl{T} in second input is interpreted as \matl{44100}.  \\
