@@ -1621,7 +1621,9 @@ Xu	1	3	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first'};	u
 													out{4} = count; clear id count
 													end
 Yu
-Zu	1	2	1		1	1	1		true	true	true	true	out{1} = strjust(in{:});	justify character array	\matlab+strjust+
+Zu	2	2	2		1	1	1		true	true	true	true	str = {'right' 'left' 'center'};	justify character array	\matlab+strjust+. Strings in second input to be replaced by numbers, as follows: 1: \matlab+'right'+, 2: \matlab+'left'+, 3: \matlab+'center'+
+													if isnumeric(in{2}), in(2) = str(in{2}); end; clear str
+													out{1} = strjust(in{:});
 v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(nonzeros(cellfun(@(x) size(x,2), in))))	vertical concatenation	\matlab+vertcat+. If inputs are matrices with non-matching sizes they are linearized
 													in = cellfun(@(x) reshape(x,[],1), in, 'uniformoutput', false);
 													end
