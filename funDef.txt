@@ -1055,7 +1055,8 @@ Z^	2	2	2		1	1	1		true	true	true	true	if numel(in{1})==1 && numel(in{2})>1, in([1
 													[combs{end:-1:1}] = ndgrid(in{1});
 													combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 													out{1} = combs; clear combs n
-_	1	1	1		1	1	1		true	true	true	true	out{1} = -in{1};	unary minus	unary \matlab+-+ (\matlab+uminus+)
+_	1	1	1		1	1	1		true	true	true	true	if isa(in{1}, 'uint8'), out{1} = double(in{1})/255;	unary minus / normalize uint8 values	(i) If input is \matlab+uint8+: unary \matlab+-+ (\matlab+uminus+). (ii) If input is \matlab+uint8+: converts to \matlab+double+ and divides by $255$
+													else out{1} = -in{1}; end
 X_
 Y_
 Z_
@@ -1668,7 +1669,7 @@ Xx	0	1	0	1	0	0	0		true	true	true	true	if numel(in)==1, if islogical(in{1}), if i
 Yx
 Zx
 y	0	inf	2	3	0	0	0		false	true	false	true	out = in(1);	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs
-Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	eye (matrix with ones on diagonal and zeros elsewhere)	\matlab+eye+
+Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	identity matrix	\matlab+eye+ (matrix with ones on diagonal and zeros elsewhere)
 Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
 Zy	1	2	1		1	inf	1		true	true	true	true	[out{:}] = size(in{:});	size	\matlab+size+
 z	1	1	1		1	1	1		true	true	true	true	out{1} = nnz(in{:});	number of nonzero elements	\matlab+nnz+

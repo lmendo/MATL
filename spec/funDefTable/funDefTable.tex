@@ -163,7 +163,7 @@
 \matl{X\textasciicircum{}} & 1 & 1 & \matlab+sqrt+ \\
 \matl{Y\textasciicircum{}} & 2 & 1 & \matlab+^+ (\matlab+mpower+) \\
 \matl{Z\textasciicircum{}} & 2 & 1 & (i) Given an array and a number $n$, computes the Cartesian power of the array times itself $n$ times. (ii) If the first input is a number and the second input is an array of at least two elements, the inputs are interpreted in reverse order. When using this mode, caution is needed in case the second input (array) may become a scalar, because then mode (i) will be used. \sa \matl{Z*} \\
-\matl{\_} & 1 & 1 & unary \matlab+-+ (\matlab+uminus+) \\
+\matl{\_} & 1 & 1 & (i) If input is \matlab+uint8+: unary \matlab+-+ (\matlab+uminus+). (ii) If input is \matlab+uint8+: converts to \matlab+double+ and divides by $255$ \\
 \matl{Y`} & 0 & 0--1 (0) & \matlab+tic+. \sa \matl{Z`} \\
 \matl{Z`} & 0--1 (0) & 0--1 (1) & \matlab+toc+. \sa \matl{Y`} \\
 \matl{a} & 1--2 (1 / 2) & 1 & \matlab+any+. \sa \matl{Xa} \\
@@ -246,7 +246,7 @@
 \matl{x} & 0-- (1) & 0 & delete from stack \\
 \matl{Xx} & 0--1 (0 / 1) & 0 & \matlab+clc+. With $1$ input \matlab+x+: \matlab+pause(x/10)+ and then \matlab+clc+. Inputs \matl{F} and \matl{T} are interpreted as \matl{2.5} and \matl{10} respectively \\
 \matl{y} & 0-- (2 / 3) & 0 & duplicate one element in stack. The duplicated element is the lowest among those specified as inputs \\
-\matl{Xy} & 1--4 (1) & 1 & \matlab+eye+ \\
+\matl{Xy} & 1--4 (1) & 1 & \matlab+eye+ (matrix with ones on diagonal and zeros elsewhere) \\
 \matl{Yy} & 2 & 1 & \matlab+hypot+, element-wise with singleton expansion \\
 \matl{Zy} & 1--2 (1) & 1-- (1) & \matlab+size+ \\
 \matl{z} & 1 & 1 & \matlab+nnz+ \\
