@@ -1044,7 +1044,7 @@ I initially thought it would be cool to have function equivalent to \matlab+eval
 \item
 \matlab+issorted+: it can be easily realized by comparing with the result of \matlab+sort+. Of course \matlab+issorted+ would be more time-efficient, but time efficiency is not the main purpose of code golf.
 \item
-\matlab+rem+: probably having \matlab+mod+ is enough.
+\matlab+rem+: having \matlab+mod+ is probably enough.
 \item
 matrix inverse: not used very often; and can be done with \matlab+eye+ and matrix division
 \item
@@ -1061,6 +1061,8 @@ matrix inverse: not used very often; and can be done with \matlab+eye+ and matri
 \matlab+strcmpi+: there's \matlab+strcmp+.
 \item
 \matlab+convmtx+: \matlab+convmtx(x,n)+ can be realized as \matlab+conv2(x, eye(n))+.
+\item
+\matlab+histcounts+ / \matlab+histc+: \matlab+histc+ would be a little redundant; compare \matlab+histc(x,unique(x))+ with \matl{8\#u} or \matl{SY'}; or compare \matlab+histc(x,y)+ with \matl{!=s}. Besides, MATLAB's \matlab+histc+ is deprecated and replaced by \matlab+histcounts+. The latter works differently; and I preferred the old \matlab+histc+'s behaviour: given \matlab+x = [10 20 30 20 30]+, \matlab+histcounts(x,unique(x))+ gives \matlab+[1 4]+ whereas \matlab+histc(x,unique(x))+ gives \matlab+[1 2 2]+.
 \end{itemize}
 
 %Remove these?

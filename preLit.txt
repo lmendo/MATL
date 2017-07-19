@@ -127,26 +127,6 @@ X6
 35	'notpacked'
 
 
-X7
-
-1	'BinWidth'
-2	'BinLimits'
-3	'Normalization'
-4	'count'
-5	'probability'
-6	'countdensity'
-7	'pdf'
-8	'cumcount'
-9	'cdf'
-10	'BinMethod'
-11	'auto'
-12	'scott'
-13	'fd'
-14	'integers'
-15	'sturges'
-16	'sqrt'
-
-
 X8
 
 1	'cityblock'

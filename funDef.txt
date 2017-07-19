@@ -611,7 +611,7 @@ XB	1	1	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert from binary to de
 YB	1	2	1	2	1	1	1		true	true	true	true	out{1} = dec2bin(in{:});	convert decimal number to binary string	\matlab|dec2bin|. \sa \matl|B|
 ZB	1	1	1		1	1	1		true	true	true	true	out{1} = bin2dec(in{1});	convert binary string to decimal number	\matlab|bin2dec|. \sa \matl|XB|
 C
-XC	1	7	2		1	3	1		true	true	true	true	[out{:}] = histcounts(in{:});	histogram bin counts	\matlab+histcounts+
+XC
 YC	2	4	2		1	1	1		true	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in{2} = [1 in{2}]; else in{2} = [in{2} 1]; end; end	rearrange array blocks into columns	\matlab+im2col+. If the second input is a scalar \matlab+n+, it is transformed into \matlab+[1 n]+ if the first input is a row vector, or to \matlab+[n 1]+ otherwise. First input can also be a cell array. \sa \matl+ZC+
 													if iscell(in{1})
 													x = reshape(1:numel(in{1}), size(in{1}));
