@@ -1358,9 +1358,9 @@ In Octave, \matlab+pdist2+ allows fewer distance functions than \matlab+pdist+ d
 %\item
 %MATLAB always displays \matlab+char(0)+ as a space. In Octave, on the other hand, the output is system-dependent. For example, on Windows 7 it produces a space, whereas on Linux and OS X it produces no output. To ensure a unique (and perhaps more useful) behaviour, \matlab+char(0)+ is forced to be displayed as a space when running in Octave.
 %http://chat.stackoverflow.com/transcript/message/29729521#29729521
-% ^^ This has changed. Now many characters below 32 (not just 0) are replaced by a space; and this is done also in Matlab, not just in Octave, to assure consistent behaviour regardless of terminal or browser. So I indicate this in the help of functions D, XD, ZD, rather than here, because this section is for things specific to Octave.
+% ^^ This has changed. Now many characters below 32 (not just 0) are replaced by a space; and this is done also in MATLAB, not just in Octave, to assure consistent behaviour regardless of terminal or browser. So I indicate this in the help of functions D, XD, ZD, rather than here, because this section is for things specific to Octave.
 \item
-Some functions in Matlab automatically convert input to \matlab+double+ if needed, and in Octave don't. This has been solved. These functions include \matlab+cumsum+, \matlab+cumprod+, \matlab+kron+.
+Some functions in MATLAB automatically convert input to \matlab+double+ if needed, and in Octave don't. This has been solved. These functions include \matlab+cumsum+, \matlab+cumprod+, \matlab+kron+.
 \item
 Octave's \matlab+datestr+ with input format \matlab+16+ (\matlab+'HH:MM PM'+) produced hour numbers greater than \matlab+12+. This was initially corrected. Then an Octave patch\footnote{\url{https://savannah.gnu.org/bugs/index.php?50673}} came out that corrects a different issue related to rounding, and that apparently incorporates the correction for input format \matlab+16+ too. So the function from that patch is used.
 \item
@@ -1373,9 +1373,9 @@ Octave's \matlab+strsplit+ gives an error when trying to split on \matlab|+|. Th
 \item
 Octave's \matlab+str2num+ gives an error with certain inputs. This has been fixed.
 \item
-In Octave, \matlab+str2num+ with input \matlab+'e'+ produces number $e$ (and similarly for inputs like \matlab+'[1; e]'+). In Matlab it produces an empty array, that is, the string is not recognized as a number. This difference is addressed by the compiler, so that the behaviour in Octave is as in MATLAB.
+In Octave, \matlab+str2num+ with input \matlab+'e'+ produces number $e$ (and similarly for inputs like \matlab+'[1; e]'+). In MATLAB it produces an empty array, that is, the string is not recognized as a number. This difference is addressed by the compiler, so that the behaviour in Octave is as in MATLAB.
 \item
-In Matlab, \matlab+str2double+ linearizes char input into a row, whereas in Octave it doesn't. This has been solved.
+In MATLAB, \matlab+str2double+ linearizes char input into a row, whereas in Octave it doesn't. This has been solved.
 \item
 MATLAB's \matlab+imshow+, by default, produces one screen pixel for each image pixel. On the other hand, Octave's \matlab+imshow+ scales the image on the screen. This has been partly fixed, so image pixels and screen pixels coincide. ``Partly'' means that the fix only works in some platforms, for reasons unknown (at least by me).
 \item
@@ -1387,7 +1387,9 @@ Octave's \matlab+strcat+ doesn't remove trailing space when the input is a singl
 % (4.0.0)
 The pattern seems to be: if \matlab+~isvector(y)+ MATLAB reshapes as a row, whereas Octave reshapes as a column. This is addressed by explicitly reshaping as a row in that case.
 \item
-In Matlab, \matlab+input(..., 's')+ (unevaluated input) interprets input consisting of only spaces as empty input. This doesn't happen in Octave. This difference has not been addressed.
+In MATLAB, \matlab+input(..., 's')+ (unevaluated input) interprets input consisting of only spaces as empty input. This doesn't happen in Octave. This difference has not been addressed.
+\item
+In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+. In Octave it gives \matlab+0.2+ (banker's rounding). This difference has not been addressed.
 \end{itemize}
 
 
