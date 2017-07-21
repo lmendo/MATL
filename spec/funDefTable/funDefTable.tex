@@ -143,7 +143,7 @@
 \matl{XS} & 1--2 (1) & 1--2 (1 / 2nd) & \matlab+sortrows+. \sa \matl{S} \\
 \matl{YS} & 2--3 (2 / 3) & 1 & \matlab+circshift+. If second input is a scalar and there's no third input, the shift is applied along the first non-singleton dimension. This function also allows first input a 2D array; third input a scalar specifying dimension; and second input a vector or array specifying the shift for each position in the other dimension \\
 \matl{ZS} & 1 & 1 & \matlab+sign+ \\
-\matl{YT} & 1--2 (2) & 1 & \matlab+toeplitz+ \\
+\matl{YT} & 1--2 (1 / 2) & 1 & \matlab+toeplitz+. Output is char if any input is \\
 \matl{U} & 1 & 1--2 (1) & (i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl{D}). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. The second output is supported in all cases. (ii) For numeric input: \matlab+(...).^2+ \\
 \matl{XU} & 1 & 1 & \matlab+str2double+ \\
 \matl{V} & 1--2 (1 / 2) & 1 & \matlab+num2str+. Uses format \matlab+'%.15g '+ by default. To get Matlab's default format use \matlab+[]+ as format specification \\
