@@ -775,8 +775,6 @@ I had initially dropped the idea to include \matlab+end+-based indexing because 
 
 But I picked it again following a discussion with \user{@beaker}. I came up with the idea that the imaginary unit can be used as an ``\matlab+end+ label'', which is left unresolved until an indexing function such as \matl{)} establishes its relationship with a specific array. By using imaginary values the sign is available to indicate positive or negative displacements with respect to \matlab+end+.
 
-Common \matlab+end+-based indexing expressions are predefined as initial contents of clipboard L; see Table~\ref{tab: clipboard initial contents}).
-
 Modular indexing was added later, following a suggestion by \user{@Dennis}. At first I thought it would not be compatible with \matlab+end+-based indexing, but it could be made compatible by restricting modular indices to be scalar.
 %http://codegolf.stackexchange.com/questions/75841/parity-of-a-permutation/75853#comment184427_75853
 
@@ -1077,7 +1075,7 @@ matrix inverse: not used very often; and can be done with \matlab+eye+ and matri
 
 \subsection{Usage}
 
-The official MATL compiler is written in MATLAB R2015b. It takes a source program in MATL and produces an output (compiled) program that is run in MATLAB. It requires version R105b or newer, although most of the functionality probably works in older versions too. The compiler can also work on Octave; see \S\ref{parte: compatibility with Octave}. In addition, online compilers are available; see \S\ref{parte: online}.
+The official MATL compiler is written in MATLAB. It takes a source program in MATL and produces an output (compiled) program that is run in MATLAB. It requires version R105b or newer, although most of the functionality probably works in older versions too. The compiler also works on Octave 4.0 or newer; see \S\ref{parte: compatibility with Octave}. In addition, online compilers are available; see \S\ref{parte: online}.
 
 The compiler can be used in any of the following ways:
 \begin{itemize}
@@ -1262,7 +1260,7 @@ The \parte{help function}, \matlab+matl_help+, provides command-line help. It us
 \section{Compatibility with Octave}
 \label{parte: compatibility with Octave}
 
-The compiler can also run on Octave, which is a free alternative to MATLAB. Version 4.0.0 is required, although most of the functionality probably works in older versions too.
+The compiler can also run on Octave, which is a free alternative to MATLAB. Version 4.0.0 or newer is required, although most of the functionality probably works in older versions too.
 
 Although MATLAB and Octave have a large degree of similarity, compatibility between them is not total. This has some implications that are described in the following.
 
@@ -1290,7 +1288,7 @@ Similarly, if a MATLAB function doesn't exist in Octave, the compiler includes i
 
 These compatibility functions are defined in separate files in a \emph{compatibility folder}, called \matlab+compatibility+. Each file is read as text by the compiler, if needed, to insert it as a subfunction in the compiled code.
 
-The following list describes the cases where a discrepancy between a MATLAB and an Octave function has been detected, and indicates if the compiler addresses this or not.
+The following list describes the cases where a discrepancy between a MATLAB and an Octave function has been detected, and indicates if the compiler addresses this or not. In most cases Octave 4.0.0 is assumed. Some of these differences may not exist in newer Octave versions.
 \begin{itemize}
 \item
 \matlab+num2str+ behaves differently in Octave and in MATLAB\footnote{\url{http://stackoverflow.com/q/34483961/2586922}}. The compiler tries to achieve consistent behaviour, adapting the compiled code to give the same output on MATLAB and on Octave in the most common cases.
@@ -1387,9 +1385,11 @@ Octave's \matlab+strcat+ doesn't remove trailing space when the input is a singl
 % (4.0.0)
 The pattern seems to be: if \matlab+~isvector(y)+ MATLAB reshapes as a row, whereas Octave reshapes as a column. This is addressed by explicitly reshaping as a row in that case.
 \item
+Matlab's \matlab+disp+ displays \matlab+char(0)+ as space on any platform. Octave displays it as either space, or narrow space, or nothing.\footnote{\urlG} MATL's display functions replace \matlab+char(0)+ (and other chars with codepoint below $32$) by space before calling \matlab+disp+.
+\item
 In MATLAB, \matlab+input(..., 's')+ (unevaluated input) interprets input consisting of only spaces as empty input. This doesn't happen in Octave. This difference has not been addressed.
 \item
-In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+. In Octave it gives \matlab+0.2+ (banker's rounding). This difference has not been addressed.
+In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round away from zero) and \matlab+0.2+ on Linux (banker's rounding). In Octave it gives \matlab+0.2+ both on Windows and on Linux.\footnote{\url{https://savannah.gnu.org/bugs/index.php?51515}} These differences have not been addressed.
 \end{itemize}
 
 
@@ -1399,7 +1399,7 @@ In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+. In Octave it give
 MATL code can be executed online in the following two awesome platforms. Many thanks to \user{@Dennis} and \user{@Suever} for providing them!
 \begin{itemize}
 \item
-\user{@Dennis}' \emph{Try It Online} platform\footnote{\url{https://tio.run/nexus/matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
+\user{@Dennis}' \emph{Try It Online} platform\footnote{\url{https://tio.run/\#matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
 \item
 \user{@Suever}'s \emph{MATL Online} interpreter\footnote{\url{https://matl.suever.net/}}. This platform is MATL-specific and allows real-time text output, graphical output and documentation search, among other features.
 \end{itemize}
