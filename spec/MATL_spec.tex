@@ -771,6 +771,7 @@ An \matlab+end+-based index is equivalent to a numerical index, with \matlab+end
 All these four types of indices can be used with any of the indexing functions, taking into account that numeric values are interpreted as modular (in reference indexing) or semi-modular (in assignment indexing).
 
 \begin{pending}
+
 I had initially dropped the idea to include \matlab+end+-based indexing because it seemed complicated: MATLAB's \matlab+end+ is used \emph{within} an array, and the known size of that array determines its meaning. But MATL's stack-oriented character and absence of infix notation means that the \matlab+end+-based array needs to be pushed onto the stack by itself, and exist independently of whichever array it will end up indexing into.
 
 But I picked it again following a discussion with \user{@beaker}. I came up with the idea that the imaginary unit can be used as an ``\matlab+end+ label'', which is left unresolved until an indexing function such as \matl{)} establishes its relationship with a specific array. By using imaginary values the sign is available to indicate positive or negative displacements with respect to \matlab+end+.
