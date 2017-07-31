@@ -1662,14 +1662,19 @@ Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen
 % The above is needed to include 0 as whitespace
 													out{1} = strtrim(in{:});
 													end
-Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && isnumeric(in{1})	symmetric range / symmetric array / remove trailing blanks	(i) For one numeric input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two inputs: applies symmetric range indexing to the first input along the dimension given by the second input, without repeating the last entry. If the second input is negative the last entry is repeated. (iii) For one string or cell array input: \matlab+deblank+
+Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && isnumeric(in{1})	symmetric range / symmetric array / remove trailing blanks	(i) For one numeric input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two inputs: applies symmetric range indexing to the first input along each dimension given by the (linearized) second input. The indexing along a given dimension doesn't repeat the last entry if the dimension is positive, and repeats it if it is negative. (iii) For one string or cell array input: \matlab+deblank+
 													if in{1}>=0, in{1} = floor(in{1}); out{1} = [1:in{1} in{1}-1:-1:1]; else, in{1} = floor(-in{1}); out{1} = [in{1}:-1:1 2:in{1}]; end
 													elseif numel(in)==1
 													out{1} = deblank(in{:});
 													else
-													removelast = in{2}>0; dim = abs(in{2});
-													inds = repmat({':'}, 1, ndims(in{1})); inds{dim} = [1:size(in{1}, dim) size(in{1}, dim)-removelast:-1:1];
-													out{1} = in{1}(inds{:}); clear inds dim removelast
+													result = in{1};
+													for k = in{2}(:).'
+													removeLast = k>0; dim = abs(k);
+													inds = repmat({':'}, 1, ndims(result)); inds{dim} = [1:size(result, dim) size(result, dim)-removeLast:-1:1];
+													result = result(inds{:});
+													end
+													out{1} = result;
+													clear k inds dim removeLast result
 													end
 w	0	inf	2		0	0	0		false	true	false	true	if ~isempty(in), in([1 end]) = in([end 1]); STACK(end+nin) = in; end	swap elements in stack	swap elements in stack
 Xw
