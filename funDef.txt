@@ -498,7 +498,8 @@ X9	1	1	1		1	1	1		true	true	true	true	fn = 'X9'; k = find(preLit.(fn).key==in{1},
 													out{1} = preLit.(fn).val{k};
 Y9
 Z9
-:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1	range; vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+ if \matlab+x+ is char.
+:	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1 && iscell(in{1}), in = in{1}; end	range; vector of equally spaced values	\matlab+colon+ (with three inputs \matlab+x+, \matlab+y+, \matlab+z+ produces \matlab+x:y:z+; with two inputs \matlab+x+, \matlab+y+ produces \matlab+x:y+). If one input: produces \matlab+1:x+, or \matlab+' ':x+ if \matlab+x+ is char. For a single cell-array input, the contents of the cell array are interpreted as the actual inputs.
+													if numel(in)==1
 													if ischar(in{1}), s = ' '; else s = 1; end
 													out{1} = colon(s,in{:}); clear s
 													else
