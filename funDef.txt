@@ -1204,7 +1204,7 @@ Yc	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	if all(cellfun(@isnumeric, in
 													for k = 1:numel(in), if isnumeric(in{k}), in{k} = char(in{k}); end; if islogical(in{k}), in{k} = char(double(in{k})); end; end;
 													out{1} = strcat(in{:}); clear k
 													end
-Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of strings or numbers into single vector	\matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored
+Zc	1	2	1	2	1	1	1		true	true	true	true	if iscell(in{1}) && ischar(in{1}{1})	join cell array into a vector / convert to char(35) and char(0)	If cell input: \matlab+strjoin+. This function also allows input with numeric content. The first cell of the first input determines char or numeric mode. If that cell contains a char (resp. numeric) array, numeric (resp. char) contents in other cells, as well as the second input or its contents, are converted to char (resp. double). (i) Char mode corresponds to \matlab+strjoin+. (ii) Numeric mode is similar: it has a default delimiter, which is 0; or a single delimiter may be specified, which may be a scalar or an array; or a cell array of delimiters may be used. (i, ii) Both in char and in numeric mode, non-vector arrays are linearized, and the result is a row vector. Surplus delimiters are ignored. (iii) With a single, non-cell input: nonzeros are replaced by 35 and the result is converted to char
 													in{1} = in{1}(:).';
 % This line is for compatibility with R2014b `strjoin`: it doesn't like cell arrays that are not rows
 													for k = 1:numel(in{1}), if isnumeric(in{1}{k}), in{1}{k} = char(in{1}{k}); end;
@@ -1214,7 +1214,7 @@ Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of str
 													for k = 1:numel(in{2}), in{2}{k} = in{2}{k}(:).'; if isnumeric(in{2}{k}), in{2}{k} = char(in{2}{k}); end; end
 													end
 													out{1} = strjoin(in{:});
-													else
+													elseif iscell(in{1}) && ~ischar(in{1}{1})
 													for k = 1:numel(in{1}), if ischar(in{1}{k}), in{1}{k} = double(in{1}{k}); end;
 													end;
 													if numel(in)==1, in{2} = 0; end
@@ -1229,6 +1229,10 @@ Zc	1	2	1	2	1	1	1		true	true	true	true	if ischar(in{1}{1})	join cell array of str
 													y = [y delim in{1}{k}(:).'];
 													end
 													out{1} = y; clear y singledelim delim
+													elseif numel(in)==1
+													out{1} = char((in{1}~=0)*35);
+													else
+													error('MATL:runtime', 'MATL run-time error: inputs not allowed');
 													end
 d	1	3	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = diff(in{1});	difference	\matlab+diff+ with second and third input interchanged: second specifies dimension, third specifies difference order.
 													elseif numel(in)==2, out{1} = diff(in{1}, [], in{2});
