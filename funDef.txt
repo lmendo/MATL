@@ -399,8 +399,14 @@ Y+	2	3	2	3	1	1	1		true	true	true	true	str = {'same' 'valid' 'full'};	two-dimensi
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if issparse(in{1}), in{1} = full(in{1}); end; if issparse(in{2}), in{2} = full(in{2}); end
 													out{1} = conv2(double(in{1}), double(in{2}), in{3:end});
-Z+	2	2	2		1	1	1		true	true	true	true	if issparse(in{1}), in{1} = full(in{1}); end; if issparse(in{2}), in{2} = full(in{2}); end	two-dimensional convolution; maintains size	\matlab+conv2(..., 'same')+. Converts inputs to \matlab+double+. \sa \matl|Y+|
+Z+	2	3	2	3	1	1	1		true	true	true	true	if issparse(in{1}), in{1} = full(in{1}); end; if issparse(in{2}), in{2} = full(in{2}); end	two-dimensional convolution maintaining size / circular convolution	(i) If $2$ inputs: \matlab+conv2(..., 'same')+. (ii) If $3$ inputs: \matlab+cconv+. Non-vector inputs are linearized into column vectors. (i,ii) Inputs are converted to \matlab+double+. \sa \matl|Y+|
+													if numel(in)==2
 													out{1} = conv2(double(in{1}), double(in{2}), 'same');
+													else
+													if ~isvector(in{1}), in{1} = in{1}(:); end
+													if ~isvector(in{2}), in{2} = in{2}(:); end
+													out{1} = cconv(double(in{1}), double(in{2}), double(in{3}));
+													end
 ,
 X,	1	1	1		1	1	1		true	true	true	true	out{1} = cos(in{1});	cosine (radians)	\matlab+cos+
 Y,	1	1	1		1	1	1		true	true	true	true	out{1} = sin(in{1});	sine (radians)	\matlab+sin+
