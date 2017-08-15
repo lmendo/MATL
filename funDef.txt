@@ -1111,8 +1111,10 @@ Ya	2	4	2	3	1	1	1		true	true	true	true	if ~any(imag(in{2})) && ~any(in{2}<0)	pad 
 													end
 													out{1} = in{1};
 													end
-Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second or third input equals \matl+T+ or \matl+F+, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order. \sa \matl+YA+, \matl+ZA+
-													if ~iscell(in{1}), in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); else in{1} = in{1}(:); end
+Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1})	Convert numbers between bases	Converts the number represented by input 1 from the base specified by input 2 to that of input 3. Each base can be a number or a vector. In the first case the alphabet is from 0 to that number minus 1. If the second or third input equals \matl+T+ or \matl+F+, it is respectively interpreted as \matlab+' ':'~'+ (all printable ASCII chars) or \matlab+[' ':'&' '(':'~']+ (all printable ASCII chars except single quote). Non-valid digits in the first input are discarded. An optional fourth input indicates number of digits of the result. First input can be a matrix or a cell array; and then the result is a matrix in which each row corresponds to a row of the input matrix, or to a cell of the input cell array in linear order. \sa \matl+YA+, \matl+ZA+
+													if isempty(in{1}), in{1} = in(1); else in{1} = mat2cell(in{1}, ones(1,size(in{1},1)), size(in{1},2)); end
+													else in{1} = in{1}(:);
+													end
 													if islogical(in{2}) && isscalar(in{2})
 													if in{2}, in{2} = ' ':'~'; else in{2} = [' ':'&' '(':'~']; end
 													end
@@ -1124,11 +1126,13 @@ Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1},
 													Z = cell(size(in{1}));
 													for c = 1:numel(in{1})
 													x = in{1}{c}; [valid, x] = ismember(x,ax); x = x(valid)-1;
-													if ~isempty(x)
+													if ~isempty(x) && ~any(x)
+													z = 0;
+													elseif ~isempty(x)
 													z = NaN(1,ceil(numel(x)*log2(bx)/log2(bz))); done_outer = false;
 													n = 0;
 													while ~done_outer
-													n = n +1;
+													n = n + 1;
 													x = [0 x(find(x,1):end)];
 													y = NaN(size(x)); done_inner = false;
 													m = 0;
@@ -1143,14 +1147,16 @@ Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1}), in{1} = mat2cell(in{1},
 													z(n) = r; x = y; done_outer = ~any(x);
 													end
 													z = z(n:-1:1);
-													if numel(in)>=4 && numel(z)<in{4}, z = [zeros(1,in{4}-numel(z)) z]; end
-													Z{c} = z;
+													else
+													z = [];
 													end
+													if numel(in)>=4 && numel(z)<in{4}, z = [zeros(1,in{4}-numel(z)) z]; end
+													z = az(z+1);
+													Z{c} = z;
 													end
 													L = max(cellfun(@numel, Z));
 													Z = cellfun(@(x) [zeros(1, L-numel(x)) x], Z, 'uniformoutput', false);
 													Z = vertcat(Z{:});
-													Z = az(Z+1);
 													out{1} = Z; clear x ax bx z Z az bz y t r q k m n c done_outer done_inner valid L
 b	0	inf	3	4	0	0	0		false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb
