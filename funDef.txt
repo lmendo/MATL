@@ -1151,12 +1151,12 @@ Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1})	Convert numbers between 
 													z = [];
 													end
 													if numel(in)>=4 && numel(z)<in{4}, z = [zeros(1,in{4}-numel(z)) z]; end
-													z = az(z+1);
 													Z{c} = z;
 													end
 													L = max(cellfun(@numel, Z));
 													Z = cellfun(@(x) [zeros(1, L-numel(x)) x], Z, 'uniformoutput', false);
 													Z = vertcat(Z{:});
+													Z = az(Z+1);
 													out{1} = Z; clear x ax bx z Z az bz y t r q k m n c done_outer done_inner valid L
 b	0	inf	3	4	0	0	0		false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
 Xb
