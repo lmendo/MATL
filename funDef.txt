@@ -1583,11 +1583,17 @@ Ys	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 													y = ipermute(y, [d 1:d-1 d+1:ndims(in{1})]);
 													out{1} = y; clear d m M x y
 													end
-Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	standard deviation / covariance matrix	\matlab+std+. With $2$ inputs \matlab+x+, \matlab+f+ and \matlab+f+ equal to $2$ or $3$, gives \matlab+cov(x, f-2)+
-													if numel(in)==1 || (numel(in)==2 && in{2}<=1) || numel(in)>2
+Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	standard deviation / covariance matrix / skewness / kurtosis	(i) \matlab+std+. (ii) With $2$ inputs \matlab+x+, \matlab+k+ and \matlab+k+ equal to $2$ or $3$, gives \matlab+cov(x, k-2)+. (iii) With $2$ inputs \matlab+x+, \matlab+k+ and \matlab+k+ equal to $4$ or $5$, gives \matlab+skewness(x(:), k-4)+. (iv) With $2$ inputs \matlab+x+, \matlab+k+ and \matlab+k+ equal to $6$ or $7$, gives \matlab+kurtosis(x(:), k-6)+
+													if numel(in)==1 || (numel(in)==2 && isscalar(in{2}) && in{2}<=1) || (numel(in)==2 && ~isscalar(in{2})) || numel(in)>2
 													out{1} = std(in{:});
-													else
+													elseif numel(in)==2 && isscalar(in{2}) && ismember(in{2}, [2 3])
 													out{1} = cov(in{1}, in{2}-2);
+													elseif numel(in)==2 && isscalar(in{2}) && ismember(in{2}, [4 5])
+													out{1} = skewness(in{1}(:), in{2}-4);
+													elseif numel(in)==2 && isscalar(in{2}) && ismember(in{2}, [6 7])
+													out{1} = kurtosis(in{1}(:), in{2}-6);
+													else
+													error('MATL:runtime', 'MATL run-time error: inputs not allowed');
 													end
 t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
 Xt
