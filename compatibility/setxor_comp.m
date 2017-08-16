@@ -1,7 +1,7 @@
 function varargout = setxor(varargin)
 % Adds support for 'stable' input flag with one output
 if iscell(varargin{1}) && ~iscell(varargin{2}), varargin{2} = {varargin{2}}; end
-if iscell(varargin{2}) && ~iscell(varargin{1}), varargin{1} = {varargin{2}}; end
+if iscell(varargin{2}) && ~iscell(varargin{1}), varargin{1} = {varargin{1}}; end
 if nargin>=3 && strcmp(varargin{end},'stable')
     % This is almost like setdiff:
     if strcmp(varargin{3},'rows')
