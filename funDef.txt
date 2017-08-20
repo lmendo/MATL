@@ -547,7 +547,9 @@ Z>
 ?
 X?
 Y?	0	0	0		1	1	1		true	true	true	true	x = { 'V=..90+r~/,~6=..90+~0/*p~J69,9~5+~0/~''6%' 'U*w+~=22~Q=*2=<w+~8=)2*p~U*w+~49=2/)+p~U*w+~6/2:507~19~<=;3}' 'Uw(9~+990~.,/7,=1+~%/)~.9/.29~''/)2:0w*~<9259(9' 'J69~.,/7,=119,~6=+~<990~:,503507r~0/*~19' 'U~:5:~5*~8/,~19p~U~2539:~5*p~U~''=+~7//:~=*~5*' 'E/)~4)+*~6=(90w*~9=,09:~5*~%9*r~<=<%' 'Q%~;/:9~5+~.,/<291=*5;' 'E/)~399.~)+507~*6=*~8)0;*5/0p~U~:/~0/*~*6503~5*~19=0+~''6=*~%/)~*6503~5*~19=0+' 'J65+~5+~/<(5/)+2%~+/19~+*,=079~)+9~/8~*69~8)0;*5/0~wE_w~*6=*~U~''=+0w*~.,9(5/)+2%~=''=,9~/8' 'N,/7,=1+~1=3507~.,/7,=1+~q~6/''~.9,(9,+9}' 'G9~099:~*/~7/~:99.9,' }; if ~numel(in), in{1} = randi(numel(x)); end; if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input not allowed'); end; out{1} = char(158-x{mod(in{1}-1,numel(x))+1}); clear x	answer why	answer why. Sort of
-Z?	1	6	3		1	1	1		true	true	true	true	out{1} = sparse(in{:});	create sparse matrix	\matlab+sparse+
+Z?	1	6	3		1	1	1		true	true	true	true	for k = 1:min(3,numel(in)), if ischar(in{k}), in{k} = double(in{k}); end; end	create sparse matrix	\matlab+sparse+
+													out{1} = sparse(in{:});
+													clear k
 @
 X@
 Y@	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	all possible permutations / variations	If $1$ input: \matlab+perms+. If $2$ inputs: variations (without repetition). In either case, the results are sorted
