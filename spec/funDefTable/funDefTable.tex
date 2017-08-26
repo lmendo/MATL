@@ -33,7 +33,7 @@
 \matl{Z*} & 1-- (2 / $^\ddagger$) & 1 & Cartesian product. Given a number $n$ of arrays of possibly different sizes, generates an $n$-column matrix whose rows describe all combinations of elements taken from those arrays \\
 \matl{+} & 1-- (2 / 1) & 1 & \matlab|+| (\matlab+plus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
 \matl{Y+} & 2--3 (2 / 3) & 1 & \matlab+conv2+. Doesn't allow two-vector and one matrix mode. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl{Z+} \\
-\matl{Z+} & 2--3 (2 / 3) & 1 & (i) If $2$ inputs: \matlab+conv2(..., 'same')+. (ii) If $3$ inputs: \matlab+cconv+. Non-vector inputs are linearized into column vectors. (i,ii) Inputs are converted to \matlab+double+. \sa \matl{Y+} \\
+\matl{Z+} & 2--3 (2 / 3) & 1 & (i) If $2$ inputs: \matlab+conv2(..., 'same')+. (ii) If $3$ inputs: \matlab+cconv+. Non-vector inputs are linearized into column vectors. The output is of type \matlab+double+. Integer inputs are guaranteed to give exact integer results, up to \matlab+double+ data type limitations. (i,ii) Inputs are converted to \matlab+double+. \sa \matl{Y+} \\
 \matl{X,} & 1 & 1 & \matlab+cos+ \\
 \matl{Y,} & 1 & 1 & \matlab+sin+ \\
 \matl{Z,} & 1 & 1 & \matlab+tan+ \\
