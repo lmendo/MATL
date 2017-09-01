@@ -1532,6 +1532,7 @@ Yp	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 													[out{1}] = y;
 													end
 Zp	1	1	1		1	1	1		true	true	true	true	if all(in{1}>=0)	is prime / totient function	For input with non-negative entries: \matlab+isprime+. For input with non-positive entries: Euler's totient function for absolute value of each entry
+													in{1}(mod(in{1},1)>0) = 0;
 													if ischar(in{1}), in{1} = double(in{1}); end, out{1} = isprime(in{1});
 													elseif all(in{1}<=0)
 													in{1} = -in{1}; tot = NaN(size(in{1}));
