@@ -422,7 +422,7 @@ X-	2	4	2	3	1	2	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set diff
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
 													if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 													if numel(in)==2, in{3}='stable'; end, [out{:}] = setdiff(in{:});
-Y-	2	2	2		1	2	2	1	true	true	true	true	[out{:}] = deconv(in{:});	deconvolution and polynomial division	\matlab+deconv+
+Y-	2	2	2		1	2	1	2	true	true	true	true	[out{:}] = deconv(in{:});	deconvolution and polynomial division	\matlab+deconv+
 Z-
 .
 X.
