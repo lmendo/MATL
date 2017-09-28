@@ -1060,7 +1060,7 @@ Z[
 													if numel(out)==2, out{2} = floor(bsxfun(@rdivide, in{1}, in{2})); end
 X\	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@mod, in{1}-1, in{2})+1;	modulo on the interval [1,divisor+1) (element-wise, singleton expansion)	\matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl|\|
 Y\	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}\in{2};	left matrix division	left matrix division, \matlab+\+ (\matlab+mldivide+)
-Z\	1	1	1		1	1	1		true	true	true	true	if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: too many inputs'); end	divisors	divisors of a number. For negative input the absolute value is used
+Z\	1	1	1		1	1	1		true	true	true	true	if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input cannot contain more than one value'); end	divisors	divisors of a number. For negative input the absolute value is used
 													if in{1}<0, in{1} = -in{1}; end; out{1} = find(~mod(in{1}, 1:in{1}));
 ]
 X]	3	inf	3		1	1	1		true	true	true	true	cp = cumprod(in{1}(1:end-1));	convert subscripts into linear index	\matlab+sub2ind+ without input restrictions
