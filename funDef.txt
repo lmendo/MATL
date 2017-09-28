@@ -705,7 +705,7 @@ XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string 
 													data = vertcat(data{:}); kk = cellfun(@iscell, data); end
 													for k = 1:numel(data), d = num2str(data{k}, '%.15g '); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
 													clear data kk k
-YD	1	inf	2	1	0	2	1	0	true	true	true	true	if numel(out), [out{:}] = sprintf(in{:});	write formatted data to string	\matlab+sprintf+. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
+YD	1	inf	2	1	0	2	1	0	true	true	true	true	if numel(out), [out{:}] = sprintf(in{end}, in{1:end-1});	write formatted data to string	\matlab+sprintf+ with format string as last input. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
 													else fprintf(in{:}); end
 ZD	0	inf	1		0	0	0		true	true	true	true	for k = 1:numel(in), if ischar(in{k}), in{k}(ismember(in{k},replaceBySpace)) = ' '; end, disp(in{k}), end	display	\matlab+disp+ for each input. For char input, most characters below 32 are replaced by space. \sa \matl+D+, \matl+XD+, \matl+YD+
 E	1	1	1		1	1	1		true	true	true	true	out{1} = in{1}*2;	multiply by 2	\matlab|(...)*2|
