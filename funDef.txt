@@ -568,6 +568,7 @@ Y@	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	all possible permutations 
 													combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 													combs = combs(all(diff(sort(combs,2),[],2),2), :);
 													combs = in{1}(combs);
+													combs = reshape(combs, [], n);
 													out{1} = sortrows(combs); clear combs n x
 													end
 % Variations are computed like Cartesian power (variations with repetitions), and then results with repetitions are removed
