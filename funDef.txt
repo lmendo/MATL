@@ -838,7 +838,7 @@ XK	0	inf	1		0	0	0		false	true	false	true	CB_K = in;	copy to clipboard K	copy to 
 YK
 ZK
 L	1	1	1		0	inf	numel(CB_L{in{1}})		true	true	false	true	out = [CB_L{in{1}}(1:nout)];	paste from multi-level clipboard L	paste from multi-level clipboard L. Input specifies level
-XL	1	inf	2	3	0	0	0		false	true	false	true	CB_L{in{end}} = in(1:end-1); STACK(end+nin(end)) = [];	copy to multi-level clipboard L	copy to multi-level clipboard L. Topmost input specifies level
+XL	1	inf	2	3	0	0	0		false	true	false	true	CB_L{in{end}} = in(1:end-1); STACK(end+nin(end)) = [];	copy to multi-level clipboard L	copy to multi-level clipboard L. Last input specifies level
 YL	1	inf	2	3	1	inf	1		true	true	true	true	str = {'spiral' 'pascal' 'magic' 'hadamard' 'circul' 'gcdmat' 'minij' 'hilb' 'invhilb' 'tridiag' 'ris'};	Higham test matrices and other matrices	\matlab+gallery+ with matrix name as last input. Also includes \matlab+magic+, \matlab+hilb+, \matlab+invhilb+, \matlab+hadamard+, \matlab+pascal+, \matlab+spiral+. This function allows some strings in last input to be replaced by numbers, as follows:  1: \matlab+'spiral'+, 2: \matlab+'pascal'+, 3: \matlab+'magic'+, 4: \matlab+'hadamard'+, 5: \matlab+'circul'+, 6: \matlab+'gcdmat'+, 7: \matlab+'minij'+, 8: \matlab+'hilb'+, 9: \matlab+'invhilb'+, 10: \matlab+'tridiag'+, 11: \matlab+'ris'+
 													if isnumeric(in{end}), in(end) = str(in{end}); end; clear str
 													switch in{end}
