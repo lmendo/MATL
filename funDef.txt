@@ -738,7 +738,14 @@ YF	1	1	1		1	2	1	2	true	true	true	true	trim = (any(in{1}<0) && (nout==1)) || (~an
 													end
 													if trim, out = cellfun(@(c) c(:, any(y>0, 1)), out, 'UniformOutput', false); end
 													clear f p y k trim
-ZF
+ZF	1	3	1	2	1	1	1		true	true	true	true	if numel(in)<=2	N-dimensional discrete Fourier transform (FFT)	(i) With $1$ or $2$ inputs: \matlab+nfft+. If first input is a vector and second input is a scalar, a $1$ is prepended or appended to the second input according to the vector orientation (so the result is the same as that of \matlab+fft+). (ii) With $3$ inputs: \matlab+fft+
+													if numel(in)==2 && isvector(in{1}) && isscalar(in{2}), if size(in{1},1)==1, in{2} = [1 in{2}]; else in{2} = [in{2} 1]; end, end
+													out{1} = fftn(in{:});
+													elseif numel(in)==3
+													out{1} = fft(in{:});
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
+													end
 G	0	1	double(numel(CB_G)>1)	0	0	inf	1+(max(numel(CB_G),1)-1)*(numel(in)==0)		true	true	false	true	if numel(CB_G)==0	paste from user-input clipboard G	paste from user-input clipboard G. If $0$ input arguments: addresses all levels. If $1$ input argument: addresses specified level. In either of those cases, if clipboard G has no levels one user-input is implicitly taken to fill the first level
 													implInput = input(implicitInputPrompt,'s');
 													valid = isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-df-hk-zA-EG-MOQ-SU-XZ]', 'once')) && isempty(regexp(implInput, '^[^'']*(''[^'']*''[^'']*)*[a-zA-Z]{2}', 'once'));
@@ -963,7 +970,14 @@ YS	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==3 && numel(in{2})>1 && ndims
 													end
 													out{1} = y; clear d y
 													end
-ZS	1	1	1		1	1	1		true	true	true	true	out{1} = sign(in{:});	sign function	\matlab+sign+
+ZS	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	sign function / FFT shift	(i) With $1$ input: \matlab+sign+. (ii) With $2$ inputs: \matlab+fftshift+. Second input equal to $0$ corresponds to \matlab+fftshift+ with $1$ input
+													out{1} = sign(in{:});
+													elseif numel(in)==2
+													if in{2}==0, in(2) = []; end
+													out{1} = fftshift(in{:});
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
+													end
 T
 XT
 YT	1	2	1	2	1	1	1		true	true	true	true	c = any(cellfun(@ischar, in));	Toeplitz matrix	\matlab+toeplitz+. Output is char if any input is
