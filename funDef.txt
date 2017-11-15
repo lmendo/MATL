@@ -1212,12 +1212,13 @@ Yb	1	inf	1	2	1	2	1		true	true	true	true	if isnumeric(in{1})	split string or nume
 													end
 													end
 Zb
-c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character array	\matlab+char+. Sparse input is first converted to full, and logical input is first converted to double. For cell array input, non-char cell contents are first converted to char
+c	1	inf	1		1	1	1		true	true	true	true	if ~iscell(in{1})	convert to character array	\matlab+char+. Sparse input is first converted to full, and logical input is first converted to double. For cell array input, non-char cell contents are first converted to char. In all cases, non-integer values are rounded down
 													if issparse(in{1}), in{1} = full(in{1}); end
 													if islogical(in{1}), in{1} = double(in{1}); end
+													in = cellfun(@(x) char(max(floor(x), 0)), in, 'UniformOutput', false);
 													out{1} = char(in{:});
 													else
-													for k = 1:numel(in{1}), if ~ischar(in{1}{k}), in{1}{k} = char(in{1}{k}); end; end
+													for k = 1:numel(in{1}), if ~ischar(in{1}{k}), in{1}{k} = char(max(floor(in{1}{k}), 0)); end; end
 													out{1} = char(in{:});
 													end
 Xc	3	inf	3	numel(STACK)	1	1	1		true	true	true	true	if any(cellfun(@ischar, in))	concatenate arrays	\matlab+cat+. The dimension is the last input
