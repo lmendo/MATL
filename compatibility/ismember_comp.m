@@ -9,7 +9,7 @@ function varargout = ismember(varargin)
 % This seems to have been caused by a "reimplementation" of ismember. So if
 % any input is complex we use unique to replace the inputs by unique labels
 % (3):
-if ~isreal(varargin{1}) || ~isreal(varargin{2})
+if (isnumeric(varargin{1})&&~isreal(varargin{1})) || (isnumeric(varargin{2})&&~isreal(varargin{2}))
     a = varargin{1};
     b = varargin{2};
     [~, ~, u] = unique([a(:); b(:)]);
