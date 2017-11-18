@@ -47,7 +47,7 @@
 \newcommand{\sa}{\textit{See also }}
 
 %\urldef{\urlA}\url{http://chat.stackoverflow.com/transcript/message/26114065#26114065}
-\urldef{\urlB}\url{http://chat.stackoverflow.com/transcript/message/26114026#26114026}
+%\urldef{\urlB}\url{http://chat.stackoverflow.com/transcript/message/26114026#26114026}
 %\urldef{\urlC}\url{http://chat.stackoverflow.com/transcript/message/26879794#26879794}
 %\urldef{\urlD}\url{http://chat.stackoverflow.com/transcript/message/27351795#27351795}
 %\urldef{\urlE}\url{http://chat.stackoverflow.com/transcript/message/27352363#27352363}
@@ -1320,7 +1320,11 @@ Support for the \matlab+'stable'+ flag has been added.
 \item
 In \matlab+union+, \matlab+intesect+, \matlab+setdiff+, \matlab+setxor+: support for the \matlab+'stable'+ flag has been added, only in the single-output case.
 \item
-The second output of \matlab+ismember+ in Octave gives the index of the first occurrence, not the last as in recent versions of MATLAB. Also, it gives error when the first two inputs are char and numeric, whereas in MATLAB it works. Both issues are fixed.
+The second output of \matlab+ismember+ in Octave gives the index of the last occurrence, not the first as in recent versions of MATLAB. Also, it gives error when the first two inputs are char and numeric, whereas in MATLAB that works. Both issues are fixed.
+
+In Octave 4.0 and 4.2, \matlab+ismember+ incorrectly treats complex values in inputs as their absolute values. This has been fixed.
+% https://chat.stackoverflow.com/transcript/message/40084076#40084076
+% https://savannah.gnu.org/bugs/index.php?52437
 \item
 \matlab+randsample+ with scalar first input produces a row vector in Octave, instead of a column vector as in MATLAB. This has been fixed in the compiler, forcing a column vector in Octave in that case.
 \item
@@ -1462,9 +1466,13 @@ Code: \matl{jtt!=XRa\textasciitilde{})}. This produces the same result as in the
 Thanks to the following people (in alphabetical order) for their contributions:
 \begin{itemize}
 \item
-\user{@AndrasDeak} for his very extensive testing of the compiler.
+\user{@AndrasDeak} for his very extensive testing of the compiler. Also for his help (together with \user{@beaker}) regarding a bug in Octave's \matlab+ismember+ function with complex inputs.
+% https://chat.stackoverflow.com/transcript/message/40084076#40084076
 \item
-\user{@beaker} for a helpful discussion\footnote{\urlB} that led me to reconsider including a form of \matlab+end+-based indexing, for telling me about Octave's \matlab+repelems+ function, and for pointing out several errata.
+\user{@beaker} for a helpful discussion
+% http://chat.stackoverflow.com/transcript/message/26114026#26114026
+that led me to reconsider including a form of \matlab+end+-based indexing, for telling me about Octave's \matlab+repelems+ function, and for pointing out several errata. Also for his help (together with \user{@AndrasDeak}) regarding a bug in Octave's \matlab+ismember+ function with complex inputs.
+% https://chat.stackoverflow.com/transcript/message/40084076#40084076
 \item
 \user{Ben Barrowes} for his function \matlab+genHyper+.
 \item
@@ -1472,7 +1480,8 @@ Thanks to the following people (in alphabetical order) for their contributions:
 \item
 \user{@David} for finding a good implementation of the ``$n$-th prime'' function, as well as some errata in this document. Also for suggesting that \matl{G} should take implicit input if needed, and for finding a bug in Octave's \matlab+datestr+ function.
 \item
-\user{@Dennis} for hosting MATL in his wonderful \emph{Try It Online} platform\footnote{\url{http://tryitonline.net}}. Also for suggesting modular indexing, and bit-wise operations with negative values.
+\user{@Dennis} for hosting MATL in his wonderful \emph{Try It Online} platform\footnote{\url
+{http://tryitonline.net}}. Also for suggesting modular indexing, and bit-wise operations with negative values.
 \item
 \user{@DJMcMayhem} for finding some errata, and also for suggesting that a square-power and a divisors function be added.
 %http://chat.stackexchange.com/transcript/message/30482878#30482878
@@ -1497,7 +1506,7 @@ Thanks to the following people (in alphabetical order) for their contributions:
 \user{@Sanchises} for noticing bugs in \matl{Za} (base conversion), in \matl{Y@} (variations without repetition),
 % https://chat.stackexchange.com/transcript/message/40439254#404392
 and in the Octave compatibility function for \matl{X\textasciitilde{}} (\matlab+setxor+), the latter of which also affected other functions. Also for noticing a difference with \matlab+char+'s implicit rounding in MATLAB and in Octave.
-% Zhttps://chat.stackexchange.com/transcript/message/41158178#41158178
+% https://chat.stackexchange.com/transcript/message/41158178#41158178
 \item
 \user{@Suever} for his help in finding several differences between Octave and MATLAB,
 % regarding the $0$ character, as well as the \matlab+max+ and \matlab+min+ functions;

@@ -4,6 +4,20 @@ function varargout = ismember(varargin)
 % (2) Octave gives error when the first two inputs are char and
 % numeric, whereas Matlab works. So I include here conversion from char to
 % double in that case.
+% (3) Octave's ismember treats complex inputs as their absolute value,
+% which is incorrect (see https://savannah.gnu.org/bugs/index.php?52437).
+% This seems to have been caused by a "reimplementation" of ismember. So if
+% any input is complex we use unique to replace the inputs by unique labels
+% (3):
+if ~isreal(varargin{1}) || ~isreal(varargin{2})
+    a = varargin{1};
+    b = varargin{2};
+    [~, ~, u] = unique([a(:); b(:)]);
+    a(:) = real(u(1:numel(a)));
+    b(:) = real(u(numel(a)+1:end));
+    varargin{1} = a;
+    varargin{2} = b;
+end
 % (2):
 if ischar(varargin{1})&&isnumeric(varargin{2})
    varargin{1} = double(varargin{1});
