@@ -1088,9 +1088,10 @@ Y]
 Z]
 ^	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
 X^	1	1	1		1	1	1		true	true	true	true	out{1} = sqrt(in{:});	square root	\matlab+sqrt+
-Y^	2	2	2		1	1	1		true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix power	\matlab+^+ (\matlab+mpower+)
+Y^	2	2	2		1	1	1		true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix power, or sum of matrix powers	\matlab+^+ (\matlab+mpower+). If the second input is an array, the output is the sum of matrix powers with those exponents
 													if islogical(in{2}), in{2} = double(in{2}); end
-													out{1} = in{1}^in{2};
+													y = zeros(size(in{1})); for k=1:numel(in{2}), y = y + in{1}^in{2}(k); end;
+													out{1} = y; clear k y
 Z^	2	2	2		1	1	1		true	true	true	true	if numel(in{1})==1 && numel(in{2})>1, in([1 2]) = in([2 1]); end	Cartesian power	(i) Given an array and a number $n$, computes the Cartesian power of the array times itself $n$ times. (ii) If the first input is a number and the second input is an array of at least two elements, the inputs are interpreted in reverse order. When using this mode, caution is needed in case the second input (array) may become a scalar, because then mode (i) will be used. \sa \matl+Z*+
 													n = in{2}; combs = cell(1,n);
 													[combs{end:-1:1}] = ndgrid(in{1});
@@ -1339,7 +1340,20 @@ e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove sin
 													out{1} = squeeze(in{:});
 													end
 Xe
-Ye
+Ye	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	matrix exponential / logical "infinite" graph power	(i) With numerical input: \matlab+expm+. (ii) With logical input \matlab+M+: the input is interpreted as the adjacency matrix of a graph. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with increasing exponent until the result no longer changes. This is the same as \matlab+logical(M*expm(M))+ except that numerical precision issues are avoided. \sa \matl+Y^+
+													out{1} = expm(in{1});
+													elseif islogical(in{1})
+													if isempty(in{1}), in{1} = []; end
+													assert(ismatrix(in{1}) && ~diff(size(in{1})), 'MATL:runtime', 'MATL run-time error: input should be a square matrix or empty')
+													y = in{1}; x = double(in{1}); done = false;
+													while ~done
+													y_old = y; y = y | double(y)*x;
+													done = all(y(:)==y_old(:));
+													end
+													out{1} = y; clear x y
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect input type')
+													end
 Ze	1	1	1		1	1	1		true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
 f	1	3	1		1	3	1	2	true	true	true	true	[out{:}] = find(in{:});	find	\matlab+find+
 Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / non-empty substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: output is a cell array of all non-empty substrings. Works also for numeric or cell arrays
