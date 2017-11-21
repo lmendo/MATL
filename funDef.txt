@@ -1348,6 +1348,7 @@ Ye	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	matrix exponential / lo
 													y = in{1}; x = double(in{1}); done = false;
 													while ~done
 													y_old = y; y = y | double(y)*x;
+% Multiplying by x on the right or on the left should be the same, but on the right "makes more sense"
 													done = all(y(:)==y_old(:));
 													end
 													out{1} = y; clear x y
