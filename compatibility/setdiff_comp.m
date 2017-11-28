@@ -24,7 +24,7 @@ if nargin>=3 && strcmp(varargin{end},'stable')
     else        
         y = a(x);
     end
-    if ~strcmp(varargin{3},'rows') && isrow(varargin{1})==1 % row output if first input is row
+    if ~strcmp(varargin{3},'rows') && isrow(varargin{1}) % row output if first input is row
         y = reshape(y,1,[]);
     end
     varargout{1} = y;
