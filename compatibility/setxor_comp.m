@@ -1,5 +1,9 @@
 function varargout = setxor(varargin)
 % Adds support for 'stable' input flag with one output
+% Also, z = vertcat(z, y); is used instead of z = [z; y]; because of an
+% Octave bug when vertically concatenating a 1x0 char array with another
+% char array; see https://savannah.gnu.org/bugs/index.php?52542. It seems
+% to be avoided using `vertcat` instead of `;`
 if iscell(varargin{1}) && ~iscell(varargin{2}), varargin{2} = {varargin{2}}; end
 if iscell(varargin{2}) && ~iscell(varargin{1}), varargin{1} = {varargin{1}}; end
 if nargin>=3 && strcmp(varargin{end},'stable')
@@ -51,9 +55,9 @@ if nargin>=3 && strcmp(varargin{end},'stable')
     end
     % Join partial outputs:
     if ~strcmp(varargin{3},'rows') && isrow(varargin{1}) && isrow(varargin{2})
-        z = [z y];
+        z = horzcat(z, y);
     else
-        z = [z; y];
+        z = vertcat(z, y);
     end
     if size(varargin{1},1)==1 && size(varargin{2},1)==1 % row ouput if first two inputs are rows
         z = reshape(z,1,[]);
