@@ -28,6 +28,9 @@ if nargin>=3 && strcmp(varargin{end},'stable')
         y = a(x,:);
     else        
         y = a(x);
+        if isrow(varargin{1}) && isrow(varargin{2})
+            y = reshape(y,1,[]);
+        end
     end
     % Keep partial output:
     z = y;
@@ -52,15 +55,15 @@ if nargin>=3 && strcmp(varargin{end},'stable')
         y = a(x,:);
     else        
         y = a(x);
+        if isrow(varargin{1}) && isrow(varargin{2})
+            y = reshape(y,1,[]);
+        end
     end
     % Join partial outputs:
     if ~strcmp(varargin{3},'rows') && isrow(varargin{1}) && isrow(varargin{2})
         z = horzcat(z, y);
     else
         z = vertcat(z, y);
-    end
-    if size(varargin{1},1)==1 && size(varargin{2},1)==1 % row ouput if first two inputs are rows
-        z = reshape(z,1,[]);
     end
     varargout{1} = z;    
 else
