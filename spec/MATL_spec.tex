@@ -1322,9 +1322,8 @@ In \matlab+union+, \matlab+intesect+, \matlab+setdiff+, \matlab+setxor+: support
 \item
 The second output of \matlab+ismember+ in Octave gives the index of the last occurrence, not the first as in recent versions of MATLAB. Also, it gives error when the first two inputs are char and numeric, whereas in MATLAB that works. Both issues are fixed.
 
-In Octave 4.0 and 4.2, \matlab+ismember+ incorrectly treats complex values in inputs as their absolute values. This has been fixed.
+In Octave 4.0 and 4.2, \matlab+ismember+ incorrectly treats complex values in inputs as their absolute values.\footnote{\url{https://savannah.gnu.org/bugs/index.php?52437}} This has been fixed.
 % https://chat.stackoverflow.com/transcript/message/40084076#40084076
-% https://savannah.gnu.org/bugs/index.php?52437
 \item
 \matlab+randsample+ with scalar first input produces a row vector in Octave, instead of a column vector as in MATLAB. This has been fixed in the compiler, forcing a column vector in Octave in that case.
 \item
@@ -1397,6 +1396,9 @@ Matlab's \matlab+disp+ displays \matlab+char(0)+ as space on any platform. Octav
 In MATLAB, \matlab+input(..., 's')+ (unevaluated input) interprets input consisting of only spaces as empty input. This doesn't happen in Octave. This difference has not been addressed.
 \item
 In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round away from zero) and \matlab+0.2+ on Linux (banker's rounding). In Octave it gives \matlab+0.2+ both on Windows and on Linux.\footnote{\url{https://savannah.gnu.org/bugs/index.php?51515}} These differences have not been addressed.
+\item
+\matlab+char+ implicitly rounds down in MATLAB, and rounds to closest in Octave. This difference has been addressed by enforcing MATLAB's behaviour.
+Octave's \matlab+mode+ doesn't handle char input. This has been fixed.
 \end{itemize}
 
 
