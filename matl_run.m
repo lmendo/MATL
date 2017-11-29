@@ -9,6 +9,12 @@ function matl_run(S, pOutFile, cOutFileNoExt, dbstopLines, isMatlab, useTags)
 %
 % Luis Mendo
 
+if isMatlab
+    matlabOctave = 'MATLAB';
+else
+    matlabOctave = 'Octave';
+end
+
 if ~isempty(dbstopLines) % debug mode
     if isMatlab
         for line = dbstopLines
@@ -47,9 +53,9 @@ catch ME
         k = ME.stack(h).line;
         n = find([S(:).compileLine]<=k, 1, 'last');
         if useTags
-            fprintf(2, 'MATL run-time error: The following MATLAB error refers to <a href="matlab: opentoline(''%s'', %i)">statement number %i:  %s</a>\n', pOutFile, n, n, S(n).source);
+            fprintf(2, 'MATL run-time error: The following %s error refers to <a href="matlab: opentoline(''%s'', %i)">statement number %i:  %s</a>\n', matlabOctave, pOutFile, n, n, S(n).source);
         else
-            fprintf(2, 'MATL run-time error: The following MATLAB error refers to statement number %i:  %s\n', n, S(n).source);
+            fprintf(2, 'MATL run-time error: The following %s error refers to statement number %i:  %s\n', matlabOctave, n, S(n).source);
         end
         fprintf(2, '---\n');
     else
