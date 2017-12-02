@@ -154,7 +154,7 @@
 \matl{YY} & 0-- (0) & 1 & \matlab+inf+ function. If $0$ inputs: produces literal \matlab+inf+. \\
 \matl{ZY} & 1 & 1 & \matlab+isinf+ \\
 \matl{X[} & 2 & 1-- ($^\triangle$) & \matlab+ind2sub+ without input restrictions \\
-\matl{\textbackslash } & 2 & 1--2 (1 / 2) & \matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. \sa \matl{X\textbackslash }, \matl{o} \\
+\matl{\textbackslash } & 2 & 1--2 (1 / 2) & \matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. For $1$ or $2$ outputs, if the first input is complex the real and imaginary parts are dealt with separately. \sa \matl{X\textbackslash }, \matl{o} \\
 \matl{X\textbackslash } & 2 & 1 & \matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl{\textbackslash } \\
 \matl{Y\textbackslash } & 2 & 1 & left matrix division, \matlab+\+ (\matlab+mldivide+) \\
 \matl{Z\textbackslash } & 1 & 1 & divisors of a number. For negative input the absolute value is used \\

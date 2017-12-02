@@ -1071,8 +1071,13 @@ X[	2	2	2		1	inf	numel(in{1})		true	true	true	true	siz = double(in{1}); ndx = in{
 % This code above was adapted from Matlab's `ind2sub`
 Y[
 Z[
-\	2	2	2		1	2	1	2	true	true	true	true	out{1} = bsxfun(@mod, in{1}, in{2});	modulo/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. \sa \matl|X\|, \matl|o|
+\	2	2	2		1	2	1	2	true	true	true	true	if isreal(in{1})	modulo/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. For $1$ or $2$ outputs, if the first input is complex the real and imaginary parts are dealt with separately. \sa \matl|X\|, \matl|o|
+													out{1} = bsxfun(@mod, in{1}, in{2});
 													if numel(out)==2, out{2} = floor(bsxfun(@rdivide, in{1}, in{2})); end
+													else
+													out{1} = bsxfun(@mod, real(in{1}), in{2}) + 1j*bsxfun(@mod, imag(in{1}), in{2});
+													if numel(out)==2, out{2} = floor(bsxfun(@rdivide, real(in{1}), in{2})) + 1j*floor(bsxfun(@rdivide, imag(in{1}), in{2})); end
+													end
 X\	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@mod, in{1}-1, in{2})+1;	modulo on the interval [1,divisor+1) (element-wise, singleton expansion)	\matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl|\|
 Y\	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}\in{2};	left matrix division	left matrix division, \matlab+\+ (\matlab+mldivide+)
 Z\	1	1	1		1	1	1		true	true	true	true	if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input cannot contain more than one value'); end	divisors	divisors of a number. For negative input the absolute value is used
