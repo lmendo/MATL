@@ -89,6 +89,7 @@ appendLines('set(0, ''DefaultFigureColormap'', gray(256));', 0)
 appendLines('cleanup_warn = onCleanup(@()warning(warningState));', 0);
 appendLines('cleanup_diary = onCleanup(@()diary(''off''));', 0);
 appendLines('cleanup_cmap = onCleanup(@()set(0, ''DefaultFigureColormap'', defaultColorMap));', 0);
+appendLines('cleanup_cmap = onCleanup(@()rng(''default''));', 0);
 if ~isMatlab
     appendLines('page_screen_output(false, ''local'');', 0)
     appendLines('page_output_immediately(true, ''local'');', 0)

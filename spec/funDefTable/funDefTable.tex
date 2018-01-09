@@ -227,8 +227,8 @@
 \matl{Xq} & 2--3 (2 / 3) & 1 & \matlab+quantile+ \\
 \matl{Yq} & 1 & 1 & For input with positive entries: $n$-th prime for each value $n$ in the input array. For input with non-positive entries: next prime for absolute value of each entry \\
 \matl{Zq} & 1 & 1 & \matlab+primes+ \\
-\matl{r} & 0-- (0 / 2) & 1 & \matlab+rand+ \\
-\matl{Xr} & 0-- (0 / 2) & 1 & \matlab+randn+ \\
+\matl{r} & 0-- (0 / 2) & 0--1 (1) & \matlab+rand+ \\
+\matl{Xr} & 0-- (0 / 2) & 0--1 (1) & \matlab+randn+ \\
 \matl{Yr} & 1-- (1 / 2) & 1 & \matlab+randi+. If the first input is a vector of $2$ elements it is automatically sorted. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+ \\
 \matl{Zr} & 2--4 (2 / 3) & 1 & \matlab+randsample+. Does not support stream specification \\
 \matl{s} & 1--4 (1 / 2) & 1 & \matlab+sum+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'omitnan'+, 2: \matlab+'includenan'+, 3: \matlab+'double'+, 4: \matlab+'native'+, 5: \matlab+'default'+. \sa \matl{Xs} \\
