@@ -289,7 +289,7 @@ The character \matl{+}, unlike \matl{-}, does not stick to numbers. Thus \matl{1
 
 \matl{j} is interpreted as imaginary unit when used as part of literals, and as a function elsewhere. Again, a separator may be needed to avoid function \matl{j} being interpreted as part of a literal. For example, \matl{4j} is a literal representing number $4j$, whereas \matl{4 j} is a literal representing number $4$ followed by function \matl{j}. To get number $j=\sqrt{-1}$ use the number literal \matl{1j} (or the array \matl{[j]}; see \S\ref{parte: numerical arrays}).
 
-Similarly, \matl{e} and \matl{.} denote exponent or decimal point when used as part of literals, and are interpreted as functions elsewhere. For example, \matl{4e3} is a literal representing number $4000$, whereas \matl{4e+} is a literal representing number $4$, followed by function \matl{j}, followed by function \matl{+}.
+Similarly, \matl{e} and \matl{.} denote exponent or decimal point when used as part of literals, and are interpreted as functions elsewhere. For example, \matl{4e3} is a literal representing number $4000$, whereas \matl{4e+} is a literal representing number $4$, followed by function \matl{e}, followed by function \matl{+}.
 
 Complex numbers in general can't be introduced directly as literals; only real or imaginary numbers can. For example, \matl{1-2j} would be interpreted as literal \matl{1} followed by literal \matl{-2j}. (However, array literals allow infix operators, as discussed in \S\ref{parte: numerical arrays}; so \matl{[1+2j]} would be interpreted as the complex number $1+2j$.)
 
@@ -1494,6 +1494,9 @@ that led me to reconsider including a form of \matlab+end+-based indexing, for t
 \user{@flawr} for his suggestions, including the ``$n$-th prime'' function and implicit input of data, and for finding several bugs.
 \item
 \user{@FryAmTheEggman} for helpful comments that led to improvements related to \matlab+nchoosek+.
+\item
+\user{@H.PWiz} for coreecting a typo in the documentation.
+% https://chat.stackexchange.com/transcript/message/42323700#42323700
 \item
 \user{@pragmatist1} for suggesting the use of a regular expression to check contents of array literals.
 % http://codegolf.stackexchange.com/questions/74789/vandermonde-determinant#comment181478_74799
