@@ -75,11 +75,10 @@ while pos<=L
         S(n).nesting = parseNesting;
         pos = pos + fin;
         n = n + 1;
-    elseif s(pos)=='[' % It's an array (number, char or logical)
-        % Consume until ]. There may be other [ and ] in between (although it would be a waste of characters),
-        % so consume until the number of [ minus ] reaches 0
-        [ini, fin] = regexp(s(pos:end), '^\[([^\[\]]*\[[^\[\]]*\])*[^\[\]]*\]', 'once');
-        assert(isequal(ini,1), 'MATL:parser', 'MATL error while parsing: array literal not well formed')
+    elseif s(pos)=='[' % It's an array (number, char or logical). Consume until ]. There may be other
+        %  [ and ] in between (although it would be a waste of characters), so consume until the number
+        % of [ minus ], not counting those predeced by an odd number of ', reaches 0
+        assert(~isempty(fin), 'MATL:parser', 'MATL error while parsing: array literal not closed')
         S(n).type = 'literal.array';
         % Content validation will be done in the compiler, together with letter replacing
         S(n).source = s(pos:pos-1+fin);
@@ -87,8 +86,7 @@ while pos<=L
         pos = pos + fin;
         n = n + 1;
     elseif s(pos)=='{' % It's a cell array. Consume until matching }. There may be other { and } in between,
-        % so consume until the number of { minus } reaches 0
-        fin = find(~cumsum((s(pos:end)=='{')-(s(pos:end)=='}')),1);
+        % so consume until the number of { minus }, not counting those predeced by an odd number of ', reaches 0
         assert(~isempty(fin), 'MATL:parser', 'MATL error while parsing: cell array literal not closed')
         S(n).type = 'literal.cellArray';
         % Content validation will be done in the compiler, together with letter replacing
