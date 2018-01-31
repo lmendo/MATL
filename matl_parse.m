@@ -210,7 +210,7 @@ while pos<=L
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         success = false;
-        for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
+        for m = parseControlStack(parseNesting:-1:1) % from innermost to outermost control structure
             if strcmp(S(m).type,'controlFlow.for')
                 S(n).type = 'controlFlow.forValue';
                 success = true;
@@ -240,7 +240,7 @@ while pos<=L
         S(n).source = s(pos);
         S(n).nesting = parseNesting;
         success = false;
-        for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
+        for m = parseControlStack(parseNesting:-1:1) % from innermost to outermost control structure
             if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doTwice' 'controlFlow.doWhile' 'controlFlow.while'}))
                 S(n).from = m; % associate this with opening statement
                 success = true;
@@ -288,7 +288,7 @@ while pos<=L
             S(n).source = s([pos pos+1]);
             S(n).nesting = parseNesting;
             success = false;
-            for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
+            for m = parseControlStack(parseNesting:-1:1) % from innermost to outermost control structure
                 if any(strcmp(S(m).type,{'controlFlow.for' 'controlFlow.doTwice' 'controlFlow.doWhile' 'controlFlow.while'}))
                     S(n).from = m; % associate this with opening statement
                     success = true;
@@ -303,7 +303,7 @@ while pos<=L
             S(n).source = s([pos pos+1]);
             S(n).nesting = parseNesting;
             success = false;
-            for m = parseControlStack(parseNesting:-1:1); % from innermost to outermost control structure
+            for m = parseControlStack(parseNesting:-1:1) % from innermost to outermost control structure
                 if strcmp(S(m).type,'controlFlow.for')
                     S(n).type = 'controlFlow.forIndex';
                     success = true;
