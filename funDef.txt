@@ -1302,7 +1302,7 @@ Zd	1	2	2	1	1	3	1		true	true	true	true	if numel(in)==1 && numel(out)==1, x=in{1}(
 													clear nd sz1 sz2 rm1 rm2 insx1 insx2
 													end
 													end
-e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove singleton dimensions	(i) With $1$ input: \matlab+squeeze+. (ii) With more than $1$ input: \matlab+reshape+. If second input is logical, inputs beyond the second are ignored. Contiguous equal values in the second input indicate dimensions that will be collapsed; and a final \matlab+[]+ is implicit. If there are two inputs and the second is a non-logical scalar, a final \matlab+[]+ is implicit. If size specification doesn't contain \matlab+[]+ (explicit or implicit), the first input is padded or truncated if needed; padding is done with \matlab+0+, \matlab+false+, \matlab+char(0)+ or \matlab+{[]}+ according to type of first input. If size specification contains \matlab+[]+ (explicit or implicit), the first input is padded if needed
+e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove singleton dimensions	(i) With $1$ input: \matlab+squeeze+. (ii) With more than $1$ input: \matlab+reshape+. If second input is logical, inputs beyond the second are ignored. Contiguous equal values in the second input indicate dimensions that will be collapsed; and a final \matlab+[]+ is implicit. If there are $2$ inputs and the second is non-logical and empty, it is replaced by the rounded-up square root of the number of elements of the first input, repeated; thus a square matrix is returned. If there are $2$ inputs and the second is a non-logical scalar, a final \matlab+[]+ is implicit. If size specification doesn't contain \matlab+[]+ (explicit or implicit), the first input is padded or truncated if needed; padding is done with \matlab+0+, \matlab+false+, \matlab+char(0)+ or \matlab+{[]}+ according to type of first input. If size specification contains \matlab+[]+ (explicit or implicit), the first input is padded if needed
 													if islogical(in{2})
 													nd = {size(in{1},1)};
 													v = in{2}(1);
@@ -1316,8 +1316,9 @@ e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove sin
 													end
 													nd{end+1} = [];
 													out{1} = reshape(in{1}, nd{:});
-													else
+													elseif ~iscell(in{2})
 													if numel(in)==2 && isscalar(in{2}), in{3} = []; end
+													if numel(in)==2 && isempty(in{2}), in{2} = repmat(ceil(sqrt(numel(in{1}))), 1, 2); end
 													if ~any(cellfun(@isempty, in(2:end))) && prod([in{2:end}])>numel(in{1})
 													if isnumeric(in{1}), in{1} = in{1}(:); in{1}(end+1:prod([in{2:end}])) = 0;
 													elseif islogical(in{1}), in{1} = in{1}(:); in{1}(end+1:prod([in{2:end}])) = false;
@@ -1340,6 +1341,7 @@ e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove sin
 													else error('MATL:runtime', 'MATL run-time error: unrecognized type of first input');
 													end, end
 													out{1} = reshape(in{:});
+													else error('MATL:runtime', 'MATL run-time error: unrecognized second input');
 													end
 													else
 													out{1} = squeeze(in{:});
