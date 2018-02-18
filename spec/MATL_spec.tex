@@ -1399,6 +1399,8 @@ In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round 
 \item
 \matlab+char+ implicitly rounds down in MATLAB, and rounds to closest in Octave. This difference has been addressed by enforcing MATLAB's behaviour.
 Octave's \matlab+mode+ doesn't handle char input. This has been fixed.
+\item
+Octave treats ranges specially to save memory\footnote{\url{https://www.gnu.org/software/octave/doc/v4.2.0/Ranges.html}}. When applying function \matlab+nnz+ to a range an error occurs. This has been fixed.
 \end{itemize}
 
 
@@ -1519,6 +1521,9 @@ for suggesting to include \matlab+expm+ (matrix exponential) and to generalize m
 % https://chat.stackexchange.com/transcript/message/41206681#41206681
 and for finding a bug in the parser, which incorrectly identified \matl{]} or \matl{\}} within strings as closing symbols for array literals.
 % https://chat.stackexchange.com/transcript/message/42555761#42555761
+\item
+\user{@Steadybox} for finding a bug in Octave's \matlab+nnz+ function when applied to a range.
+% Comments in https://codegolf.stackexchange.com/a/155943/36398
 \item
 \user{@Suever} for his help in finding several differences between Octave and MATLAB,
 % regarding the $0$ character, as well as the \matlab+max+ and \matlab+min+ functions;
