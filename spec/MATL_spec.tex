@@ -155,7 +155,7 @@ This is how MATL code is displayed in this document: \matl{iXyD}. Or sometimes w
 MATLAB code is displayed like this: \matlab+n = input(''); disp(eye(n)))+.
 
 \begin{pending}
-Auxiliary or ``meta'' stuff is typeset this way. This includes discussions as to why something has been done in a particular way, or things that remain to be done.
+Auxiliary or ``meta'' stuff is typeset in smaller font with indentation. This includes discussions as to why something has been done in a particular way, or things that remain to be done.
 \end{pending}
 
 
@@ -194,10 +194,10 @@ MATLAB: \matlab+unique(input('','s'),'stable')+
 Same as above but done manually, that is, without using MATLAB's \matlab+unique+ or its MATL equivalent \matl{u}:
 \begin{description}
 \item
-MATL: \matl{jt\&=XRa\textasciitilde{})}
+MATL: \matl{jt\&=XRa.\textasciitilde{})}
 \item
 MATLAB:\\
-\matlab+s=input('','s');s(~any(triu(bsxfun(@eq,s,s'),1)));+
+\matlab+s=input('','s');s(~any(triu(bsxfun(@eq,s,s.'),1)));+
 \end{description}
 \end{enumerate}
 
@@ -682,7 +682,7 @@ In this scenario, \matl{4M} would push \matl{10}, \matl{20}, \matl{30} onto the 
 
 Note the similarity of \matl{M} with function \matl{L}, which is used for pasting from multi-level clipboard L. In both cases, the input argument to the function specifies the clipboard level which is being addressed, and the output specification controls which of the multiple elements (arrays) existing in that level are pushed to the stack. In function \matl{G}, on the other hand, both the input argument and the output specification specify which levels are pushed, each level containing only one element (array). Another difference between clipboards G and M is that the former uses chronological order, whereas the latter uses reverse chronological order.
 
-Clipboards G and M differ from H,\ldots,L in that here copying is done automatically, and it doesn't use or consume any \matl{\$} or \matl{\#} specifications. But pasting with functions \matl{G} and \matl{M} does consume \matl{\$} and \matl{\#} specifications, like pasting from standard clipboards does.
+Clipboards G and M differ from H, \ldots, L in that here copying is done automatically, and it doesn't use or consume any \matl{\$} or \matl{\#} specifications. But pasting with functions \matl{G} and \matl{M} does consume \matl{\$} and \matl{\#} specifications, like pasting from standard clipboards does.
 
 \begin{pending}
 The default number of inputs and outputs of \matl{G} has been defined such that, in normal usage, an input number is used to address the intended level; but this number is spared when it's not needed because there is only one level. Note that with this function there may be several ways of obtaining the same result using different input and output specifications. For example, if clipboard G has two levels, \matl{0\$1\#G} is equivalent to \matl{1\$1G}.
@@ -694,7 +694,7 @@ Perhaps a cleaner syntax could have been used to distinguish combined addressing
 \subsection{Indices and indexing functions}
 \label{parte: indexing}
 
-Indexing with \parte{round brackets} is used in MATLAB for accessing array's contents and cells of a cell array. Indexing with \parte{curly braces} is used for accessing cell's contents in a cell array.
+Indexing with \parte{round brackets} is used in MATLAB for accessing array's contents and cells of a cell array. Indexing with \parte{curly braces} is used for accessing cells' contents in a cell array.
 
 Indexing can be used for two purposes: \parte{referencing} elements of an array, or \parte{assigning} values to elements of an array. For example, in the statement \matlab+a(2,:) = b(1,:)+, reference indexing is being used for \matlab+b+, and assignment indexing is being used for \matlab+a+.
 %The MATLAB functions \matlab+subsref+ and \matlab+subsasgn+ correspond to these types of indexing. However, in MATLAB these functions are not usually called directly, but rather the parenthesis notation is used.
@@ -840,7 +840,7 @@ I would have liked to, but I haven't found a way to make curly-brace assignment 
 
 In many cases the assignment will be to a single cell with a single index (\matlab+a{ind} = data+). In MATL that case is simple indeed, and totally analogous to round-bracket indexing: push \matlab+a+, then \matlab+val+, then \matlab+ind+, and \matl{X(} will do the assignment. In the more general case one only has to remember to include the number of indices as a final input.
 
-All in all, notation may get a little complicated in the general case. On the positive side, some people may consider code obfuscation to be, well, a good thing... specially in a weird/esoteric language worth that name!
+All in all, notation may get a little complicated in the general case. On the positive side, some people may consider code obfuscation to be, well, a good thing\ldots specially in a weird/esoteric language worth that name!
 
 On a more serious note, MATL indexing supports integer/logical indexing; multidimensional/linear/partially linear indexing; curly braces (cell contents) and round brackets (cells, standard arrays); reference (getting values from an array) and assignment (putting values into an array); all working on a stack. I hope notation is just about as complicated as it needed to be.
 \end{pending}
@@ -1480,7 +1480,8 @@ that led me to reconsider including a form of \matlab+end+-based indexing, for t
 \item
 \user{Ben Barrowes} for his function \matlab+genHyper+.
 \item
-\user{Conor O'Brien} for his suggestion to have a function essentially equivalent to \matl{35*c}.
+\user{Conor O'Brien} for his suggestion to have a function essentially equivalent to \matl{35*c} but shorter.
+% https://codegolf.stackexchange.com/questions/138883/fractal-cathedral/138886#comment340831_138886
 \item
 \user{@David} for finding a good implementation of the ``$n$-th prime'' function, as well as some errata in this document. Also for suggesting that \matl{G} should take implicit input if needed, and for finding a bug in Octave's \matlab+datestr+ function.
 \item
