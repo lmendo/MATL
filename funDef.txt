@@ -1347,7 +1347,7 @@ e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove sin
 													out{1} = squeeze(in{:});
 													end
 Xe
-Ye	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1})	matrix exponential / logical "infinite" graph power	(i) With numerical input: \matlab+expm+. (ii) With logical input \matlab+M+: the input is interpreted as the adjacency matrix of a graph. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with increasing exponent until the result no longer changes. This is the same as \matlab+logical(M*expm(M))+ except that numerical precision issues are avoided. \sa \matl+Y^+
+Ye	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1 && isnumeric(in{1})	matrix exponential / logical "infinite" graph power	(i) With one numerical input: \matlab+expm+. (ii) With one logical input \matlab+M+: the input is interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with increasing exponent until the result no longer changes. This is the same as \matlab+logical(M*expm(M))+ except that numerical precision issues are avoided. (iii) With a logical input \matlab+M+ and a non-negative integer input \matlab+n+: \matlab+M+ interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with exponent \matlab+n+. \sa \matl+Y^+
 													out{1} = expm(in{1});
 													elseif numel(in)==1 && islogical(in{1})
 													if isempty(in{1}), in{1} = []; end
