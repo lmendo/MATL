@@ -35,7 +35,9 @@ else
     fid = fopen(fileName, 'w');
     count = fwrite(fid, y);
     fclose(fid);
-    if count
+    if count==numel(y)
         disp('Converted file successfully written')
+    else
+        disp('Something went wrong when writing the file')
     end
 end
