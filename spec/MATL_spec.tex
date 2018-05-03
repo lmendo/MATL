@@ -536,7 +536,7 @@ These functions rearrange the elements in the stack (by duplicating, moving, del
 
 If a logical array is used as argument to \matl{\$}, it specifies which elements should be copied, maintaining their relative order. For example, \matl{TTF\$t} would copy the third- and second-highest elements and paste them at the top of the stack.
 \item
-\matl{y} (duplicate element). This function is similar to \matl{t}, but it only duplicates the lowest element among those specified as inputs. It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $2$; secondary default $3$. Or a logical array can be used as input specification. For example, if the stack contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'b'}, either \matl{3\$y} or \matl{TTF\$y} would leave the stack as \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'a'}. Without input specification, \matl{k} duplicates the second element from the top.
+\matl{y} (duplicate element). This function is similar to \matl{t}, but it only duplicates the lowest element among those specified as inputs. It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $2$; secondary default $3$. Or a logical array can be used as input specification. For example, if the stack contains \matl{'a'}, \matl{'b'}, \matl{'c'}, either \matl{3\$y} or \matl{TTF\$y} would leave the stack as \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'a'}. Without input specification, \matl{y} duplicates the second element from the top.
 \item
 \matl{b} (bubble up). It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $3$; secondary default $4$. It makes the $n$-th highest element ``bubble up'' to the top, shifting elements $1$, \ldots, $n-1$ one position down. For $n=0$ it does nothing.
 
@@ -1491,6 +1491,9 @@ that led me to reconsider including a form of \matlab+end+-based indexing, for t
 \user{@DJMcMayhem} for finding some errata, and also for suggesting that a square-power and a divisors function be added.
 %http://chat.stackexchange.com/transcript/message/30482878#30482878
 %https://chat.stackexchange.com/transcript/message/33065597#33065597
+\item
+\user{@EriktheOutgolfer} for finding some errata in the documentation.
+% https://chat.stackexchange.com/transcript/message/44392192#44392192
 \item
 \user{@excaza} for his suggestion regarding the hypergeometric function.
 \item
