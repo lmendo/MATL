@@ -664,7 +664,7 @@ If the referred function call hasn't actually occurred, \matl{M} produces no out
 \item
 \emph{Individual addressing}: \matl{M} takes as input a number $5$, $6$, \ldots. The number individually addresses inputs from function calls that used more than one input. Addressing is from most recent to less recent call, and from most recent (rightmost) to less recent (leftmost) input in the function signature. Only calls that had more than one input are considered, because single-input calls are already covered by combined addressing. So $5$ refers to the latest input of the latest call that used several inputs; $6$ refers to the second latest such input, etc.
 
-If the addressed function input doesn't actually exist, \matl{M} produces no outputs. For example, \matl{5M} does nothing if there haven't been any normal function calls with several inputs.
+If the addressed function input doesn't actually exist, \matl{M} produces no output. For example, \matl{5M} does nothing if there haven't been any normal function calls with several inputs.
 \end{itemize}
 
 As an example, consider the following code, where spaces are used to separate statements for clarity: \matl{10 20 30 3\$+ [5 0 7] 1 4 X0 3\$f =}. There are four function calls, with the following inputs and outputs:
