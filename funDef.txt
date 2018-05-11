@@ -882,7 +882,7 @@ M	1	1	1		0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)		true	tr
 													out = [CB_M{in{1}}(1:nout)];
 													elseif in{1}>numCbM
 													cbMflip = CB_M(end:-1:1); cbMIndivIn = [cbMflip{cellfun(@numel, cbMflip)>1}]; cbMIndivIn = cbMIndivIn(end:-1:1);
-													out = cbMIndivIn(in{1}-numCbM);
+													if in{1}-numCbM<=numel(cbMIndivIn), out = cbMIndivIn(in{1}-numCbM); else out = {}; end 
 													clear cbMflip cbMIndivIn
 													else
 													error('MATL:runtime', 'MATL run-time error: incorrect input')

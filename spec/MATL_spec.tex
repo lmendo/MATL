@@ -540,7 +540,7 @@ If a logical array is used as argument to \matl{\$}, it specifies which elements
 \item
 \matl{b} (bubble up). It can have an arbitrary number $n=0,1,2,\ldots$ specified to \matl{\$}; by default $3$; secondary default $4$. It makes the $n$-th highest element ``bubble up'' to the top, shifting elements $1$, \ldots, $n-1$ one position down. For $n=0$ it does nothing.
 
-If a logical array is used as argument to \matl{\$}, the bubbling is done only for the indicated stack elements. For example, if the stack initially contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'d'} from bottom to top, \matl{TTFT\$b} would leave the stack as \matl{'b'}, \matl{'d'}, \matl{'c'}, \matl{'a'}.
+If a logical array is used as argument to \matl{\$}, the bubbling is done only among the indicated stack elements. For example, if the stack initially contains \matl{'a'}, \matl{'b'}, \matl{'c'}, \matl{'d'} from bottom to top, \matl{TTFT\$b} would leave the stack as \matl{'b'}, \matl{'d'}, \matl{'c'}, \matl{'a'}. Note how \matl{'c'} remains in its original position.
 \item
 \matl{N} (stack size). It pushes the number of elements that the stack currently has. It has no inputs (so the only allowed input specification would be \matl{0\$}, which is unnecessary anyway).
 \item
@@ -664,7 +664,7 @@ If the referred function call hasn't actually occurred, \matl{M} produces no out
 \item
 \emph{Individual addressing}: \matl{M} takes as input a number $5$, $6$, \ldots. The number individually addresses inputs from function calls that used more than one input. Addressing is from most recent to less recent call, and from most recent (rightmost) to less recent (leftmost) input in the function signature. Only calls that had more than one input are considered, because single-input calls are already covered by combined addressing. So $5$ refers to the latest input of the latest call that used several inputs; $6$ refers to the second latest such input, etc.
 
-If the addressed function input doesn't actually exist, \matl{M} gives an error. For example, \matl{5M} gives an error if there haven't been any normal function calls with several inputs.
+If the addressed function input doesn't actually exist, \matl{M} produces no outputs. For example, \matl{5M} does nothing if there haven't been any normal function calls with several inputs.
 \end{itemize}
 
 As an example, consider the following code, where spaces are used to separate statements for clarity: \matl{10 20 30 3\$+ [5 0 7] 1 4 X0 3\$f =}. There are four function calls, with the following inputs and outputs:
