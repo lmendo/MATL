@@ -218,7 +218,9 @@ Character arrays;
 \item
 Cell arrays.
 \end{itemize}
-Either of these arrays can be 2D or multidimensional. As in MATLAB, arrays of one dimension are considered to be 2D arrays with size $1$ in one of the dimensions. Numbers are considered 2D numerical arrays of size $1\times 1$.
+Either of these arrays can be 2D or multidimensional. As in MATLAB, there aren't arrays of one dimension. All arrays are at least 2D, possibly with size $1$ in some of their dimensions. Dimensions with size $1$ are called singleton dimensions. Arrays with only one non-singleton dimension are referred to as \emph{vectors}. For example, a row vector has size $1 \times n$. Numbers are considered 2D numerical arrays of size $1\times 1$.
+
+MATL does not have the \matlab+string+ data type introduced by MATLAB's release 2016b. In this document, a \emph{string} should be understood as a row vector of chars..
 
 2D numerical arrays are full or sparse. Their default class is \matlab+double+. MATL can work with all the other numerical classes. Conversion is done with a function corresponding to MATLAB's \matlab+cast+, or with functions corresponding to \matlab+double+ and \matlab+int64+.
 
@@ -1538,6 +1540,9 @@ and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\ma
 % http://chat.stackoverflow.com/transcript/message/29835862#29835862
 % http://chat.stackoverflow.com/transcript/message/30154628#30154628
 % http://codegolf.stackexchange.com/questions/82981/leyland-numbers#comment202388_82995
+\item
+\user{@sundar} for prompting me to clarify that strings are understood as row vectors of chars in MATL.
+% https://codegolf.stackexchange.com/questions/166527/decoding-the-kaadi-system/168021#comment405995_168021
 \end{itemize}
 
 

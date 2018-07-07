@@ -977,7 +977,7 @@ S	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)>1 && ~ischar(in{2})
 													end
 													end
 XS	1	2	1		1	2	1	[false true]	true	true	true	true	[out{:}] = sortrows(in{:});	sort rows	\matlab+sortrows+. \sa \matl|S|
-YS	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==3 && numel(in{2})>1 && ndims(in{1})==2 && in{3}<=2	circular shift	\matlab+circshift+. If second input is a scalar and there's no third input, the shift is applied along the first non-singleton dimension. This function also allows first input a 2D array; third input a scalar specifying dimension; and second input a vector or array specifying the shift for each position in the other dimension
+YS	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==3 && numel(in{2})>1 && ndims(in{1})==2 && in{3}<=2	circular shift (rotate)	\matlab+circshift+. If second input is a scalar and there's no third input, the shift is applied along the first non-singleton dimension. This function also allows first input a 2D array; third input a scalar specifying dimension; and second input a vector or array specifying the shift for each position in the other dimension
 													x = in{1};
 													if in{3}==2, x = x.'; end
 													ind = bsxfun(@plus, 0:size(x,1):numel(x)-1, mod(bsxfun(@plus, (1:size(x,1)).', -in{2}(:).'-1), size(x,1))+1);
