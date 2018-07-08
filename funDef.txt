@@ -1125,7 +1125,7 @@ Z^	2	2	2		1	1	1		true	true	true	true	if numel(in{1})==1 && numel(in{2})>1, in([1
 													[combs{end:-1:1}] = ndgrid(in{1});
 													combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 													out{1} = combs; clear combs n
-_	1	1	1		1	1	1		true	true	true	true	if isa(in{1}, 'uint8'), out{1} = double(in{1})/255;	unary minus / normalize uint8 values	(i) If input is \matlab+uint8+: unary \matlab+-+ (\matlab+uminus+), that is, output is the negative of the input. (ii) If input is \matlab+uint8+: converts to \matlab+double+ and divides by $255$
+_	1	1	1		1	1	1		true	true	true	true	if isa(in{1}, 'uint8'), out{1} = double(in{1})/255;	unary minus / normalize uint8 values	(i) If input is not \matlab+uint8+: unary \matlab+-+ (\matlab+uminus+), that is, output is the negative of the input. (ii) If input is \matlab+uint8+: converts to \matlab+double+ and divides by $255$
 													else out{1} = -in{1}; end
 X_
 Y_
