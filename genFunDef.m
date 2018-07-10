@@ -1,5 +1,7 @@
 function F = genFunDef(masterFileName, fileName)
 %
+% F = genFunDef(masterFileName, fileName)
+%
 % Generates function definition struct array "F" from tab-separated text
 % file, and saves it in file.
 %

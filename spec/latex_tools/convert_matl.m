@@ -1,6 +1,11 @@
 function convert_matl(fileName, keepOriginal)
 
+%
+% convert_matl(fileName, keepOriginal)
+%
 % Converts \matl+...+ or \matl|...| into: \matl{...} with escaped characters
+%
+% Luis Mendo
 
 %disp(' ');
 copyFileName = [fileName ' [not converted]'];

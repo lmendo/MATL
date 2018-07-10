@@ -1,5 +1,7 @@
 function H = genHelp(F, L)
 %
+% H = genHelp(F, L)
+
 % Generates help struct array "H" from struct array "F" (functions) and
 % additional information coded directly here (non-functions), and saves it
 % in file "help.mat"

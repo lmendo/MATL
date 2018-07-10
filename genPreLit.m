@@ -1,5 +1,7 @@
 function L = genPreLit(masterFileName, fileName)
 %
+% L = genPreLit(masterFileName, fileName)
+%
 % Generates struct array "L" for predefined literals from tab-separated text
 % file, and saves it in file.
 %
