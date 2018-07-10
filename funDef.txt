@@ -1733,7 +1733,7 @@ Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1})	replace s
 u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'rows'};	unique	\matlab+unique+, with \matlab+'stable'+ option by default. It includes a fourth output with the count for each unique element. It also allows cell array input with numeric content, or mixed char/numeric content. In this case it only works with a single output, either in sorted or stable mode. This function allows flag strings in second and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'stable'+, 2: \matlab+'sorted'+, 3: \matlab+'last'+, 4: \matlab+'first'+, 5: \matlab+'rows'+. \sa \matl+Xu+
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if numel(in)==1 || (numel(in)==2 && strcmp(in{2}, 'rows')), in{end+1} = 'stable'; end
-													if iscell(in{1}) && ~ischar(in{1}{1})
+													if iscell(in{1}) && ~all(cellfun(@ischar, in{1}))
 													if numel(in)>=2 && isequal(in{end},'sorted')
 % Sort lexicographically. This is taken from the code of `S`:
 													n = max(cellfun(@numel, in));
