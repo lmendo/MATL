@@ -1581,21 +1581,36 @@ o	1	3	1	2	1	1	1		true	true	true	true	if ~iscell(in{1})	convert to double precisi
 													out{1} = vertcat(in{1}{:}); clear n fill lr
 													end
 Xo	1	1	1		1	1	1		true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
-Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case
+Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case. Optional second input specifies in which characters or cells the case will be changed
 													str = {'significant' 'decimals'};
 													if numel(in)>=3 && isnumeric(in{3}), in(3) = str(in{3}); end; clear str
 													y = round(in{:});
 													elseif ~iscell(in{1})
 													x = in{1}(:).'; xlu = [lower(x); upper(x)];
-													[~, ind] = max(bsxfun(@ne, x, xlu)); y = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind)); y = reshape(y,size(in{1}));
+													[~, ind] = max(bsxfun(@ne, x, xlu)); t = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind)); t = reshape(t,size(in{1}));
+													if numel(in)==1
+													y = t;
+													elseif numel(in)==2
+													y = x; y(in{2}) = t(in{2});
+													end
 													else
 													y = cell(size(in{1}));
-													for n = 1:numel(in{1})
+													if numel(in)==1
+													nn = 1:numel(in{1});
+													elseif numel(in)==2
+													if islogical(in{2})
+													nn = find(in{2});
+													else
+													nn = reshape(in{2},1,[]);
+													end
+													end
+													y = in{1};
+													for n = nn
 													x = in{1}{n}; xlu = [lower(x); upper(x)];
 													[~, ind] = max(bsxfun(@ne, x, xlu)); y{n} = xlu(bsxfun(@plus, 0:2:2*(numel(x)-1), ind));
 													end
 													end
-													out{1} = y; clear x xlu ind
+													out{1} = y; clear x xlu ind t nn
 Zo	1	1	1		1	1	1		true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
 p	1	3	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{:});	product of elements	\matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl|Xp|
 Xp	1	3	1		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl+p+.
