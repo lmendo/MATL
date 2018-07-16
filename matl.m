@@ -1,9 +1,12 @@
 function matl(varargin)
 %
 % MATL main program.
-% Matlab 2015b or newer. Also works in Octave. See
+%
+% Requires Matlab 2015b or newer. Also works in Octave. See
 % specification document for compatibility considerations.
+%
 % Calls parser, compiler, runner depending on input options.
+%
 % Luis Mendo
 
 indentBase = 4; % number of spaces for indentation level 0. Default value

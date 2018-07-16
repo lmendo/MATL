@@ -1,8 +1,11 @@
 function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, verNum, useTags, online)
 %
 % MATL compiler. Compiles into MATLAB code.
-% Input: struct array with parsed statements.
+%
+% The main input is a struct array with parsed statements.
 % Produces output file with the MATLAB code.
+%
+% Luis Mendo
 
 % Each MATLAB line is a string in cell array C.
 
@@ -18,8 +21,6 @@ function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, verNum
 % refer to clipboard levels. The "inner cells" refer to copied elements within that clipboard 
 % level. CB_L is a dynamic cell array: outer cells are created on the fly
 % when clipboard levels are copied to.
-%
-% Luis Mendo
 
 global indStepComp C implicitInputBlock
 
