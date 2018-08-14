@@ -1824,7 +1824,11 @@ Zz
 {
 X{	1	2	1	2	1	1	1		true	true	true	true	out{1} = num2cell(in{:});	convert numeric array into cell array	\matlab+num2cell+
 Y{	2	inf	3	2	1	1	1		true	true	true	true	out{1} = mat2cell(in{:});	break up array into cell array of subarrays	\matlab+mat2cell+
-Z{	1	1	1		1	1	1		true	true	true	true	sz = num2cell(size(in{1})); out{1} = mat2cell(in{1}, ones(sz{1},1), sz{2:end});	cell array of first-dimension slices from array	\matlab+mat2cell(x, ones(size(x,1),1), size(x,2),...,size(x,ndims(x)))+. It's a generalization of \matlab+cellstr+ that works for numeric, logical or char arrays of any number of dimensions
+Z{	1	1	1		1	1	1		true	true	true	true	if ischar(in{1})	cell array of char vectors or of first-dimension slices from array	\matlab+cellstr+ for \matlab+char+ input, or \matlab+mat2cell(x, ones(size(x,1),1), size(x,2),...,size(x,ndims(x)))+ for non-\matlab+char+ arrays of any number of dimensions
+													out{1} = cellstr(in{1});
+													else
+													sz = num2cell(size(in{1})); out{1} = mat2cell(in{1}, ones(sz{1},1), sz{2:end}); clear sz
+													end
 |	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = abs(in{1});	absolute value / norm / determinant	If $1$ input: \matlab+abs+. If $2$ inputs, second input non-zero: \matlab+norm+. If $2$ inputs, second input zero: \matlab+det+, or \matlab+sqrt(det(A*A.'))+ for first input \matlab+A+ non-square
 													elseif in{2}==0 && ~diff(size(in{1})), out{1} = det(in{1});
 													elseif in{2}==0 && diff(size(in{1})), out{1} = sqrt(det(in{1}*in{1}.'));
