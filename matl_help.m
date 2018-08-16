@@ -33,11 +33,11 @@ if isempty(strHelp) || strcmp(strHelp,'help') % empty string: show help usage an
     fprintf('  %s-d%s: debug\n', strongBegin, strongEnd)
     fprintf('  %s-f%s: use file\n', strongBegin, strongEnd)
     fprintf('  %s-v%s: verbose\n', strongBegin, strongEnd)
-    fprintf('  %s-h%s: help.\n', strongBegin, strongEnd)
-    fprintf('  %s-o%s: online mode.\n', strongBegin, strongEnd)
+    fprintf('  %s-h%s: help\n', strongBegin, strongEnd)
+    fprintf('  %s-o%s: online mode\n', strongBegin, strongEnd)
     fprintf('Second input: string:\n')
     fprintf('  Contains source code, file name or search text\n')
-    fprintf('  Source code or file name can be omitted. In that case they are introduced later\n')
+    fprintf('  Source code or file name can be omitted, to be introduced later\n')
     fprintf('  Search text can be a name of function or statement, or a word.\n')
     return
 elseif numel(strHelp)==1 || (numel(strHelp)==2 && any(strHelp(1)=='XYZ'))  % search in source
