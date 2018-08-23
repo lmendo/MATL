@@ -126,18 +126,23 @@ if ~isempty(S)
         appendLines(['preLit.' str{n} '.val = {' sprintf('%s ', L.(str{n}).val{:}) '};'], 0)
     end
 end
-% Initiallize stack (empty)
-appendLines('STACK = {};', 0)
-% Initiallize function input and output specifications (to empty).
-appendLines('S_IN = ''def''; S_OUT = ''def'';', 0)
+% Define initial values for stack, input/output specs and clipboards:
+appendLines('STACK_ini = {};',0)
+appendLines('S_IN_ini = ''def''; S_OUT_ini = ''def'';', 0);
+appendLines('CB_H_ini = { 2 }; CB_I_ini = { 3 }; CB_J_ini = { 1j }; CB_K_ini = { 4 }; CB_L_ini = { {[1 2 1j]} {[2 2 1j]} {[1 1j-1]} {[2 1j]} {[1 0]} {[2 1j-1]} {[2 3 1]} {[3 1 2]} {[1 1j]} {[1j -1 1]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {0.5772156649015328606} {(sqrt(5)+1)/2} {2j*pi} {[1 3 2 4]} {[1 3 4 2]} {[3 1 2 4]} {[3 1 4 2]} {[3 4 1 2]} {[1 .5j]} {[1 .5+.5j]} {[1+.5j 1j]} {[.5+.5j 1j]} };', 0)
+appendLines('CB_G_ini = { }; CB_M_ini = repmat({{}},1,numCbM);', 0)
+% Initiallize stack
+appendLines('STACK = STACK_ini;', 0)
+% Initiallize function input and output specifications
+appendLines('S_IN = S_IN_ini; S_OUT = S_OUT_ini;', 0)
 % Initiallize clipboards. Clipboards H--L are implemented directly as variables.
 % Clipboard L is implemented as a cell array, where each cell is one clipboard
 % "level".
-appendLines('CB_H = { 2 }; CB_I = { 3 }; CB_J = { 1j }; CB_K = { 4 }; CB_L = { {[1 2 1j]} {[2 2 1j]} {[1 1j-1]} {[2 1j]} {[1 0]} {[2 1j-1]} {[2 3 1]} {[3 1 2]} {[1 1j]} {[1j -1 1]} {3600} {86400} {1440} {[31 28 31 30 31 30 31 31 30 31 30 31]} {[31 29 31 30 31 30 31 31 30 31 30 31]} {0.5772156649015328606} {(sqrt(5)+1)/2} {2j*pi} {[1 3 2 4]} {[1 3 4 2]} {[3 1 2 4]} {[3 1 4 2]} {[3 4 1 2]} {[1 .5j]} {[1 .5+.5j]} {[1+.5j 1j]} {[.5+.5j 1j]} };', 0)
+appendLines('CB_H = CB_H_ini; CB_I = CB_I_ini; CB_J = CB_J_ini; CB_K = CB_K_ini; CB_L = CB_L_ini;', 0)
 % Initiallize automatic clipboards. Clipboard L is implemented as a cell
 % array, where each cell is one clipboard "level" containing one input. It
 % is initially empty.
-appendLines('CB_G = { }; CB_M = repmat({{}},1,numCbM);', 0)
+appendLines('CB_G = CB_G_ini; CB_M = CB_M_ini;', 0)
 % Read input file, if present. Don't do it in online compiler
 if ~online
     appendLines('if exist(''defin'',''file''), fid = fopen(''defin'',''r''); STACK{end+1} = reshape(fread(fid,inf,''*char''),1,[]); fclose(fid); end', 0)

@@ -1810,10 +1810,13 @@ w	0	inf	2		0	0	0		false	true	false	true	if ~isempty(in), in([1 end]) = in([end 1
 Xw
 Yw
 Zw
-x	0	inf	1		0	0	0		true	true	false	true	;	delete	delete from stack
+x	0	inf	1		0	0	0		true	true	false	true	;	delete elements	delete elements from stack. The deleted elements are those specified as inputs 
 Xx	0	1	0	1	0	0	0		true	true	true	true	if numel(in)==1, if islogical(in{1}), if in{1}, in{1} = 10; else, in{1} = 2.5; end; end, pause(in{1}/10); end; clc	clear window	\matlab+clc+. With $1$ input \matlab+x+: \matlab+pause(x/10)+ and then \matlab+clc+. Inputs \matl+F+ and \matl+T+ are interpreted as \matl+2.5+ and \matl+10+ respectively
 Yx
-Zx
+Zx	0	0	0		0	0	0		true	true	true	true	STACK = STACK_ini;	reset program state	resets stack, input/output specifications and clipboards to their initial values
+													S_IN = S_IN_ini; S_OUT = S_OUT_ini;
+													CB_H = CB_H_ini; CB_I = CB_I_ini; CB_J = CB_J_ini; CB_K = CB_K_ini; CB_L = CB_L_ini;
+													CB_G = CB_G_ini; CB_M = CB_M_ini;
 y	0	inf	2	3	0	0	0		false	true	false	true	out = in(1);	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs
 Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	identity matrix	\matlab+eye+ (matrix with ones on diagonal and zeros elsewhere)
 Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
