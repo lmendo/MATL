@@ -994,11 +994,13 @@ YS	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==3 && numel(in{2})>1 && ndims
 													end
 													out{1} = y; clear d y
 													end
-ZS	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	sign function / FFT shift	(i) With $1$ input: \matlab+sign+. (ii) With $2$ inputs: \matlab+fftshift+. Second input equal to $0$ corresponds to \matlab+fftshift+ with $1$ input
+ZS	1	3	1	3	1	1	1		true	true	true	true	if numel(in)==1	sign function / FFT shift / linspace	(i) With $1$ input: \matlab+sign+. (ii) With $2$ inputs: \matlab+fftshift+. Second input equal to $0$ corresponds to \matlab+fftshift+ with $1$ input. (iii) With $3$ inputs: \matlab+linspace+
 													out{1} = sign(in{:});
 													elseif numel(in)==2
 													if in{2}==0, in(2) = []; end
 													out{1} = fftshift(in{:});
+													elseif numel(in)==3
+													out{1} = linspace(in{:});
 													else
 													error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
 													end
