@@ -251,7 +251,7 @@
 \matl{Xy} & 1--4 (1) & 1 & \matlab+eye+ (matrix with ones on diagonal and zeros elsewhere) \\
 \matl{Yy} & 2 & 1 & \matlab+hypot+, element-wise with singleton expansion \\
 \matl{Zy} & 1--2 (1) & 1-- (1) & \matlab+size+ \\
-\matl{z} & 1 & 1 & \matlab+nnz+ \\
+\matl{z} & 1 & 1 & \matlab+nnz+ / \matlab+cellfun(@nnz, ...)+ \\
 \matl{Xz} & 1 & 1 & \matlab+nonzeros+. If input is a string or char array: removes whitespace, including \matlab+char(0)+; the result is a string. If input is cell array of strings: operates on each string \\
 \matl{X\{} & 1--2 (1 / 2) & 1 & \matlab+num2cell+ \\
 \matl{Y\{} & 2-- (3 / 2) & 1 & \matlab+mat2cell+ \\
