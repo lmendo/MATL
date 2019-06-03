@@ -1224,6 +1224,8 @@ Yb	1	inf	1	2	1	2	1		true	true	true	true	str = {'CollapseDelimiters' 'DelimiterTy
 													isRow = isrow(in{1}); x = in{1}(:); d = in{2};
 													ind = any(bsxfun(@eq, [d(1); x; d(1)], d(:).'), 2);
 													x(ind(2:end-1)) = [];
+													x = x(:);
+% Force x to be a column. This is needed for example if x = 33, d = 33. In this case the empty assignment x(true) = [] gives 1x0 rather than 0x1
 													if isRow, x = x.'; y = mat2cell(x, 1, diff(find(ind))-1);
 													else, y = mat2cell(x, diff(find(ind))-1, 1);
 													end
@@ -1232,7 +1234,7 @@ Yb	1	inf	1	2	1	2	1		true	true	true	true	str = {'CollapseDelimiters' 'DelimiterTy
 													y = y(e);
 													end
 													out{1} = y;
-													clear x y collapse d ind e
+													clear x y collapse d ind e isRow
 													else
 													if numel(in)>1 && isnumeric(in{2}), in{2} = char(in{2}); end;
 													if ~iscell(in{1})
