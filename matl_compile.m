@@ -96,7 +96,7 @@ if ~isMatlab
     % This is needed in Octave so it honours pauses etc. Thanks, Suever!
 end
 if isMatlab && exist('rng', 'file') % recent Matlab version
-    appendLines('cleanup_cmap = onCleanup(@()rng(''default''));', 0);
+    appendLines('cleanup_rng = onCleanup(@()rng(''default''));', 0);
     appendLines('rng(''shuffle'')', 0)
 elseif isMatlab % old Matlab version
     appendLines('rand(''seed'',sum(clock)); randn(''seed'',sum(clock))', 0);
