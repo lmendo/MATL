@@ -1214,7 +1214,7 @@ Za	3	4	3	4	1	1	1		true	true	true	true	if ~iscell(in{1})	Convert numbers between 
 													Z = vertcat(Z{:});
 													Z = az(Z+1);
 													out{1} = Z; clear x ax bx z Z az bz y t r q k m n c done_outer done_inner valid L
-b	0	inf	3	4	0	0	0		false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack
+b	0	inf	3	4	0	0	0		false	true	false	true	if ~isempty(in), in = in([2:end 1]); STACK(end+nin) = in; end	bubble up element in stack	bubble up element in stack. \sa \matl+w+
 Xb
 Yb	1	inf	1	2	1	2	1		true	true	true	true	str = {'CollapseDelimiters' 'DelimiterType' 'RegularExpression' 'Simple'};	split string or numeric array at delimiter	(i) \matlab+strsplit+. If second input is numeric it is converted to char. This function allows flag strings in third and successive inputs to be replaced by numbers, as follows: 1: \matlab+'CollapseDelimiters'+, 2: \matlab+'DelimiterType'+, 3: \matlab+'RegularExpression'+, 4: \matlab+'Simple'+. (ii) First input can be a cell array of strings, and then the result is a cell array of cell arrays of strings. Only one output is supported in this mode. (iii) First input can be numeric or logical. In this mode only one output is supported, the default delimiter is 0 or \matlab+false+, and the parameter \matlab+'CollapseDelimiters'+ can be used. The second input (delimiter) can be a single number or a numeric array, and in the latter case each element is a possible delimiter. If the first input is a row array the output will contain row arrays; otherwise it will contain column arrays
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
@@ -1706,7 +1706,7 @@ Zs	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); e
 													else
 													error('MATL:runtime', 'MATL run-time error: inputs not allowed');
 													end
-t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs
+t	0	inf	1		0	0	0		false	true	false	true	out = in;	duplicate elements	duplicate elements in stack. The duplicated elements are those specified as inputs. \sa \matl+y+
 Xt
 Yt
 Zt	3	3	3		1	1	1		true	true	true	true	if ischar(in{1}) || iscell(in{1})	replace substring with another	(i) If first input is char or a cell array: \matlab+strrep+. Numerical second and third inputs are converted to char. If the first input is char it is linearized into a row vector. (ii) The first input can be a numerical or logical array (not a cell array of numeric or logical arrays). In this case the other inputs can be char, numeric or logical (not cell); each input array is linearized; result is a row vector; and result has the type of the third input, even if no substitutions have been actually done
@@ -1811,7 +1811,7 @@ Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && 
 													out{1} = result;
 													clear k inds dim removeLast result
 													end
-w	0	inf	2		0	0	0		false	true	false	true	if ~isempty(in), in([1 end]) = in([end 1]); STACK(end+nin) = in; end	swap elements in stack	swap elements in stack
+w	0	inf	2		0	0	0		false	true	false	true	if ~isempty(in), in([1 end]) = in([end 1]); STACK(end+nin) = in; end	swap elements in stack	swap elements in stack. \sa \matl+b+
 Xw
 Yw
 Zw
@@ -1822,7 +1822,7 @@ Zx	0	0	0		0	0	0		true	true	true	true	STACK = STACK_ini;	reset program state	rese
 													S_IN = S_IN_ini; S_OUT = S_OUT_ini;
 													CB_H = CB_H_ini; CB_I = CB_I_ini; CB_J = CB_J_ini; CB_K = CB_K_ini; CB_L = CB_L_ini;
 													CB_G = CB_G_ini; CB_M = CB_M_ini;
-y	0	inf	2	3	0	0	0		false	true	false	true	out = in(1);	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs
+y	0	inf	2	3	0	0	0		false	true	false	true	if ~isempty(in), out = in(1); else out = {};	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs, if any. \sa \matl+t+
 Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	identity matrix	\matlab+eye+ (matrix with ones on diagonal and zeros elsewhere)
 Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
 Zy	1	2	1		1	inf	1		true	true	true	true	[out{:}] = size(in{:});	size	\matlab+size+
