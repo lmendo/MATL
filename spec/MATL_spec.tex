@@ -1341,6 +1341,10 @@ When using Octave's \matlab+vpa+, conversion from symbolic to char looses precis
 \item
 Octave's \matlab+vpa+ seems to have trouble with long strings containing non-integer numbers. For example, compare the output of \matlab+vpa('1/1234567891011')+ with that of \matlab+vpa('1/.1234567891011')+. This isn't addressed by the compiler.
 \item
+MATLAB does not support char input to \matlab+vpa+ anymore.
+% This happened on R2019a, maybe earlier. In R2017b it was supported (with a warning)
+Consequently, \matlab+vpa(str2sym(...), ...)+ is needed. On the other hand, Octave does not have \matlab+str2sym+, and allows char input to \matlab+vpa+. This is handled by the compiler by using \matlab+vpa(str2sym(...), ...)+ in the compiled code but defining \matlab+str2sym+ as the identity function in Octave. 
+\item
 \matlab+sum+ and \matlab+mean+ don't support the \matlab+'omitnan'+ flag in Octave. This has been added.
 \item
 \matlab+diff+ and \matlab+mod+ don't allow char inputs in Octave. This has been fixed.

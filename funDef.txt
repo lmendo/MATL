@@ -80,14 +80,14 @@ Z#	1	3	1	2	0	0	0		true	true	true	false	data = in{1}; if ~iscell(data), data = {d
 													fclose(fid); clear file sep
 $
 X$	1	inf	2	2	0	inf	1		true	true	true	false	[out{:}] = feval(in{:});	execute Matlab function	execute Matlab function specified by first input, using the rest of the inputs as arguments.
-Y$	1	2	2		1	1	1		true	true	true	true	if in{2}>0, out{1} = char(vpa(in{:}));	variable precision arithmetic	(i) \matlab+char(vpa(...))+. (ii) If the first input is a real or imaginary scalar and the second input (number of significant digits) is negative, the latter is interpreted as its absolute value, and the output will give the actual digits without rounding (so inputs \matlab+'5/3'+ and \matlab+-4+ will produce \matlab+'1.666'+, not \matlab+'1.667'+)
+Y$	2	2	2		1	1	1		true	true	true	true	if in{2}>0, out{1} = char(vpa(str2sym(in{1}), in{2:end}));	variable precision arithmetic	(i) \matlab+char(vpa(str2sym(...), ...))+. First input is a string, second is number of significant digits. (ii) If the first input is a string representing a real or imaginary scalar and the second input (number of significant digits) is negative, the latter is interpreted as its absolute value, and the output will give the actual digits without rounding (so inputs \matlab+'5/3'+ and \matlab+-4+ will produce \matlab+'1.666'+, not \matlab+'1.667'+)
 													elseif in{2}<0
 													s = in{1}; W = -in{2};
 													E = 0;
 													done = false;
 													while ~done
 													E = E+1;
-													x = char(vpa(s, W+E));
+													x = char(vpa(str2sym(s), W+E));
 													y = regexprep(x, '^[+-]?0*|\.0*', '');
 													y = regexprep(y, '\D.*$', '');
 													num_digits = numel(y); % get number of significant digits in x: 
