@@ -207,6 +207,9 @@ Y0
 64	'spring'
 65	'summer'
 66	'winter'
+70	'filled'
+71	'grouped'
+72	'stacked'
 
 
 Y2
