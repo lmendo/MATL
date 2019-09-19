@@ -831,7 +831,7 @@ ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of gra
 													end
 H	0	0	0		0	inf	numel(CB_H)		true	true	false	true	out = CB_H(1:nout);	paste from clipboard H	paste from clipboard H
 XH	0	inf	1	2	0	0	0		false	true	false	true	CB_H = in;	copy to clipboard H	copy to clipboard H
-YH	1	inf	2	4	0	0	0		true	true	true	true	switch in{end}	advanced plotting functions	Depending on numeric last input, calls a plotting function with the remaining inputs.  $0$: \matlab+plot3+.  $1$: \matlab+surf+.  $2$: \matlab+mesh+.  $3$: \matlab+stem+.  $4$: \matlab+stairs+.  $5$: \matlab+bar+.
+YH	1	inf	2	4	0	0	0		true	true	true	true	switch in{end}	advanced plotting functions	Depending on numeric last input, calls a plotting function with the remaining inputs.  $0$: \matlab+plot3+.  $1$: \matlab+surf+.  $2$: \matlab+mesh+.  $3$: \matlab+stem+.  $4$: \matlab+stairs+.  $5$: \matlab+bar+.  After that , \matlab+drawnow+ is called to update figure immediately
 													case 0
 													plot3(in{1:end-1});
 													case 1
