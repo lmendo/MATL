@@ -847,6 +847,7 @@ YH	1	inf	2	4	0	0	0		true	true	true	true	switch in{end}	advanced plotting functio
 													otherwise
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
+													drawnow
 ZH
 I	0	0	0		0	inf	numel(CB_I)		true	true	false	true	out = CB_I(1:nout);	paste from clipboard I	paste from clipboard I
 XI	0	inf	1		0	0	0		false	true	false	true	CB_I = in;	copy to clipboard I	copy to clipboard I
