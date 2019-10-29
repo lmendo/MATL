@@ -70,13 +70,13 @@
 \matl{X;} & 1 & 1 & \matlab+acos+ \\
 \matl{Y;} & 1 & 1 & \matlab+asin+ \\
 \matl{Z;} & 2 & 1 & \matlab+atan2+, element-wise with singleton expansion \\
-\matl{<} & 1--2 (2 / 1) & 1 & \matlab+<+ (\matlab+lt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{<} & 1--2 (2 / 1) & 1 & \matlab+<+ (\matlab+lt+), element-wise with singleton expansion. For complex values, the real parts are compared. If $1$ input: a second input is used given by the first transposed \\
 \matl{X<} & 1--3 (1) & 1--2 (1 / 2nd) & \matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl{[]}. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl{X>}, \matl{Xl} \\
 \matl{Y<} & 1--3 (1 / 2) & 1 & \matlab+cummin+. Output is \matlab+char+ if first input is. \sa \matl{Y>} \\
 \matl{=} & 1--2 (2 / 1) & 1 & \matlab+==+ (\matlab+eq+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
 \matl{X=} & 0-- (2 / $^\ddagger$) & 1 & \matlab+isequal+. Works for any number of inputs \\
 \matl{Y=} & 2 & 1 & \matlab+strcmp+. If first or second inputs are numeric they are converted to char \\
-\matl{>} & 1--2 (2 / 1) & 1 & \matlab+>+ (\matlab+gt+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed \\
+\matl{>} & 1--2 (2 / 1) & 1 & \matlab+>+ (\matlab+gt+), element-wise with singleton expansion. For complex values, the real parts are compared. If $1$ input: a second input is used given by the first transposed \\
 \matl{X>} & 1--3 (1) & 1--2 (1 / 2nd) & \matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl{[]}. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl{X<}, \matl{Xl} \\
 \matl{Y>} & 1--3 (1 / 2) & 1 & \matlab+cummax+. Output is \matlab+char+ if first input is. \sa \matl{Y<} \\
 \matl{Y?} & 0 & 1 & answer why. Sort of \\
