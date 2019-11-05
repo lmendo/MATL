@@ -17,7 +17,7 @@ function y = vpa(varargin);
 % However, `pretty` formats the output string with spaces and newlines. These
 % characters are removed.
 y = pretty(builtin('vpa', varargin{:}));
-y = y(y>32); % remove spaces and newlines produced by `pretty`
+y = strtrim(y); % remove leading and trailing spaces and newlines produced by `pretty`
 % In Octave `pretty(vpa('765.0908',20))` gives '765.09080000000000000'. In Matlab it gives '765.0908', and 765 gives '765.0'.
 % To remove surplus zeros in Octave, the following seems to work. It
 % doesn't work for complex values, but the complex case seems to have
