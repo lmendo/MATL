@@ -1,6 +1,6 @@
 function y = vpa(varargin);
 % (1) vpa in Octave produces a lot of unwanted displayed text. It's directly displayed, not part of the
-% function  output. I didn't found a way to removed (I tried changing
+% function  output. I didn't found a way to remove it (I tried changing
 % PAGER). But Dennis uses a clever trick (with "tail") to remove that output in the
 % online compiler
 % (2) (i) After converting to char, the result is different from Matlab. For

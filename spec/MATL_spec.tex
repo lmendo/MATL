@@ -220,13 +220,19 @@ Logical arrays;
 \item
 Character arrays;
 \item
-Cell arrays.
+Cell arrays;
+\item
+Symbolic arrays.
 \end{itemize}
 Either of these arrays can be 2D or multidimensional. As in MATLAB, there aren't arrays of one dimension. All arrays are at least 2D, possibly with size $1$ in some of their dimensions. Dimensions with size $1$ are called singleton dimensions. Arrays with only one non-singleton dimension are referred to as \emph{vectors}. For example, a row vector has size $1 \times n$. Numbers are considered 2D numerical arrays of size $1\times 1$.
 
-MATL does not have the \matlab+string+ data type introduced by MATLAB's release 2016b. In this document, a \emph{string} should be understood as a row vector of chars..
+MATL does not have the \matlab+string+ data type introduced by MATLAB's release 2016b. In this document, a \emph{string} should be understood as a row vector of chars.
 
-2D numerical arrays are full or sparse. Their default class is \matlab+double+. MATL can work with all the other numerical classes. Conversion is done with a function corresponding to MATLAB's \matlab+cast+, or with functions corresponding to \matlab+double+ and \matlab+int64+.
+2D numerical arrays are full or sparse. Their default class is \matlab+double+. MATL can work with all the other numerical classes. Conversion is done with a function corresponding to MATLAB's \matlab+cast+, or with functions corresponding to \matlab+double+ and \matlab+int64+. Symbolic arrays can be obtained converting from numerical arrays or strings, using a function corresponding to MATLAB's \matlab+sym+ or \matlab+str2sym+.
+
+\begin{pending}
+The symbolic data type was not originally in the language; it was a later addition.
+\end{pending}
 
 
 \section{Statements and separators}
@@ -277,7 +283,7 @@ Cell arrays, 2D
 \end{itemize}
 The effect of a literal statement is to push the element represented by that literal onto the top of the stack.
 
-Literals correspond to one of the data types referred to in \S\ref{parte: stack. Data types}, but limited to 2D. It's not possible to define a multidimensional array directly as a literal (this limitation exists in MATLAB too). But it is possible, for example, to produce a 3D numerical array by concatenating several 2D arrays along the third dimension.
+Literals correspond to one of the data types referred to in \S\ref{parte: stack. Data types} except symbolic, and are limited to 2D. It's not possible to define a multidimensional array directly as a literal (this limitation exists in MATLAB too). But it is possible, for example, to produce a 3D numerical array by concatenating several 2D arrays along the third dimension.
 
 At any given time, the stack contents will consist of either literals or outputs produced by functions.
 
@@ -388,7 +394,7 @@ $^\ddagger$ Separator needed
 
 \begin{pending}
 \label{parte: array checking}
-It's important to define carefully what is permitted within arrays. For example: should these be allowed? \matl{[sqrt(1:3)]}, \matl{[cos(1) sin(1)]}, \matl{[path]}. Allowing arbitrary MATLAB code within literals that will be evaluated brings flexibility, but it's dangerous. For example, the literal \matl{[rmpath('C:\textbackslash path\textbackslash to\textbackslash files')]} would remove a folder from the path in MATLAB.
+It's important to define carefully what is permitted within arrays. For instance: should these be allowed? \matl{[sqrt(1:3)]}, \matl{[cos(1) sin(1)]}, \matl{[path]}. Allowing arbitrary MATLAB code within literals that can be evaluated brings flexibility, but it's dangerous. Consider \matl{[rmpath('C:\textbackslash path\textbackslash to\textbackslash files')]} for example: evaluating it would remove a folder from the path in MATLAB.
 
 One possibility to prevent that unwanted behaviour is to check the array contents strictly: a numerical array is \matl{[...]} with contents separated by commas/spaces and semicolons. Each content must be a number, a numerical array, or a character array (which will be interpreted as numbers); and content sizes must match to form a 2D array. That involves hard work when parsing the array. It's much easier to let MATLAB do that work (via the compiled code), which it does very well.
 
@@ -928,7 +934,7 @@ When a MATL program is run, it begins with \matlab+tic+, \matlab+format compact+
 
 At the end of the program, any loops or conditional branches that have not been closed by a corresponding \matl{]} statement are implicitly closed. That is, as many \matl{]} statements as needed are implicitly included after the last (explicit) statement in the source code.
 
-After that, the display function \matl{XD} is implicitly called. This function (see \S\ref{parte: table of functions} and \S\ref{parte: list of functions}) by default takes each element from the stack, converts it to string and prints it on screen. Cell array inputs are unboxed and their contents are displayed in linear order. Nested cell arrays are allowed. For example, consider that the stack contains two elements: number \matl{1} and the cell array \matl{\{'aa' \{3 4; 5 6\}\}}. Then the displayed values will be, in this order: \comp{1}, \comp{aa}, \comp{3}, \comp{5}, \comp{4}, \comp{6}.
+After that, the display function \matl{XD} is implicitly called. This function (see \S\ref{parte: table of functions} and \S\ref{parte: list of functions}) by default takes each element from the stack, converts it to string if needed, and prints it on screen. Cell array inputs are unboxed and their contents are displayed in linear order. Nested cell arrays are allowed. For example, consider that the stack contains two elements: number \matl{1} and the cell array \matl{\{'aa' \{3 4; 5 6\}\}}. Then the displayed values will be, in this order: \comp{1}, \comp{aa}, \comp{3}, \comp{5}, \comp{4}, \comp{6}.
 
 The number of inputs for the implicit display function can be modified by one final call to \matl{\$}. For example, to display only the top of the stack specify \matl{1\$} at the end of the program; or use \matl{\&}, which for \matl{XD} has the same meaning as \matl{1\$} (see \S\ref{parte: meta-functions}). To prevent the implicit display function from displaying any stack contents use \matl{0\$} (or delete all stack contents).
 
@@ -1187,16 +1193,16 @@ Examples:
 \item
 \matlab|matl -e0291 '1t8:"yy+'|: parses the program provided as string input (code for the Fibonacci sequence given in \S\ref{parte: examples of programs}) and shows the parsed result with automatic comments, using the numeric options for indenting. The parsed file \matl{MATLp.txt} is also produced. The result printed on screen is as shown in Figure~\ref{fig: code with automatic comments}.
 \item
-\matlab+matl -h sort+ would produce the result shown in Figure~\ref{fig: help}.
+\matlab+matl -h ismember+ would produce the result shown in Figure~\ref{fig: help}.
 \end{itemize}
 
 \begin{figure}
 \begin{small}
 \begin{Verbatim}
     1        % number literal
-    t        % duplicate
+    t        % duplicate elements
     8        % number literal
-    :        % vector of equally spaced values
+    :        % range; vector of equally spaced values
     "        % for
       y      % duplicate element
       y      % duplicate element
@@ -1343,7 +1349,10 @@ Octave's \matlab+vpa+ seems to have trouble with long strings containing non-int
 \item
 MATLAB does not support char input to \matlab+vpa+ anymore.
 % This happened on R2019a, maybe earlier. In R2017b it was supported (with a warning)
-Consequently, \matlab+vpa(str2sym(...), ...)+ is needed. On the other hand, Octave does not have \matlab+str2sym+, and allows char input to \matlab+vpa+. This is handled by the compiler by using \matlab+vpa(str2sym(...), ...)+ for char input in the compiled code but defining \matlab+str2sym+ as the identity function in Octave. 
+Consequently, \matlab+vpa(str2sym(...), ...)+ is needed for char input. On the other hand, Octave does not have \matlab+str2sym+, and allows char input to \matlab+vpa+. This is handled by the compiler by using \matlab+vpa(str2sym(...), ...)+ for char input in the compiled code but defining \matlab+str2sym+ as the identity function in Octave.
+\item
+Octave does not have \matlab+str2sym+. Conversion from string to symbolic is done using \matlab+sym+ instead. However, this seems to only handle strings representing scalars.
+% Cuando Octave tenga str2sym se podrá hacer esa conversión. Y entonces habrá que quitar la definición actual de str2sym como identity function, que ya no sería necesaria para vpa (e impediría hacer conversiones de string a symbolic en general)
 \item
 \matlab+sum+ and \matlab+mean+ don't support the \matlab+'omitnan'+ flag in Octave. This has been added.
 \item
@@ -1537,8 +1546,10 @@ for suggesting to include \matlab+expm+ (matrix exponential) and to generalize m
 % https://chat.stackexchange.com/transcript/message/41206681#41206681
 for finding a bug in the parser, which incorrectly identified \matl{]} or \matl{\}} within strings as closing symbols for array literals;
 % https://chat.stackexchange.com/transcript/message/42555761#42555761
-and for suggesting to generalize \matl{z} for cell arrays.
+for suggesting to generalize \matl{z} for cell arrays;
 % https://chat.stackexchange.com/transcript/message/49993614#49993614
+and for suggesting that MATL should have a symbolic data type.
+% https://chat.stackexchange.com/transcript/message/52437616#52437616
 \item
 \user{@Steadybox} for finding a bug in Octave's \matlab+nnz+ function when applied to a range.
 % Comments in https://codegolf.stackexchange.com/a/155943/36398
@@ -1859,7 +1870,7 @@ I've considered several options for displaying results. I've decided on these, b
 \item
 \matl{D}: \matlab+disp+: it causes weird horizontal alignment with numbers, and so it's perhaps not very useful. But it's the only one that can display cell arrays.
 \item
-\matl{E}: \matlab+disp(num2str(...,...))+: useful to displayed stuff left aligned. It displays all its inputs except for the last, which is interpreted as a format specifier to \matlab+sprintf+. With $1$ input (default) no format specifier is used. Cell arrays can't be used as inputs.
+\matl{E}: \matlab+disp(num2str(...,...))+: useful to display stuff left aligned. It displays all its inputs except for the last, which is interpreted as a format specifier to \matlab+sprintf+. With $1$ input (default) no format specifier is used. Cell arrays can't be used as inputs.
 \item
 \matl{XE}: \matlab+disp(num2str(...))+: . It displays its inputs, by default the whole stack, without format specifier. Useful at the end of program. Cell arrays can't be used as inputs.
 \end{itemize}

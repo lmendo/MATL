@@ -79,8 +79,8 @@ Z#	1	3	1	2	0	0	0		true	true	true	false	data = in{1}; if ~iscell(data), data = {d
 													end
 													fclose(fid); clear file sep
 $
-X$
-Y$	2	2	2		1	1	1		true	true	true	true	if in{2}>0	variable precision arithmetic	(i) \matlab+char(vpa(str2sym(...), ...))+ for char input, or \matlab+char(vpa(...))+ for non-char input. Second input is number of significant digits. (ii) If the first input is a number or a string representing a real or imaginary scalar and the second input (number of significant digits) is negative, the latter is interpreted as its absolute value, and the output will give the actual digits without rounding (so inputs \matlab+'5/3'+ and \matlab+-4+ will produce \matlab+'1.666'+, not \matlab+'1.667'+)
+X$	1	1	1		1	1	1		true	true	true	true	if ~ischar(in{1}), out{1} = sym(in{1}); else out{1} = str2sym(in{1}); end	convert to symbolic	(i) For non-char input: \matlab+sym+. (ii) For char input: \matlab+str2sym+. \sa \matl+Y$+
+Y$	2	2	2		1	1	1		true	true	true	true	if in{2}>0	variable precision arithmetic	(i) \matlab+char(vpa(str2sym(...), ...))+ for char input, or \matlab+char(vpa(...))+ for non-char input. Second input is number of significant digits. (ii) If the first input is a number or a string representing a real or imaginary scalar and the second input (number of significant digits) is negative, the latter is interpreted as its absolute value, and the output will give the actual digits without rounding (so inputs \matlab+'5/3'+ and \matlab+-4+ will produce \matlab+'1.666'+, not \matlab+'1.667'+). \sa \matl+X$+
 													if ~ischar(in{1}), out{1} = char(vpa(in{:})); else out{1} = char(vpa(str2sym(in{1}), in{2:end})); end
 													elseif in{2}<0
 													s = in{1}; W = -in{2};
@@ -678,7 +678,7 @@ ZC	2	3	2		1	1	1		true	true	true	true	if numel(in{2})==1, if size(in{1},1)==1, in
 													else
 													out{1} = im2col(in{:});
 													end
-D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display / string representation	(i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. (ii) With $1$ output: \matlab+mat2str+. Empty arrays are always shown as \matlab+[]+, \matlab+''+ or \matlab+{}+. Most input characters below 32 are replaced by space. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the separators should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl+XD+, \matl+YD+, \matl+ZD+
+D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display / string representation	(i) With $0$ outputs: If $1$ input: \matlab+disp(num2str(..., '%.15g '))+. If several inputs: \matlab+disp(num2str(eachInput,lastInput))+, where \matlab+eachInput+ loops over all inputs but the last. In either case, (nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. Symbolic data is displayed directly. (ii) With $1$ output: \matlab+mat2str+. Empty arrays are always shown as \matlab+[]+, \matlab+''+ or \matlab+{}+. Most input characters below 32 are replaced by space. Cell arrays are converted to string representation too. Optional second, third and fourth inputs respectively specify column separator, row separator and whether the separators should be used for non-cell arrays too. Second and third output are converted to char is needed. \sa \matl+XD+, \matl+YD+, \matl+ZD+
 													if numel(in)==1, data = in; fmt = {'%.15g '}; else data = in(1:end-1); fmt = in(end); end
 													kk = cellfun(@iscell, data);
 													while any(kk)
@@ -686,7 +686,7 @@ D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display 
 													for k = find(kk), data{k} = data{k}(:); end
 													data = vertcat(data{:}); kk = cellfun(@iscell, data);
 													end
-													for k = 1:numel(data), d = num2str(data{k}, fmt{:}); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
+													for k = 1:numel(data), if ~isa(data{k}, 'sym'), d = num2str(data{k}, fmt{:}); d(ismember(d,replaceBySpace)) = ' '; else d = data{k}; end, disp(d), end
 													clear data kk k d fmt
 													else
 													if numel(in)<4, sep_noncell = false; else sep_noncell = in{4}; end
@@ -724,13 +724,13 @@ D	0	inf	1		0	1	0	1	true	true	true	true	if nout==0	convert to string and display 
 													out{1} = y;
 													clear x sep_noncell row_sep col_sep done s k str inde_sep step_sep y
 													end
-XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. \sa \matl+D+, \matl+YD+, \matl+ZD+
+XD	0	inf	numel(STACK)	1	0	0	0		true	true	true	true	data = in;	convert to string and display	\matlab+disp(num2str(eachInput, '%.15g '))+, where \matlab+eachInput+ loops over all inputs. (Nested) cell arrays are (recursively) unboxed in linear order. Most characters below 32 are replaced by space. Symbolic data is displayed directly. \sa \matl+D+, \matl+YD+, \matl+ZD+
 													kk = cellfun(@iscell, data);
 													while any(kk)
 													data(~kk) = num2cell({data{~kk}}); kk = kk(:).';
 													for k = find(kk), data{k} = data{k}(:); end
 													data = vertcat(data{:}); kk = cellfun(@iscell, data); end
-													for k = 1:numel(data), d = num2str(data{k}, '%.15g '); d(ismember(d,replaceBySpace)) = ' '; disp(d), end
+													for k = 1:numel(data), if ~isa(data{k}, 'sym'), d = num2str(data{k}, '%.15g '); d(ismember(d,replaceBySpace)) = ' '; else d = data{k}; end, disp(d), end
 													clear data kk k
 YD	1	inf	2	1	0	2	1	0	true	true	true	true	if numel(out), [out{:}] = sprintf(in{end}, in{1:end-1});	write formatted data to string	\matlab+sprintf+ with format string as last input. If $0$ outputs: prints to screen using \matlab+fprintf(...)+. \sa \matl+D+, \matl+XD+, \matl+ZD+
 													else fprintf(in{:}); end
@@ -1031,7 +1031,7 @@ YT	1	2	1	2	1	1	1		true	true	true	true	c = any(cellfun(@ischar, in));	Toeplitz ma
 													if c, out{1} = char(out{1}); end
 													clear c k
 ZT
-U	1	1	1		1	2	1		true	true	true	true	if isnumeric(in{1})	convert char matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl+D+). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. The second output is supported in all cases. (ii) For numeric input: \matlab+(...).^2+
+U	1	1	1		1	2	1		true	true	true	true	if ~ischar(in{1})	convert char matrix to numeric or to general array / square	(i) For char input: \matlab+str2num+ with content checking. Most characters below 32 are replaced by space (as in \matl+D+). The input content is then checked. If it fails, \matlab+[]+ is returned. Else \matlab+str2num+ is applied. If that fails, the input string is evaluated. If that also fails, \matlab+[]+ is returned. The second output is supported in all cases. (ii) For numeric input: \matlab+(...).^2+
 													out{1} = in{1}.^2;
 													else
 													in{1}(ismember(in{1},replaceBySpace)) = ' ';
