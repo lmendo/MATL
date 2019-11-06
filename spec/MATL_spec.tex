@@ -1355,10 +1355,10 @@ Octave's \matlab+vpa+ seems to have trouble with long strings containing non-int
 \item
 MATLAB does not support char input to \matlab+vpa+ anymore.
 % This happened on R2019a, maybe earlier. In R2017b it was supported (with a warning)
-Consequently, \matlab+vpa(str2sym(...), ...)+ is needed for char input. On the other hand, Octave does not have \matlab+str2sym+, and allows char input to \matlab+vpa+. This is handled by the compiler by using \matlab+vpa(str2sym(...), ...)+ for char input in the compiled code but defining \matlab+str2sym+ as the identity function in Octave.
+Consequently, \matlab+vpa(str2sym(...), ...)+ is needed for char input. On the other hand, Octave does not have \matlab+str2sym+, but \matlab+vpa+ allows char input representing a scalar, or  \matlab+sym+ can covert char input representing a scalar. The second option is chosen. The compiler uses \matlab+vpa(str2sym(...), ...)+ for char input in the compiled code, but defines \matlab+str2sym+ to call \matlab+sym+ in Octave.
 \item
 Octave does not have \matlab+str2sym+. Conversion from string to symbolic is done using \matlab+sym+ instead. However, this seems to only handle strings representing scalars.
-% Cuando Octave tenga str2sym se podrá hacer esa conversión. Y entonces habrá que quitar la definición actual de str2sym como identity function, que ya no sería necesaria para vpa (e impediría hacer conversiones de string a symbolic en general)
+% Cuando Octave tenga str2sym quizá se podrá hacer esa conversión.
 \item
 \matlab+sum+ and \matlab+mean+ don't support the \matlab+'omitnan'+ flag in Octave. This has been added.
 \item
