@@ -11,13 +11,15 @@ function y = vpa(varargin);
 % (ii) Also, precision is lost by using `char`: char(vpa('-3.4')) gives the
 % string
 %     'Float(''-3.3999999999999999999999999999999988'', prec=32)'
-% Both (i) and (ii) seem to be resolved by `pretty`:
+% Both (i) and (ii) seem to be resolved by `pretty` (which actually calls `disp`):
 % `pretty(vpa('-3.4'))` gives the string
 %     '-3.4000000000000000000000000000000'
 % However, `pretty` formats the output string with spaces and newlines. These
-% characters are removed.
+% characters are removed if we are sure they are unwanted: real scalars
 y = pretty(builtin('vpa', varargin{:}));
-y = y(y>32); % remove spaces and newlines produced by `pretty`
+if isscalar(varargin{1}) & isreal(double(varargin{1})) 
+    y = y(y>32); % remove spaces and newlines produced by `pretty`
+end
 % In Octave `pretty(vpa('765.0908',20))` gives '765.09080000000000000'. In Matlab it gives '765.0908', and 765 gives '765.0'.
 % To remove surplus zeros in Octave, the following seems to work. It
 % doesn't work for complex values, but the complex case seems to have

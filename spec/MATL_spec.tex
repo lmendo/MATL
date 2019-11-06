@@ -400,7 +400,7 @@ One possibility to prevent that unwanted behaviour is to check the array content
 
 In fact, this problem already exists with MATLAB's \matlab+input+ and \matlab+str2num+  functions: they \emph{evaluate} what the user types, which is a dangerous thing to do. If the user types \matlab+[cos(1) sin(2]+ as input, evaluating that is probably fine. But what if they type \matlab+addpath('c:\path\to\folder')+?
 
-Possible solutions have been discussed in Stack Overflow\footnote{\url{http://stackoverflow.com/q/33124078/2586922}}. The best approach seems to be: use regular expressions to detect function or variable names, but ignoring such names if they are within a string (for example, \matl{['path' 115]} should be allowed, and would be equivalent to \matl{'paths'}). The key here is that the regular expression doesn't need to check if the array is well formed (for example, \matl{[[1 2; 3 4], [5 6]]} is not well formed), because that can be done later by evaluating it in MATLAB, once evaluation has been deemed safe. The regular expression only needs to make sure the array doesn't contain any reference to variables or functions, excluding string contents (a string can safely contain anything).
+Possible solutions have been discussed in Stack Overflow\footnote{ \url{http://stackoverflow.com/q/33124078/2586922}}. The best approach seems to be: use regular expressions to detect function or variable names, but ignoring such names if they are within a string (for example, \matl{['path' 115]} should be allowed, and would be equivalent to \matl{'paths'}). The key here is that the regular expression doesn't need to check if the array is well formed (for example, \matl{[[1 2; 3 4], [5 6]]} is not well formed), because that can be done later by evaluating it in MATLAB, once evaluation has been deemed safe. The regular expression only needs to make sure the array doesn't contain any reference to variables or functions, excluding string contents (a string can safely contain anything).
 
 The compiler proceeds as follows:
 \begin{itemize}
@@ -766,7 +766,7 @@ With \parte{numerical} indexing, each number specifies the coordinates of the el
 \emph{For assignment indexing}, only \emph{non-positive} values are interpreted modularly. This will be called \emph{semi-modular indexing}. Positive values exceeding the size of the array are interpreted normally (not modularly), and will effectively extend the array. For example, given a dimension of size $5$, index $-1$ is equivalent to $4$. Index $9$ is interpreted as $9$, so assigning content to that position will make the array grow.
 \end{itemize}
 
-With \parte{logical} indexing, the index is a logical array in which \matl{T} (\matlab+true+) indicates elements that should be picked in the corresponding dimension (or dimensions). For example, the integer index \matl{[1 3 4]} would be equivalent to the logical index \matl{TFTT}. In MATLAB, a logical index need not have the same size as the dimension(s) it's indexing into. \matlab+a(2,[true false true true])+ works even if \matlab+size(a,2)+ is greater than $4$; and trailing \matlab+false+ values are ignored\footnote{\url{http://stackoverflow.com/a/2462898/2586922}}. This also applies to MATL.
+With \parte{logical} indexing, the index is a logical array in which \matl{T} (\matlab+true+) indicates elements that should be picked in the corresponding dimension (or dimensions). For example, the integer index \matl{[1 3 4]} would be equivalent to the logical index \matl{TFTT}. In MATLAB, a logical index need not have the same size as the dimension(s) it's indexing into. \matlab+a(2,[true false true true])+ works even if \matlab+size(a,2)+ is greater than $4$; and trailing \matlab+false+ values are ignored\footnote{ \url{http://stackoverflow.com/a/2462898/2586922}}. This also applies to MATL.
 
 For \matlab+end+\parte{-based indexing} the following convention is used: whenever an array used as index has \emph{three or less} elements and at least one of them has \emph{non-zero imaginary part} it is interpreted as an \matlab+end+-based index. A complex value such as \matlab|b*j+a| corresponds to \matlab|b*end + a|, and if the array has two or three elements colons are implicitly assumed between them. So, for example,
 \begin{itemize}
@@ -779,7 +779,7 @@ For \matlab+end+\parte{-based indexing} the following convention is used: whenev
 \end{itemize}
 An \matlab+end+-based index is equivalent to a numerical index, with \matlab+end+ expanded depending on the dimensions of the indexed array. The rounding is applied to the value that results from interpreting the \matlab+end+ part (imaginary) and adding with the normal part (real). For example, the index \matlab|.5j+.8| applied on an array with $7$ elements would give the fourth element: \matlab+.5j+ is first translated into \matlab+3.5+, then \matlab+.8+ is added to give \matlab+4.3+, and this number is rounded to \matlab+4+. Similarly, the modular or semi-modular conversion (for reference or assignment indexing respectively) is applied at the end.
 
-\parte{Colon indexing} refers to \matlab+:+ used as an index. Often, a colon index is the same as the \matlab+end+-based index \matlab+1:end+, that is, \matl{[1 1j]}. However, there are cases when a colon is specifically needed (such as in null assignment, to be described later). Although MATL doesn't have an equivalent of \matlab+:+ to be specified as index, the \emph{string} \matlab+':'+ can be used instead of a colon, as in MATLAB\footnote{\url{http://stackoverflow.com/q/22537326/2586922}}.
+\parte{Colon indexing} refers to \matlab+:+ used as an index. Often, a colon index is the same as the \matlab+end+-based index \matlab+1:end+, that is, \matl{[1 1j]}. However, there are cases when a colon is specifically needed (such as in null assignment, to be described later). Although MATL doesn't have an equivalent of \matlab+:+ to be specified as index, the \emph{string} \matlab+':'+ can be used instead of a colon, as in MATLAB\footnote{ \url{http://stackoverflow.com/q/22537326/2586922}}.
 
 All these four types of indices can be used with any of the indexing functions, taking into account that numeric values are interpreted as modular (in reference indexing) or semi-modular (in assignment indexing).
 
@@ -887,7 +887,7 @@ The functions \matl{Y(} and \matl{Z(} support null assignment, with the usual re
 
 \subsection{Conditional branches: ``if\ldots{}else''}
 
-An ``if'' branch is begun with \matl{?}, ended by \matl{]}, and can optionally contain \matl{\}}. These correspond to MATLAB's \matlab+if+, \matlab+end+ and \matlab+else+ respectively. \matl{?} pops (consumes) the top array from the stack, and the statements until \matl{\}} or \matl{]} are executed if the real part of that array has all nonzero elements\footnote{This used to be MATLAB's behaviour in the past, if I recall correctly. Recent versions give an error when the expression has complex values.}. Otherwise the statements between \matl{\}} and \matl{]}, if any, are executed.
+An ``if'' branch is begun with \matl{?}, ended by \matl{]}, and can optionally contain \matl{\}}. These correspond to MATLAB's \matlab+if+, \matlab+end+ and \matlab+else+ respectively. \matl{?} pops (consumes) the top array from the stack, and the statements until \matl{\}} or \matl{]} are executed if the real part of that array has all nonzero elements\footnote{ This used to be MATLAB's behaviour in the past, if I recall correctly. Recent versions give an error when the expression has complex values.}. Otherwise the statements between \matl{\}} and \matl{]}, if any, are executed.
 
 
 \subsection{Loops: ``for'', ``do twice'', ``do\ldots{}while'' and ``while''}
@@ -995,7 +995,7 @@ The table is under development. Functions may be added, removed, or changed.
 Similarly \matl{:}, when used as a function, may need a separator to prevent it from being interpreted as part of a colon numerical vector.
 \end{pending}
 
-Most MATL functions correspond to MATLAB functions. These have been selected based on perceived most common use. They include \user{@Divakar}'s list\footnote{\url{http://stackoverflow.com/users/3293881/divakar}}, and most functions from a list by Mathworks\footnote{\url{http://es.mathworks.com/help/matlab/functionlist.html}}.
+Most MATL functions correspond to MATLAB functions. These have been selected based on perceived most common use. They include \user{@Divakar}'s list\footnote{ \url{http://stackoverflow.com/users/3293881/divakar}}, and most functions from a list by Mathworks\footnote{ \url{http://es.mathworks.com/help/matlab/functionlist.html}}.
 
 In some cases the MATLAB function has been extended or slightly modified. This is indicated in the function description of Appendix \S\ref{parte: list of functions}.
 
@@ -1045,7 +1045,7 @@ Some functions I didn't include, and the reasons why:
 \item
 \matlab+isempty+: I removed it because it can be done easily with \matlab+numel+ followed by logical negation.
 \item
-\matlab+length+. I followed \user{@chappjc}'s advice\footnote{\url{https://web.archive.org/web/20150915161950/http://stackexchange.com/users/3302774/chappjc}}: ``Never use \matlab+length+. Ever.''
+\matlab+length+. I followed \user{@chappjc}'s advice\footnote{ \url{https://web.archive.org/web/20150915161950/http://stackexchange.com/users/3302774/chappjc}}: ``Never use \matlab+length+. Ever.''
 \item
 I initially thought it would be cool to have function equivalent to \matlab+eval+ in MATL. But it would be hard to implement, and probably not very useful anyway.
 \item
@@ -1306,7 +1306,7 @@ These compatibility functions are defined in separate files in a \emph{compatibi
 The following list describes the cases where a discrepancy between a MATLAB and an Octave function has been detected, and indicates if the compiler addresses this or not. In most cases Octave 4.0.0 is assumed. Some of these differences may not exist in newer Octave versions.
 \begin{itemize}
 \item
-\matlab+num2str+ behaves differently in Octave and in MATLAB\footnote{\url{http://stackoverflow.com/q/34483961/2586922}}. The compiler tries to achieve consistent behaviour, adapting the compiled code to give the same output on MATLAB and on Octave in the most common cases.
+\matlab+num2str+ behaves differently in Octave and in MATLAB\footnote{ \url{http://stackoverflow.com/q/34483961/2586922}}. The compiler tries to achieve consistent behaviour, adapting the compiled code to give the same output on MATLAB and on Octave in the most common cases.
 \item
 \matlab+im2col+ behaves differently in Octave and in MATLAB when the block size exceeds the array size. For example, \matlab+im2col(1:8, [2 1])+ outputs \matlab+[]+ in MATLAB, and gives an error in Octave.
 
@@ -1334,7 +1334,7 @@ In \matlab+union+, \matlab+intesect+, \matlab+setdiff+, \matlab+setxor+: support
 \item
 The second output of \matlab+ismember+ in Octave gives the index of the last occurrence, not the first as in recent versions of MATLAB. Also, it gives error when the first two inputs are char and numeric, whereas in MATLAB that works. Both issues are fixed.
 
-In Octave 4.0 and 4.2, \matlab+ismember+ incorrectly treats complex values in inputs as their absolute values.\footnote{\url{https://savannah.gnu.org/bugs/index.php?52437}} This has been fixed.
+In Octave 4.0 and 4.2, \matlab+ismember+ incorrectly treats complex values in inputs as their absolute values.\footnote{ \url{https://savannah.gnu.org/bugs/index.php?52437}} This has been fixed.
 % https://chat.stackoverflow.com/transcript/message/40084076#40084076
 \item
 \matlab+randsample+ with scalar first input produces a row vector in Octave, instead of a column vector as in MATLAB. This has been fixed in the compiler, forcing a column vector in Octave in that case.
@@ -1343,11 +1343,9 @@ Octave's \matlab+nchoosek+, unlike MATLAB's, requires first input to be numeric.
 \item
 Octave's \matlab+vpa+ displays unwanted output. This hasn't been solved; however, it only happens in the first call to a symbolic function.
 \item
-When using Octave's \matlab+vpa+, conversion from symbolic to char looses precision. This is solved by converting the output of Octave's \matlab+vpa+ to string using \matlab+pretty+ (instead of \matlab+char+). This introduces unwanted whitespace in the beginning, middle and end of the string.
-% Ejemplo: pretty(vpa(1, 100))
-There may also be wanted whitespace separating elements of an array.
-% Ejemplo: pretty(vpa(pi:5, 100))
-But it is difficult to distinguish that wanted space from unwanted one. So all whitespace is removed, which only works for scalar data.
+When using Octave's \matlab+vpa+, conversion from symbolic to char looses precision. This is solved by converting the output of Octave's \matlab+vpa+ to string using \matlab+pretty+
+% which actually calls `disp`
+(instead of \matlab+char+). This introduces unwanted whitespace in the beginning, middle and end of the string (example: \matlab+pretty(vpa(1, 100))+). There may also be wanted whitespace separating elements of an array (example: \matlab+pretty(vpa(pi:5, 100))+) or with complex values. It is difficult to distinguish wanted space from unwanted one. So, for the scalar, real-valued case all whitespace is removed (because all is unwanted). In any other case the whitespace is not removed (because some is wanted).
 
 Also, in Octave trailing decimals equal to zero are produced. This has been fixed for real numbers.
 \item
@@ -1368,9 +1366,10 @@ Null assignment with less indices than dimensions works differently in MATLAB an
 \item
 \matlab+dec2bin+ and \matlab+dec2base+ don't allow empty inputs or char inputs in Octave. This has been fixed.
 \item
-\matlab+hypergeom+ doesn't exist in Octave. This is partly addressed by the compiler. The function is computed either by direct sum (when some of the numerator coefficients is a non-positive integer, in which case the sum is finite) or using a third-party function\footnote{\url{http://www.mathworks.com/matlabcentral/fileexchange/5616-generalized-hypergeometric-function}}, which only works for certain ranges of input values.
+\matlab+hypergeom+ doesn't exist in Octave. This is partly addressed by the compiler. The function is computed either by direct sum (when some of the numerator coefficients is a non-positive integer, in which case the sum is finite) or using a third-party function\footnote{\hspace{2mm}\url{http://www.mathworks.com/matlabcentral/fileexchange/5616-generalized-hypergeometric-function}}, which only works for certain ranges of input values.
 \item
-Octave's \matlab+disp+, unlike MATLAB's, produces some output for empty input. This has been fixed.
+Octave's \matlab+disp+, unlike MATLAB's, produces some output for empty input. This has been fixed. Correcting this requires intercepting \matlab+disp+ in Octave. This prevents the \matlab+disp+ function for \matlab+sym+ values from being called\footnote{ At least I don't know how to do it. See  \url{https://stackoverflow.com/questions/58727452/how-to-call-a-shadowed-function-in-octave}
+}. To solve this, the code of \matlab+disp+ for \matlab+sym+ values is manually included. This is not an elegant solution, but as a side effect it allows some tweaking, namely removing left indentation which is introduced by Octave and not by MATLAB. 
 \item
 Octave's \matlab+str2func+ works in the form \matlab+y = str2func('max')+, but not in the form \matlab+y = str2func('@(x) max(x)')+, unlike MATLAB's. This has been fixed. (This function is necessary for MATL's equivalent of \matlab+accumarray+.)
 \item
@@ -1391,7 +1390,7 @@ In Octave, \matlab+pdist2+ allows fewer distance functions than \matlab+pdist+ d
 \item
 Some functions in MATLAB automatically convert input to \matlab+double+ if needed, and in Octave don't. This has been solved. These functions include \matlab+cumsum+, \matlab+cumprod+, \matlab+kron+.
 \item
-Octave's \matlab+datestr+ with input format \matlab+16+ (\matlab+'HH:MM PM'+) produced hour numbers greater than \matlab+12+. This was initially corrected. Then an Octave patch\footnote{\url{https://savannah.gnu.org/bugs/index.php?50673}} came out that corrects a different issue related to rounding, and that apparently incorporates the correction for input format \matlab+16+ too. So the function from that patch is used.
+Octave's \matlab+datestr+ with input format \matlab+16+ (\matlab+'HH:MM PM'+) produced hour numbers greater than \matlab+12+. This was initially corrected. Then an Octave patch\footnote{ \url{https://savannah.gnu.org/bugs/index.php?50673}} came out that corrects a different issue related to rounding, and that apparently incorporates the correction for input format \matlab+16+ too. So the function from that patch is used.
 \item
 MATLAB's \matlab+regexp+ and \matlab+regexprep+ produce empty outputs or do nothing, respectively, if the regular expression is invalid; whereas Octave's give an error. This has been solved.
 \item
@@ -1416,16 +1415,16 @@ Octave's \matlab+strcat+ doesn't remove trailing space when the input is a singl
 % (4.0.0)
 The pattern seems to be: if \matlab+~isvector(y)+ MATLAB reshapes as a row, whereas Octave reshapes as a column. This is addressed by explicitly reshaping as a row in that case.
 \item
-Matlab's \matlab+disp+ displays \matlab+char(0)+ as space on any platform. Octave displays it as either space, or narrow space, or nothing.\footnote{\urlG} MATL's display functions replace \matlab+char(0)+ (and other chars with codepoint below $32$) by space before calling \matlab+disp+.
+Matlab's \matlab+disp+ displays \matlab+char(0)+ as space on any platform. Octave displays it as either space, or narrow space, or nothing.\footnote{ \urlG} MATL's display functions replace \matlab+char(0)+ (and other chars with codepoint below $32$) by space before calling \matlab+disp+.
 \item
 In MATLAB, \matlab+input(..., 's')+ (unevaluated input) interprets input consisting of only spaces as empty input. This doesn't happen in Octave. This difference has not been addressed.
 \item
-In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round away from zero) and \matlab+0.2+ on Linux (banker's rounding). In Octave it gives \matlab+0.2+ both on Windows and on Linux.\footnote{\url{https://savannah.gnu.org/bugs/index.php?51515}} These differences have not been addressed.
+In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round away from zero) and \matlab+0.2+ on Linux (banker's rounding). In Octave it gives \matlab+0.2+ both on Windows and on Linux.\footnote{ \url{https://savannah.gnu.org/bugs/index.php?51515}} These differences have not been addressed.
 \item
 \matlab+char+ implicitly rounds down in MATLAB, and rounds to closest in Octave. This difference has been addressed by enforcing MATLAB's behaviour.
 Octave's \matlab+mode+ doesn't handle char input. This has been fixed.
 \item
-Octave treats ranges specially to save memory\footnote{\url{https://www.gnu.org/software/octave/doc/v4.2.0/Ranges.html}}. When applying function \matlab+nnz+ to a range an error occurs. This has been fixed.
+Octave treats ranges specially to save memory\footnote{ \url{https://www.gnu.org/software/octave/doc/v4.2.0/Ranges.html}}. When applying function \matlab+nnz+ to a range an error occurs. This has been fixed.
 \end{itemize}
 
 
@@ -1435,9 +1434,9 @@ Octave treats ranges specially to save memory\footnote{\url{https://www.gnu.org/
 MATL code can be executed online in the following two awesome platforms. Many thanks to \user{@Dennis} and \user{@Suever} for providing them!
 \begin{itemize}
 \item
-\user{@Dennis}' \emph{Try It Online} platform\footnote{\url{https://tio.run/\#matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
+\user{@Dennis}' \emph{Try It Online} platform\footnote{ \url{https://tio.run/\#matl}}. The online compiler runs on Octave. Text output is displayed normally, and graphical output is displayed (with limitations) by Octave's fancy ASCII-graph capabilities.
 \item
-\user{@Suever}'s \emph{MATL Online} interpreter\footnote{\url{https://matl.suever.net/}}. This platform is MATL-specific and allows real-time text output, graphical output and documentation search, among other features.
+\user{@Suever}'s \emph{MATL Online} interpreter\footnote{ \url{https://matl.suever.net/}}. This platform is MATL-specific and allows real-time text output, graphical output and documentation search, among other features.
 \end{itemize}
 
 
@@ -1510,7 +1509,7 @@ that led me to reconsider including a form of \matlab+end+-based indexing, for t
 \item
 \user{@David} for finding a good implementation of the ``$n$-th prime'' function, as well as some errata in this document. Also for suggesting that \matl{G} should take implicit input if needed, and for finding a bug in Octave's \matlab+datestr+ function.
 \item
-\user{@Dennis} for hosting MATL in his wonderful \emph{Try It Online} platform\footnote{\url
+\user{@Dennis} for hosting MATL in his wonderful \emph{Try It Online} platform\footnote{ \url
 {http://tryitonline.net}}. Also for suggesting modular indexing, and bit-wise operations with negative values.
 \item
 \user{@DJMcMayhem} for finding some errata, and also for suggesting that a square-power and a divisors function be added.
@@ -1539,7 +1538,7 @@ that led me to reconsider including a form of \matlab+end+-based indexing, for t
 \user{@RainerP} for a helpful discussion related to ``if'' branches and the automatic function clipboard.
 %http://codegolf.stackexchange.com/a/68987/36398
 \item
-\user{@rayryeng} for coming up with the initial idea\footnote{\urlF} and for his invaluable help in getting MATL to work online. Also for his suggestion to include predefined constants, for reading an early version of this document and suggesting changes, and for his support with this project.
+\user{@rayryeng} for coming up with the initial idea\footnote{ \urlF} and for his invaluable help in getting MATL to work online. Also for his suggestion to include predefined constants, for reading an early version of this document and suggesting changes, and for his support with this project.
 \item
 \user{@Sanchises} for noticing bugs in \matl{Za} (base conversion), in \matl{Y@} (variations without repetition),
 % https://chat.stackexchange.com/transcript/message/40439254#404392
@@ -1563,7 +1562,7 @@ and for suggesting that MATL should have a symbolic data type.
 \user{@Suever} for his help in finding several differences between Octave and MATLAB,
 % regarding the $0$ character, as well as the \matlab+max+ and \matlab+min+ functions;
 % concatenation of chars and logical doesn't work in Matlab
-and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\matlab+imshow+), and in Octave's compatibility patch for \matl{u} and \matl{Xu} (\matlab+unique+). Also for suggesting that \matl{\&} should produce a ``secondary default'' input/output specification, adapted to each function (my initial idea was to simply have it increase the number of inputs by $1$), and for his valuable help in finding the most appropriate secondary specification for each function, including a very useful script to get information from MATL answers posted in the Programming Puzzles and Code Golf site. Thanks too for his suggestion to have automatic input transposition for single-input versions of addition, multiplication and other functions, and for his suggestion which led to the name ``element-wise indexing''. And, specially, thanks for creating and maintaining the awesome \emph{MATL Online} platform\footnote{\url{https://matl.suever.net/}}.
+and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\matlab+imshow+), and in Octave's compatibility patch for \matl{u} and \matl{Xu} (\matlab+unique+). Also for suggesting that \matl{\&} should produce a ``secondary default'' input/output specification, adapted to each function (my initial idea was to simply have it increase the number of inputs by $1$), and for his valuable help in finding the most appropriate secondary specification for each function, including a very useful script to get information from MATL answers posted in the Programming Puzzles and Code Golf site. Thanks too for his suggestion to have automatic input transposition for single-input versions of addition, multiplication and other functions, and for his suggestion which led to the name ``element-wise indexing''. And, specially, thanks for creating and maintaining the awesome \emph{MATL Online} platform\footnote{ \url{https://matl.suever.net/}}.
 % http://chat.stackoverflow.com/transcript/message/29716461#29716461
 % http://chat.stackoverflow.com/transcript/message/29717853#29717853
 % http://chat.stackoverflow.com/transcript/message/29835862#29835862
