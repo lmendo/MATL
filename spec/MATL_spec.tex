@@ -1343,7 +1343,9 @@ Octave's \matlab+nchoosek+, unlike MATLAB's, requires first input to be numeric.
 \item
 Octave's \matlab+vpa+ displays unwanted output. This hasn't been solved; however, it only happens in the first call to a symbolic function.
 \item
-When using Octave's \matlab+vpa+, conversion from symbolic to char looses precision. This is solved by converting the output of Octave's \matlab+vpa+ to string using \matlab+pretty+ (instead of \matlab+char+) and removing unwanted whitespace. Also, in Octave trailing decimals equal to zero are produced. This has been fixed for real numbers.
+When using Octave's \matlab+vpa+, conversion from symbolic to char looses precision. This is solved by converting the output of Octave's \matlab+vpa+ to string using \matlab+pretty+ (instead of \matlab+char+). This introduces unwanted whitespace in the beginning, middle and end of the string. There may also be wanted whitespace separating elements of an array. But it is difficult to distinguish that wanted space from unwanted one. So all whitespace is removed, which only works for scalar data.
+
+Also, in Octave trailing decimals equal to zero are produced. This has been fixed for real numbers.
 \item
 Octave's \matlab+vpa+ seems to have trouble with long strings containing non-integer numbers. For example, compare the output of \matlab+vpa('1/1234567891011')+ with that of \matlab+vpa('1/.1234567891011')+. This isn't addressed by the compiler.
 \item
