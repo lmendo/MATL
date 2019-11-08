@@ -10,5 +10,9 @@ if nargout==0
     nargout = 1; % if called without outputs: produce 1 output
 end
 varargout = cell(1,nargout);
-[varargout{:}] = builtin('min', varargin{:});
+if ~any(cellfun(@(x) isa(x,'sym'), varargin))
+    [varargout{:}] = builtin('min', varargin{:});
+else
+    [varargout{:}] = builtin('@sym/min', varargin{:});
+end
 end

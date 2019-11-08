@@ -17,7 +17,7 @@ function y = vpa(varargin);
 % However, `pretty` formats the output string with spaces and newlines. These
 % characters are removed if we are sure they are unwanted: real scalars
 y = pretty(builtin('vpa', varargin{:}));
-if isscalar(varargin{1}) & isreal(double(varargin{1})) 
+if isscalar(varargin{1}) && isreal(double(varargin{1})) 
     y = y(y>32); % remove spaces and newlines produced by `pretty`
 end
 % In Octave `pretty(vpa('765.0908',20))` gives '765.09080000000000000'. In Matlab it gives '765.0908', and 765 gives '765.0'.

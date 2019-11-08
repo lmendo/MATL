@@ -122,7 +122,8 @@ X&	2	4	2	3	1	3	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set inte
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
 													if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 													if numel(in)==2 || (numel(in)==3 && strcmp(in{3},'rows')), in{end+1}='stable'; end, [out{:}] = intersect(in{:});
-Y&	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if isempty(in), y = true; else y = in{1}; for n=2:numel(in), y = bsxfun(@and, y, in{n}); end; end; if numel(in)==1, y = logical(y); end; out{1} = y; clear y n;	logical 'and' (element-wise, singleton expansion)	\matlab+&+ (\matlab+and+), element-wise with singleton expansion
+Y&	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if isempty(in), y = true; else y = in{1}; for n=2:numel(in), if ~isa(y,'sym')&&~isa(in{n},'sym') y = bsxfun(@and, y, in{n}); else y = y & in{n}; end; end; end; if numel(in)==1, y = logical(y); end; out{1} = y; clear y n;	logical 'and' (element-wise, singleton expansion)	\matlab+&+ (\matlab+and+), element-wise with singleton expansion
+% MATL didn't initially support symbolic data; and bsxfun was used rather than implicit expansion. When introducing symbolic support I noticed that MATLAB doesn't allow bsxfun for symbolic, but it allows the normal operation with implicit expantion; Octave allows bsxfun or the normal operation but without expansion. So, to make it work in MATLAB without spoiling it in Octave, I change bsxfun to normal operation; but only for symbolic, because I don't want to change the code for non-symbolic inputs
 Z&	2	3	2		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; if ischar(in{2}), in{2} = double(in{2}); end	bit-wise logical 'and' (element-wise, singleton expansion)	\matlab+bitand+ (bitwise 'and'), element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl+Z|+, \matl+Z~+
 													in{1} = round(in{1}); in{2} = round(in{2});
 													if any(in{1}(:)<0) || any(in{2}(:)<0), neg = true; else neg = false; end
@@ -405,7 +406,7 @@ Z)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing wi
 													if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
 % Z) is the same as ) was before introducing element-wise indexing, except for the `indices = ...` line
 *	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	array product (element-wise, singleton expansion)	\matlab+.*+ (\matlab+times+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
-													y = in{1}; for n=2:numel(in), y = bsxfun(@times, y, in{n}); end;
+													y = in{1}; for n=2:numel(in), if ~isa(y,'sym')&&~isa(in{n},'sym') y = bsxfun(@times, y, in{n}); else y = y .* in{n}; end; end;
 													out{1} = y; clear y n;
 X*	2	2	2		1	1	1		true	true	true	true	out{1} = kron(double(in{1}), double(in{2}));	Kronecker tensor product	\matlab+kron+
 Y*	2	2	2		1	1	1		true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix product	matrix product, \matlab+*+ (\matlab+mtimes+)
@@ -416,7 +417,7 @@ Z*	1	inf	2	numel(STACK)	1	1	1		true	true	true	true	n = numel(in); combs = cell(1
 													combs = cat(n+1, combs{:}); combs = reshape(combs,[],n);
 													out{1} = combs; clear combs n
 +	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	addition (element-wise, singleton expansion)	\matlab|+| (\matlab+plus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
-													y = in{1}; for n=2:numel(in), y = bsxfun(@plus, y, in{n}); end;
+													y = in{1}; for n=2:numel(in), if ~isa(y,'sym')&&~isa(in{n},'sym') y = bsxfun(@plus, y, in{n}); else y = y + in{n}; end; end;
 													out{1} = y; clear y n;
 X+
 Y+	2	3	2	3	1	1	1		true	true	true	true	str = {'same' 'valid' 'full'};	two-dimensional convolution	\matlab+conv2+. Doesn't allow two-vector and one matrix mode. Converts first two inputs to \matlab+double+. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'same'+, 2: \matlab+'valid'+, 3: \matlab+'full'+. \sa \matl|Z+|
@@ -440,7 +441,7 @@ X,	1	1	1		1	1	1		true	true	true	true	out{1} = cos(in{1});	cosine (radians)	\matl
 Y,	1	1	1		1	1	1		true	true	true	true	out{1} = sin(in{1});	sine (radians)	\matlab+sin+
 Z,	1	1	1		1	1	1		true	true	true	true	out{1} = tan(in{1});	tangent (radians)	\matlab+tan+
 -	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	subtraction (element-wise, singleton expansion)	\matlab+-+ (\matlab+minus+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
-													out{1} = bsxfun(@minus, in{1}, in{2});
+													if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@minus, in{1}, in{2}); else out{1} = in{1} - in{2}; end
 X-	2	4	2	3	1	2	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set difference	\matlab+setdiff+. Uses the \matlab+'stable'+ flag by default. If one input is char and the other is numeric, the latter is converted to char. This function allows flag strings in third and subsequent inputs to be replaced by numbers, as follows: 1: \matlab+'rows'+, 2: \matlab+'stable'+, 3: \matlab+'sorted'+. \sa \matl+X~+
 													for k = 3:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
@@ -453,7 +454,7 @@ X.
 Y.	0	1	1		0	0	0		true	true	true	true	pause(in{:})	pause	\matlab+pause+ (without outputs)
 Z.	2	3	2		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end	get bit	\matlab+bitget+. If first input is \matlab+char+ it is automatically converted to \matlab+double+
 													out{1} = bitget(in{:});
-/	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@rdivide, in{1}, in{2});	array right division (element-wise, singleton expansion)	\matlab+./+ (\matlab+rdivide+), element-wise with singleton expansion
+/	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@rdivide, in{1}, in{2}); else out{1} = in{1} ./ in{2}; end	array right division (element-wise, singleton expansion)	\matlab+./+ (\matlab+rdivide+), element-wise with singleton expansion
 X/	1	1	1		1	1	1		true	true	true	true	out{1} = angle(in{1});	phase angle (radians)	\matlab+angle+
 Y/	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}/in{2};	right matrix division	right matrix division, \matlab+/+ (\matlab+mrdivide+)
 Z/	1	3	1		1	1	1		true	true	true	true	out{1} = unwrap(in{:});	unwrap phase angle	\matlab+unwrap+
@@ -546,11 +547,11 @@ Z:	2	4	3		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); en
 ;
 X;	1	1	1		1	1	1		true	true	true	true	out{1} = acos(in{1});	inverse cosine (radians)	\matlab+acos+
 Y;	1	1	1		1	1	1		true	true	true	true	out{1} = asin(in{1});	inverse sine (radians)	\matlab+asin+
-Z;	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@atan2, in{1}, in{2});	four quadrant inverse tangent (radians; element-wise, singleton expansion)	\matlab+atan2+, element-wise with singleton expansion
+Z;	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@atan2, in{1}, in{2}); else out{1} = atan2(in{1}, in{2}); end	four quadrant inverse tangent (radians; element-wise, singleton expansion)	\matlab+atan2+, element-wise with singleton expansion
 <	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is less than? (element-wise, singleton expansion)	\matlab+<+ (\matlab+lt+), element-wise with singleton expansion. For complex values, the real parts are compared. If $1$ input: a second input is used given by the first transposed
 													for k = 1:2, if ~isreal(in{k}), in{k} = real(in{k}); end; end; clear k
-													out{1} = bsxfun(@lt, in{1}, in{2});
-X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@min, in{1}, in{2});	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl+X>+, \matl+Xl+
+													if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@lt, in{1}, in{2}); else out{1} = in{1} < in{2}; end
+X<	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@min, in{1}, in{2}); else out{1} = min(in{1}, in{2}); end;	minimum	\matlab+min+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl+X>+, \matl+Xl+
 													elseif numel(in)==1, [out{:}] = min(in{:});
 													else in{2} = []; [out{:}] = min(in{:}); end
 													if (numel(in)==1 && ischar(in{1})) || (numel(in)==2 && ischar(in{1}) && ischar(in{2})) || (numel(in)==3 && ischar(in{1}) && isempty(in{2})), out{1} = char(out{1}); end
@@ -559,14 +560,14 @@ Y<	1	3	1	2	1	1	1		true	true	true	true	c = ischar(in{1}); if c, in{1} = double(in
 													if c, out{1} = char(out{1}); end; clear c
 Z<
 =	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is equal? (element-wise, singleton expansion)	\matlab+==+ (\matlab+eq+), element-wise with singleton expansion. If $1$ input: a second input is used given by the first transposed
-													out{1} = bsxfun(@eq, in{1}, in{2});
+													if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@eq, in{1}, in{2}); else out{1} = in{1}==in{2}; end
 X=	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if numel(in)>=2, out{1} = isequal(in{:}); else out{1} = true; end	true if arrays are numerically equal	\matlab+isequal+. Works for any number of inputs
 Y=	2	2	2		1	1	1		true	true	true	true	if isnumeric(in{1}), in{1} = char(in{1}); end; if isnumeric(in{2}), in{2} = char(in{2}); end; out{1} = strcmp(in{:});	compare strings	\matlab+strcmp+. If first or second inputs are numeric they are converted to char
 Z=
 >	1	2	2	1	1	1	1		true	true	true	true	if numel(in)==1, in{2} = in{1}.'; end	is greater than? (element-wise, singleton expansion)	\matlab+>+ (\matlab+gt+), element-wise with singleton expansion. For complex values, the real parts are compared. If $1$ input: a second input is used given by the first transposed
 													for k = 1:2, if ~isreal(in{k}), in{k} = real(in{k}); end; end; clear k
-													out{1} = bsxfun(@gt, in{1}, in{2});
-X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, out{1} = bsxfun(@max, in{1}, in{2});	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl+X<+, \matl+Xl+
+													if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@gt, in{1}, in{2}); else out{1} = in{1} > in{2}; end
+X>	1	3	1		1	2	1	[false true]	true	true	true	true	if numel(in)==2, if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@max, in{1}, in{2}); else out{1} = max(in{1}, in{2}); end;	maximum	\matlab+max+. If $2$ inputs: element-wise with singleton expansion. With more than $2$ inputs, the second is replaced by \matl+[]+. This function does not support flags \matlab+'omitnan'+ or \matlab+'includenan'+. Output is \matlab+char+ if there is $1$ input and it is \matlab+char+, or if there are $2$ inputs and both are \matlab+char+, or if there are $3$ inputs, second is empty and third is \matlab+char+. \sa \matl+X<+, \matl+Xl+
 													elseif numel(in)==1, [out{:}] = max(in{:});
 													else in{2} = []; [out{:}] = max(in{:}); end
 													if (numel(in)==1 && ischar(in{1})) || (numel(in)==2 && ischar(in{1}) && ischar(in{2})) || (numel(in)==3 && ischar(in{1}) && isempty(in{2})), out{1} = char(out{1}); end
@@ -1116,14 +1117,21 @@ X[	2	2	2		1	inf	numel(in{1})		true	true	true	true	siz = double(in{1}); ndx = in{
 % This code above was adapted from Matlab's `ind2sub`
 Y[
 Z[
-\	2	2	2		1	2	1	2	true	true	true	true	if isreal(in{1})	modulo/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. For $1$ or $2$ outputs, if the first input is complex the real and imaginary parts are dealt with separately. \sa \matl|X\|, \matl|o|
+\	2	2	2		1	2	1	2	true	true	true	true	if ~isa(in{1},'sym') && ~isa(in{2},'sym') && isreal(in{1})	modulo/quotient after division (element-wise, singleton expansion)	\matlab+mod+, element-wise with singleton expansion. With $2$ outputs: second output is \matlab+floor(.../...)+. For $1$ or $2$ outputs, if the first input is complex the real and imaginary parts are dealt with separately. \sa \matl|X\|, \matl|o|
 													out{1} = bsxfun(@mod, in{1}, in{2});
 													if numel(out)==2, out{2} = floor(bsxfun(@rdivide, in{1}, in{2})); end
-													else
+													elseif ~isa(in{1},'sym') && ~isa(in{2},'sym') && ~isreal(in{1})
 													out{1} = bsxfun(@mod, real(in{1}), in{2}) + 1j*bsxfun(@mod, imag(in{1}), in{2});
 													if numel(out)==2, out{2} = floor(bsxfun(@rdivide, real(in{1}), in{2})) + 1j*floor(bsxfun(@rdivide, imag(in{1}), in{2})); end
+													elseif isreal(double(in{1}))
+													out{1} = mod(in{1}, in{2});
+													if numel(out)==2, out{2} = floor(in{1}./in{2}); end
+													elseif ~isreal(double(in{1}))
+													out{1} = mod(real(in{1}), in{2}) + 1j*mod(imag(in{1}), in{2});
+													if numel(out)==2, out{2} = floor(real(in{1})./in{2}) + 1j*floor(imag(in{1})./in{2}); end
 													end
-X\	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@mod, in{1}-1, in{2})+1;	modulo on the interval [1,divisor+1) (element-wise, singleton expansion)	\matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl|\|
+% isreal doesn't work for symbolic input in Octave; the input has to be converted to numeric
+X\	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@mod, in{1}-1, in{2})+1; else out{1} = mod(in{1}-1, in{2})+1; end	modulo on the interval [1,divisor+1) (element-wise, singleton expansion)	\matlab|mod(...-1, ...)+1|, element-wise with singleton expansion. \sa \matl|\|
 Y\	2	2	2		1	1	1		true	true	true	true	out{1} = in{1}\in{2};	left matrix division	left matrix division, \matlab+\+ (\matlab+mldivide+)
 Z\	1	1	1		1	1	1		true	true	true	true	if numel(in{1})>1, error('MATL:runtime', 'MATL run-time error: input cannot contain more than one value'); end	divisors	divisors of a number. For negative input the absolute value is used
 													if in{1}<0, in{1} = -in{1}; end; out{1} = find(~mod(in{1}, 1:in{1}));
@@ -1136,7 +1144,7 @@ X]	3	inf	3		1	1	1		true	true	true	true	cp = cumprod(in{1}(1:end-1));	convert sub
 													out{1} = y; clear cp y
 Y]
 Z]
-^	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@power, in{1}, in{2});	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
+^	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@power, in{1}, in{2}); else out{1} = in{1}.^in{2}; end	array power (element-wise, singleton expansion)	\matlab+.^+ (\matlab+power+), element-wise with singleton expansion
 X^	1	1	1		1	1	1		true	true	true	true	out{1} = sqrt(in{:});	square root	\matlab+sqrt+
 Y^	2	2	2		1	1	1		true	true	true	true	if islogical(in{1}), in{1} = double(in{1}); end	matrix power, or sum of matrix powers	\matlab+^+ (\matlab+mpower+). If the second input is an array, the output is the sum of matrix powers with those exponents
 													if islogical(in{2}), in{2} = double(in{2}); end
@@ -1395,7 +1403,7 @@ e	1	inf	2	1	1	1	1		true	true	true	true	if numel(in)>1	reshape array / remove sin
 													out{1} = squeeze(in{:});
 													end
 Xe
-Ye	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1 && isnumeric(in{1})	matrix exponential / logical "infinite" graph power	(i) With one numerical input: \matlab+expm+. (ii) With one logical input \matlab+M+: the input is interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with increasing exponent until the result no longer changes. This is the same as \matlab+logical(M*expm(M))+ except that numerical precision issues are avoided. (iii) With a logical input \matlab+M+ and a non-negative integer input \matlab+n+: \matlab+M+ interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with exponent \matlab+n+. \sa \matl+Y^+
+Ye	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1 && (isnumeric(in{1}) || isa(in{1},'sym'))	matrix exponential / logical "infinite" graph power	(i) With one numerical or symbolic input: \matlab+expm+. (ii) With one logical input \matlab+M+: the input is interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with increasing exponent until the result no longer changes. This is the same as \matlab+logical(M*expm(M))+ except that numerical precision issues are avoided. (iii) With a logical input \matlab+M+ and a non-negative integer input \matlab+n+: \matlab+M+ interpreted as the adjacency matrix of a graph, which is made square if needed. The \matlab+logical+ version of the adjacency matrix of the power of the graph is computed with exponent \matlab+n+. \sa \matl+Y^+
 													out{1} = expm(in{1});
 													elseif numel(in)==1 && islogical(in{1})
 													if isempty(in{1}), in{1} = []; end
@@ -1519,17 +1527,17 @@ j	0	1	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; 
 Xj	1	1	1		1	1	1		true	true	true	true	out{1} = real(in{:});	real part	\matlab+real+
 Yj	1	1	1		1	1	1		true	true	true	true	out{1} = imag(in{:});	imaginary part	\matlab+imag+
 Zj	1	1	1		1	2	1	2	true	true	true	true	if nout==1, out{1} = conj(in{1}); elseif nout==2, out = {real(in{1}), imag(in{1})}; end	complex conjugate / real and imaginary parts	(i) With one output: complex conjugate (\matlab+conj+). (ii) With two outputs: real and imaginary parts (\matlab+real+, \matlab+imag+)
-k	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical arrays
-Xk	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical arrays
-Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}(:); [dmin, ind] = min(abs(bsxfun(@minus, x, y)),[],1);	closest value	closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements
+k	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical or symbolic arrays
+Xk	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical or symbolic arrays
+Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}(:); if ~isa(x,'sym')&&~isa(y,'sym') [dmin, ind] = min(abs(bsxfun(@minus, x, y)),[],1); else [dmin, ind] = min(abs(x-y),[],1); end	closest value	closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements
 													out{1} = reshape(y(ind), size(in{1}));
 													if nout>=2, out{2} = reshape(dmin, size(in{1})); end;
 													if nout>=3, out{3} = reshape(ind, size(in{1})); end;
 													clear x y ind dmin
 Zk
 l	0	inf	0	2	1	1	1		true	true	true	true	out{1} = ones(in{:});	array of ones	\matlab+ones+ (if $0$ inputs: produces output $1$)
-Xl	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==2, z = bsxfun(@min, in{1}, in{2});	clamp (limit to a range)	(i) With $2$ inputs, the minimum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the minimum between the first and the second, and then the maximum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl+X<+, \matl+X>+
-													else z = bsxfun(@max, bsxfun(@min, in{1}, in{2}), in{3}); end
+Xl	2	3	2	3	1	1	1		true	true	true	true	if numel(in)==2, if ~isa(in{1},'sym')&&~isa(in{2},'sym') z = bsxfun(@min, in{1}, in{2}); else z = min(in{1}, in{2}); end	clamp (limit to a range)	(i) With $2$ inputs, the minimum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the minimum between the first and the second, and then the maximum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl+X<+, \matl+X>+
+													else, if ~isa(in{1},'sym')&&~isa(in{2},'sym')&&~isa(in{3},'sym') z = bsxfun(@max, bsxfun(@min, in{1}, in{2}), in{3}); else z = max(min(in{1}, in{2}), in{3}) ;end, end
 													if ischar(in{1}), z = char(z); end
 													out{1} = z; clear z
 Yl	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1, out{1} = log(in{1}); else out{1} = log(in{1})/log(in{2}); end	logarithm	\matlab+log+. If $2$ inputs: second input specifies logarithm base
@@ -1605,7 +1613,7 @@ o	1	3	1	2	1	1	1		true	true	true	true	if ~iscell(in{1})	convert to double precisi
 													out{1} = vertcat(in{1}{:}); clear n fill lr
 													end
 Xo	1	1	1		1	1	1		true	true	true	true	out{1} = int64(in{1});	convert to signed 64-bit integer	\matlab+int64+
-Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1})	round towards nearest decimal or integer	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case. Optional second input specifies in which characters or cells the case will be changed
+Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym')	round towards nearest decimal or integer / change case	(i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case. Optional second input specifies in which characters or cells the case will be changed
 													str = {'significant' 'decimals'};
 													if numel(in)>=3 && isnumeric(in{3}), in(3) = str(in{3}); end; clear str
 													y = round(in{:});
@@ -1802,7 +1810,7 @@ v	0	inf	numel(STACK)	2	1	1	1		true	true	true	true	if any(diff(nonzeros(cellfun(@
 													end
 													out{1} = vertcat(in{:});
 Xv
-Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen- or singular-value decomposition / remove insignificant whitespace	(i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. If output specification is \matl+TFT+ (keep second output only), \matlab+svd+ is called with a single output, which gives a vector with the singular values. (ii) If input is a string or cell array of strings: \matlab+strtrim+. For string or char array input, char $0$ also counts as whitespace
+Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym')	eigen- or singular-value decomposition / remove insignificant whitespace	(i) If input is numeric: with $1$ or $2$ outputs: \matlab+eig+. With $3$ outputs: \matlab+svd+. If output specification is \matl+TFT+ (keep second output only), \matlab+svd+ is called with a single output, which gives a vector with the singular values. (ii) If input is a string or cell array of strings: \matlab+strtrim+. For string or char array input, char $0$ also counts as whitespace
 													if nout<=2
 													[out{:}] = eig(in{:});
 													elseif nout==3
@@ -1818,7 +1826,7 @@ Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1})	eigen
 % The above is needed to include 0 as whitespace
 													out{1} = strtrim(in{:});
 													end
-Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && isnumeric(in{1})	symmetric range / symmetric array / remove trailing blanks	(i) For one numeric input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two inputs: applies symmetric range indexing to the first input along each dimension specified by the (linearized) second input. The indexing along a given dimension doesn't repeat the last entry if the number specifying the dimension is positive, and repeats it if negative. (iii) For one string or cell array input: \matlab+deblank+
+Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && (isnumeric(in{1})||isa(in{1},'sym'))	symmetric range / symmetric array / remove trailing blanks	(i) For one scalar numeric or symbolic input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two numeric inputs: applies symmetric range indexing to the first input along each dimension specified by the (linearized) second input. The indexing along a given dimension doesn't repeat the last entry if the number specifying the dimension is positive, and repeats it if negative. (iii) For one string or cell array input: \matlab+deblank+
 													if in{1}>=0, in{1} = floor(in{1}); out{1} = [1:in{1} in{1}-1:-1:1]; else, in{1} = floor(-in{1}); out{1} = [in{1}:-1:1 2:in{1}]; end
 													elseif numel(in)==1
 													out{1} = deblank(in{:});
@@ -1845,7 +1853,7 @@ Zx	0	0	0		0	0	0		true	true	true	true	STACK = STACK_ini;	reset program state	rese
 													CB_G = CB_G_ini; CB_M = CB_M_ini;
 y	0	inf	2	3	0	0	0		false	true	false	true	if ~isempty(in), out = in(1); else out = {}; end	duplicate element	duplicate one element in stack. The duplicated element is the lowest among those specified as inputs, if any. \sa \matl+t+
 Xy	1	4	1		1	1	1		true	true	true	true	out{1} = eye(in{:});	identity matrix	\matlab+eye+ (matrix with ones on diagonal and zeros elsewhere)
-Yy	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@hypot, in{1}, in{2});	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
+Yy	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@hypot, in{1}, in{2}); else out{1} = hypot(in{1}, in{2}); end	hypotenuse (element-wise, singleton expansion)	\matlab+hypot+, element-wise with singleton expansion
 Zy	1	2	1		1	inf	1		true	true	true	true	[out{:}] = size(in{:});	size	\matlab+size+
 z	1	1	1		1	1	1		true	true	true	true	if ~iscell(in{1})	nnz / cellfun(@nnz, ...)	(i) For non-cell input: \matlab+nnz+: number of nonzero elements. (ii) For cell array input: \matlab+cellfun(@nnz, ...)+: number of nonzero elements of each cell
 													out{1} = nnz(in{1});
@@ -1873,7 +1881,7 @@ X|	2	4	2	3	1	3	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set unio
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
 													if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 													if numel(in)==2 || (numel(in)==3 && strcmp(in{3},'rows')), in{end+1}='stable'; end, [out{:}] = union(in{:});
-Y|	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if isempty(in), y = false; else y = in{1}; for n=2:numel(in), y = bsxfun(@or, y, in{n}); end; end; if numel(in)==1, y = logical(y); end; out{1} = y; clear y n;	logical 'or' (element-wise, singleton expansion)	\matlab+|+ (\matlab+or+), element-wise with singleton expansion
+Y|	0	inf	2	numel(STACK)	1	1	1		true	true	true	true	if isempty(in), y = false; else y = in{1}; for n=2:numel(in), if ~isa(y,'sym')&&~isa(in{n},'sym') y = bsxfun(@or, y, in{n}); else y = y | in{n}; end; end; end; if numel(in)==1, y = logical(y); end; out{1} = y; clear y n;	logical 'or' (element-wise, singleton expansion)	\matlab+|+ (\matlab+or+), element-wise with singleton expansion
 Z|	2	3	2		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; if ischar(in{2}), in{2} = double(in{2}); end	bit-wise logical 'or' (element-wise, singleton expansion)	\matlab+bitor+ (bitwise 'or'), element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl+Z&+, \matl+Z~+
 													in{1} = round(in{1}); in{2} = round(in{2});
 													if any(in{1}(:)<0) || any(in{2}(:)<0), neg = true; else neg = false; end
@@ -1900,7 +1908,7 @@ X~	2	4	2	3	1	3	1		true	true	true	true	str = {'rows' 'stable' 'sorted'};	set excl
 													if ischar(in{1}) && isnumeric(in{2}), in{2} = char(in{2}); end
 													if ischar(in{2}) && isnumeric(in{1}), in{1} = char(in{1}); end
 													if numel(in)==2, in{3}='stable'; end, [out{:}] = setxor(in{:});
-Y~	2	2	2		1	1	1		true	true	true	true	out{1} = bsxfun(@xor, in{1}, in{2});	logical 'xor' (element-wise, singleton expansion)	\matlab+xor+, element-wise with singleton expansion
+Y~	2	2	2		1	1	1		true	true	true	true	if ~isa(in{1},'sym')&&~isa(in{2},'sym') out{1} = bsxfun(@xor, in{1}, in{2}); else out{1} = xor(in{1}, in{2}); end	logical 'xor' (element-wise, singleton expansion)	\matlab+xor+, element-wise with singleton expansion
 Z~	2	3	2		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; if ischar(in{2}), in{2} = double(in{2}); end	bit-wise logical 'xor' (element-wise, singleton expansion)	\matlab+bitxor+ (bitwise 'xor'), element-wise with singleton expansion. If first or second inputs are \matlab+char+ they are converted to \matlab+double+. \matlab+double+ inputs are rounded. If the inputs are \matlab+double+ they can have negative values, and in that case they must be in the range from \matlab+-2^52+ up to \matlab+2^52-1+. \sa \matl+Z&+, \matl+Z|+
 													in{1} = round(in{1}); in{2} = round(in{2});
 													if any(in{1}(:)<0) || any(in{2}(:)<0), neg = true; else neg = false; end

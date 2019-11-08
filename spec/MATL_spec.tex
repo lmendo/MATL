@@ -65,14 +65,14 @@
 %\newverbcommand{\matl}{\color{fgmatl}\begin{lrbox}{\verbbox}}{\end{lrbox}\colorbox{bgmatl}{\usebox{\verbbox}}}
 % Esto produce los dos colores, pero no permite line breaks
 
-% ttfamily sí inserta saltos de línea. colorbox lo impide
+% ttfamily sÃ­ inserta saltos de lÃ­nea. colorbox lo impide
 
 %\newverbcommand{\matlab}{\color{cmatlab}}{}
 %\newverbcommand{\matlab}{\color{fgmatlab}\begin{lrbox}{\verbbox}}{\end{lrbox}\colorbox{bgmatlab}{\usebox{\verbbox}}}
 
 \newcommand{\comp}{\texttt}
 
-\newcommand{\matl}[1]{{\ttfamily\color{fgmatl}{\hl{#1}}}} % Esto funciona, sólo que no es verb: hay que usar {} como delimitadores, y "escapar" los caracters especiales que haya dentro
+\newcommand{\matl}[1]{{\ttfamily\color{fgmatl}{\hl{#1}}}} % Esto funciona, sÃ³lo que no es verb: hay que usar {} como delimitadores, y "escapar" los caracters especiales que haya dentro
 
 % De spverbatim. Cambio cosas
 \makeatletter
@@ -93,7 +93,7 @@
   \verb
 }
 \makeatother
-% Con esto sólo faltaría el fondo gris
+% Con esto sÃ³lo faltarÃ­a el fondo gris
 
 
 % http://tex.stackexchange.com/a/273850/90222. Tiene algunas cosas que no me valen, y requiere llaves para delimitar
@@ -106,7 +106,7 @@
 % \dimexpr\normalbaselineskip-2\fboxsep}}
 %\def\grayspace{\hspace{0pt minus \fboxsep}}
 
-% Para listados (entorno): usar fancyvrb (o quizá el propio verbatim). Para inline no veo cómo evitar "escapar" las cosas de LaTeX
+% Para listados (entorno): usar fancyvrb (o quizÃ¡ el propio verbatim). Para inline no veo cÃ³mo evitar "escapar" las cosas de LaTeX
 
 
 % !TeX spellcheck = en_GB
@@ -130,7 +130,7 @@ MATL is a programming language based on MATLAB/Octave and suitable for code golf
 
 The MATL language is stack-oriented. Data are pushed onto and popped out of a stack. Functions may take elements from the stack (usually those at the top) and push one or more outputs onto the stack. Since the functions use data that's already present in the stack, reverse Polish notation (or postfix notation) is used.
 
-This is in line with some other code-golf languages, and allows compact syntax for calling functions on data. To ease stack handling, values from the stack can also be copied and pasted using several clipboards. These are similar to variables in other stack-based code-golf programming languages. %Cada uno puede guardar varias cosas. O mejor no ponerlo aquí; resaltarlo luego en su apartado
+This is in line with some other code-golf languages, and allows compact syntax for calling functions on data. To ease stack handling, values from the stack can also be copied and pasted using several clipboards. These are similar to variables in other stack-based code-golf programming languages. %Cada uno puede guardar varias cosas. O mejor no ponerlo aquÃ­; resaltarlo luego en su apartado
 
 The main goal in designing the language has been to keep it as close to MATLAB as possible. Think of it as MATLAB shorthand with data on a stack. MATL includes most commonly used MATLAB functions. It should be very easy for a MATLAB user to start programming in MATL within minutes.
 
@@ -256,7 +256,7 @@ one character (different from \matl{X}, \matl{Y} or \matl{Z}); or
 two characters, the first of which is \matl{X}, \matl{Y} or \matl{Z}.
 \end{itemize}
 
-\parte{Separators} are sometimes needed to separate literals of the same type. For example, \matl{12} means the number $12$, whereas \matl{1 2} means number $1$ followed by number $2$. Similarly, \matl{'Padmé' 'Anakin'} means string \matl{'Padmé'} followed by string \matl{'Anakin'}, whereas \matl{'Padmé''Anakin'} would be interpreted as a single string containing an apostrophe between the two names (quotation marks within strings are duplicated, as in MATLAB).
+\parte{Separators} are sometimes needed to separate literals of the same type. For example, \matl{12} means the number $12$, whereas \matl{1 2} means number $1$ followed by number $2$. Similarly, \matl{'PadmÃ©' 'Anakin'} means string \matl{'PadmÃ©'} followed by string \matl{'Anakin'}, whereas \matl{'PadmÃ©''Anakin'} would be interpreted as a single string containing an apostrophe between the two names (quotation marks within strings are duplicated, as in MATLAB).
 
 Separators are not needed if the literals are of different type, such as numerical and logical: for example: \matl{T2} represents a MATLAB literal \matl{T} (corresponding to \matlab+true+ in MATLAB) followed by literal \matl{2}.
 
@@ -475,7 +475,7 @@ In some cases there exists a variation of the MATL function that corresponds to 
 MATL functions take inputs of the same data types as their corresponding MATLAB function. For example, in MATLAB numerical arrays can be added with character arrays or with logical arrays, and the result is a numerical array. Similarly, the MATL \matl{+} function accepts these types of inputs and produces a numerical array as output. Thus \matl{T1+D} would display a result \comp{2} on screen (\matl{D} by default displays the top of the stack), and \matl{T'a'T++D} would display \comp{99} (the character code for \comp{'a'} is $97$).
 
 Some normal functions simply push fixed, predefined literals onto the stack depending on their input. These are functions \matl{X0},\ldots,\matl{Z9}. Also, clipboards initially contain certain predefined values. The former are used mainly for strings (such as \matl{'stable'} or \matl{'@mean'}), whereas the latter are used for numeric values (such as \matl{2} or \matl{[0 -1 1]}). These literals are used often, and calling the corresponding function requires less characters than actually typing the literal.
-% *!* todo este párrafo anterior
+% *!* todo este pÃ¡rrafo anterior
 
 
 \subsection{Meta-functions}
@@ -880,7 +880,7 @@ The functions \matl{Y(} and \matl{Z(} support null assignment, with the usual re
 
 \matl{X:} takes an input array and applies MATLAB's \matlab+(:)+ reference indexing. This has the effect of linearizing the array into a column. The number of inputs and outputs is $1$. For example, \matl{[1 2; 3 4]X:} would replace the input array \matl{[1 2; 3 4]} by \matl{[1; 3; 2; 4]}. An equivalent result could be obtained by \matl{Y)} or \matl{Z)} without specifying any index (so that only \matlab+:+ is applied): \matl{[1 2; 3 4]1\$Y)} or \matl{[1 2; 3 4]1\$Z)}.
 
-\matl{Y:} takes one input, which must be a cell array, and applies MATLAB's \matlab+{:}+ reference indexing. This has the effect of ``unboxing'' the cell array, that is, it produces its contents (in column-major order), which are pushed onto the stack. The output specification for \matl{Y:} controls how many or which of the input contents are pushed onto the stack; by default all contents are pushed. For example, \matl{\{\{'Gödel' 'Escher' 'Bach'\} 'Hofstadter' 1979\} Y:} would consume the input cell array and push onto the stack, in this order: cell array \matl{\{'Gödel' 'Escher' 'Bach'\}}, string \matl{'Hofstadter'}, and number \matl{1979}.
+\matl{Y:} takes one input, which must be a cell array, and applies MATLAB's \matlab+{:}+ reference indexing. This has the effect of ``unboxing'' the cell array, that is, it produces its contents (in column-major order), which are pushed onto the stack. The output specification for \matl{Y:} controls how many or which of the input contents are pushed onto the stack; by default all contents are pushed. For example, \matl{\{\{'GÃ¶del' 'Escher' 'Bach'\} 'Hofstadter' 1979\} Y:} would consume the input cell array and push onto the stack, in this order: cell array \matl{\{'GÃ¶del' 'Escher' 'Bach'\}}, string \matl{'Hofstadter'}, and number \matl{1979}.
 
 
 \section{Control flow: conditional branches and loops}
@@ -1356,7 +1356,7 @@ MATLAB does not support char input to \matlab+vpa+ anymore.
 Consequently, \matlab+vpa(str2sym(...), ...)+ is needed for char input. On the other hand, Octave does not have \matlab+str2sym+, but \matlab+vpa+ allows char input representing a scalar, or  \matlab+sym+ can covert char input representing a scalar. The second option is chosen. The compiler uses \matlab+vpa(str2sym(...), ...)+ for char input in the compiled code, but defines \matlab+str2sym+ to call \matlab+sym+ in Octave.
 \item
 Octave does not have \matlab+str2sym+. Conversion from string to symbolic is done using \matlab+sym+ instead. However, this seems to only handle strings representing scalars.
-% Cuando Octave tenga str2sym quizá se podrá hacer esa conversión.
+% Cuando Octave tenga str2sym quizÃ¡ se podrÃ¡ hacer esa conversiÃ³n.
 \item
 \matlab+sum+ and \matlab+mean+ don't support the \matlab+'omitnan'+ flag in Octave. This has been added.
 \item
@@ -1425,6 +1425,14 @@ In MATLAB, \matlab+sprintf('%1.1g', 0.25)+ gives \matlab+0.3+ on Windows (round 
 Octave's \matlab+mode+ doesn't handle char input. This has been fixed.
 \item
 Octave treats ranges specially to save memory\footnote{ \url{https://www.gnu.org/software/octave/doc/v4.2.0/Ranges.html}}. When applying function \matlab+nnz+ to a range an error occurs. This has been fixed.
+\item
+\matlab+factor+ applied to a symbolic scalar gives a symbolic array in MATLAB, but not in Octave.
+% Not sure what it is
+This hasn't been fixed.
+\item
+Octave's \matlab+reshape+ for symbolic arrays doesn't allow \matlab+[]+ as part of the shape specification. This hasn't been fixed.
+\item
+Octave's \matlab+ismember+, \matlab+mean+, \matlab+svd+ don't work with symbolic data. This hasn't been fixed.
 \end{itemize}
 
 
@@ -1574,6 +1582,8 @@ and for finding a bug in MATL's extension of \matlab+reshape+, in \matl{YG} (\ma
 % https://codegolf.stackexchange.com/questions/166527/decoding-the-kaadi-system/168021#comment405995_168021
 % https://chat.stackexchange.com/transcript/message/45568841#45568841
 % https://chat.stackexchange.com/transcript/39466?m=45568698#45568698
+\item{@TasosPapastylianou} for pointing out that a shadowed function \matlab+disp(x)+ for symbolic \matlab+x+ can be called as \matlab+builtin('@sym/disp', x)+ in Octave (\matlab+builtin('disp', x)+ doesn't work).
+% https://stackoverflow.com/questions/58727452/how-to-call-a-shadowed-function-in-octave?noredirect=1#comment103801920_58727452
 \end{itemize}
 
 
@@ -1701,7 +1711,7 @@ It would be natural to include ``cut'' functions, that copy to clipboards and re
 
 
 % #3
-The limitations imposed on \matl{X)} are based on the following reasoning. If something like \matlab+[a{[1,2]}] = deal(42,43)+ were to be implemented in MATL, the specification of input to \matl{X)} would be ambiguous. In this example, \matl{X)} should take a cell array (\matlab+a+), one or several indices (in this case one: \matlab+[1,2]+) and a number of.... Ei. Sí se puede. El número de cosas que coge es el que digan los índices. Es lioso, pero se puede hacer.
+The limitations imposed on \matl{X)} are based on the following reasoning. If something like \matlab+[a{[1,2]}] = deal(42,43)+ were to be implemented in MATL, the specification of input to \matl{X)} would be ambiguous. In this example, \matl{X)} should take a cell array (\matlab+a+), one or several indices (in this case one: \matlab+[1,2]+) and a number of.... Ei. SÃ­ se puede. El nÃºmero de cosas que coge es el que digan los Ã­ndices. Es lioso, pero se puede hacer.
 
 
 % #4
@@ -1716,7 +1726,7 @@ But some functions don't consume the inputs. For example the \matl{D} function d
 
 % #6
 
-Numerical or string arrays can also be used as arguments to \matl{\$}. They are automatically transformed into logical. This allows using for example \matl{[1,0,0]} instead of \matl{TFF}. <---No: con "3" por ejemplo habría ambigüedad
+Numerical or string arrays can also be used as arguments to \matl{\$}. They are automatically transformed into logical. This allows using for example \matl{[1,0,0]} instead of \matl{TFF}. <---No: con "3" por ejemplo habrÃ­a ambigÃ¼edad
 
 
 % #7
