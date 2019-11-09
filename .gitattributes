@@ -1,2 +1,5 @@
 spec/* linguist-documentation
 spec/latex_tools/* linguist-documentation=false
+spec/functionTable/* linguist-documentation
+spec/funDefTable/* linguist-documentation
+spec/preLitTable/* linguist-documentation
