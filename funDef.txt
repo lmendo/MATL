@@ -816,7 +816,7 @@ YG	2	inf	2	3	0	0	0		true	true	true	true	if (isnumeric(in{end}) || islogical(in{e
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
 													end
-ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately. Flag strings in first to second-last inputs can be replaced by numbers, as follows: 1: \matlab+'equal'+, 2: \matlab+'image'+, 3: \matlab+'square'+, 4: \matlab+'ij'+, 5: \matlab+'xy'+, 6: \matlab+'normal'+, 7: \matlab+'off'+, 8: \matlab+'on'+, 9: \matlab+'tight'+, 10: \matlab+'manual'+, 11: \matlab+'fill'+, 12: \matlab+'auto'+, 13: \matlab+'vis3d'+.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.
+ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately. Flag strings in first to second-last inputs can be replaced by numbers, as follows: 1: \matlab+'equal'+, 2: \matlab+'image'+, 3: \matlab+'square'+, 4: \matlab+'ij'+, 5: \matlab+'xy'+, 6: \matlab+'normal'+, 7: \matlab+'off'+, 8: \matlab+'on'+, 9: \matlab+'tight'+, 10: \matlab+'manual'+, 11: \matlab+'fill'+, 12: \matlab+'auto'+, 13: \matlab+'vis3d'+.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $3$ inputs (including the last input 2), the second input specifies colormap size. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.
 													case 0
 													format(in{1:end-1});
 													case 1
@@ -825,7 +825,32 @@ ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of gra
 													axis(in{1:end-1}); drawnow
 													case 2
 													if numel(in)>=2 && isnumeric(in{1}) && ndims(in{1})==2 && size(in{1},2)==3 && any(in{1}(:)>1), in{1} = double(uint8(in{1}))/255; end
+													if numel(in)==3
+													switch in{1}
+													case 'autumn', cmap = autumn(in{2});
+													case 'bone', cmap = bone(in{2});
+													case 'colorcube', cmap = colorcube(in{2});
+													case 'cool', cmap = cool(in{2});
+													case 'copper', cmap = copper(in{2});
+													case 'flag', cmap = flag(in{2});
+													case 'gray', cmap = gray(in{2});
+													case 'hot', cmap = hot(in{2});
+													case 'hsv', cmap = hsv(in{2});
+													case 'jet', cmap = jet(in{2});
+													case 'lines', cmap = lines(in{2});
+													case 'pink', cmap = pink(in{2});
+													case 'parula', cmap = parula(in{2});
+													case 'prism', cmap = prism(in{2});
+													case 'spring', cmap = spring(in{2});
+													case 'summer', cmap = summer(in{2});
+													case 'winter', cmap = winter(in{2});
+													otherwise
+													error('MATL: runtime', 'MATL runtime error: unrecognized name for creating colormap')
+													end
+													[out{:}] = colormap(cmap); if isempty(out), drawnow, end
+													else
 													[out{:}] = colormap(in{1:end-1}); if isempty(out), drawnow, end
+													end
 													case 3
 													str = {'on' 'off'};
 													if isnumeric(in{1}), in(1) = str(in{1}); end; clear k str
