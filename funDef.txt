@@ -1462,7 +1462,28 @@ Ye	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1 && (isnumeric(in{1}) || is
 													else
 													error('MATL:runtime', 'MATL run-time error: incorrect inputs')
 													end
-Ze	1	1	1		1	1	1		true	true	true	true	out{1} = exp(in{:});	exponential	\matlab+exp+
+Ze	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	exponential / Levenshtein distance	(i) For $1$ input: \matlab+exp+. (ii) For $2$ inputs: Levenshtein distance between char, logical or numeric inputs. Either input can be a cell array, and then the result is a vector or matrix of distances.
+
+													out{1} = exp(in{1});
+													elseif numel(in)==2
+% Adapted from https://blogs.mathworks.com/cleve/2017/08/14/levenshtein-edit-distance-between-strings
+													if ~iscell(in{1}), in{1} = in(1); end
+													if ~iscell(in{2}) in{2} = in(2); end
+													R = NaN(numel(in{1}), numel(in{2}));
+													for ind1 = 1:numel(in{1}), for ind2 = 1:numel(in{2})
+													s = in{1}{ind1}(:).'; t = in{2}{ind2}(:).';
+													m = numel(s); n = numel(t);
+													D = zeros(m+1,n+1); D(:,1) = 0:m; D(1,:) = 0:n;
+													for ii = 1:m, for jj = 1:n
+													c = s(ii) ~= t(jj); D(ii+1,jj+1) = min([D(ii,jj+1)+1, D(ii+1,jj)+1, D(ii,jj)+c]);
+													end, end
+													R(ind1, ind2) = D(m+1,n+1);
+													end, end
+													out{1} = R;
+													clear s t m n D ii jj c R ind1 ind2
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
+													end
 f	1	3	1		1	3	1	2	true	true	true	true	[out{:}] = find(in{:});	find	\matlab+find+
 Xf	1	4	2	1	1	1	1		true	true	true	true	if numel(in)>1	find one string within another / non-empty substrings	(i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: output is a cell array of all non-empty substrings. Works also for numeric or cell arrays
 													if ischar(in{1}) || (iscell(in{1})&&ischar(in{1}{1}))
