@@ -1815,6 +1815,7 @@ u	1	4	1		1	4	1		true	true	true	true	str = {'stable' 'sorted' 'last' 'first' 'row
 													for k = 2:numel(in), if isnumeric(in{k}), in(k) = str(in{k}); end; end; clear str
 													if numel(in)==1 || (numel(in)==2 && strcmp(in{2}, 'rows')), in{end+1} = 'stable'; end
 													if iscell(in{1}) && ~all(cellfun(@ischar, in{1}))
+													if nout>1, error('MATL:runtime', 'MATL run-time error: number of outputs not supported'), end
 													if numel(in)>=2 && isequal(in{end},'sorted')
 % Sort lexicographically. This is taken from the code of `S`:
 													n = max(cellfun(@numel, in));
