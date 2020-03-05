@@ -1641,7 +1641,7 @@ Yn	1	5	2	4	1	1	1		true	true	true	true	if numel(in)==1	interpolation (table looku
 													out{1} = interp1(in{:});
 													end
 Zn
-o	1	3	1	2	1	1	1		true	true	true	true	if ~iscell(in{1})	convert to double precision array / modulo 2	(i) \matlab+double+. (ii) For cell array input behaves similarly to \matlab+char+: linearizes cell array, converts cell contents to \matlab+double+ and concatenates vertically, padding if needed. By default, padding is with zeros on the right. Optional second input indicates fill side: left if it evaluates to \matlab+false+, right if it evaluates to \matlab+true+. Third optional input specifies fill value. (iii) If input is already of type \matlab+double+: \matlab+mod(..., 2)+ 
+o	1	3	1	2	1	1	1		true	true	true	true	if ~iscell(in{1}) && numel(in)==1	convert to double precision array / modulo 2	(i) With one non-cell array, non-double input: \matlab+double+. (ii) For cell array input behaves similarly to \matlab+char+: linearizes cell array, converts cell contents to \matlab+double+ and concatenates vertically, padding if needed. By default, padding is with zeros on the right. Optional second input indicates fill side: left if it evaluates to \matlab+false+, right if it evaluates to \matlab+true+. Third optional input specifies fill value. (iii) With one input of type \matlab+double+: \matlab+mod(..., 2)+
 													if ~isa(in{1}, 'double')
 													out{1} = double(in{1});
 													else
