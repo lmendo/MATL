@@ -1720,7 +1720,7 @@ Zp	1	1	1		1	1	1		true	true	true	true	if all(in{1}>=0)	is prime / totient functio
 													end
 q	1	1	1		1	1	1		true	true	true	true	out{1} = in{1}-1;	decrement by 1	\matlab+(...)-1+
 Xq	2	3	2	3	1	1	1		true	true	true	true	out{1} = quantile(in{:});	quantiles of a sample	\matlab+quantile+
-Yq	1	1	1		1	1	1		true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For input with positive entries: $n$-th prime for each value $n$ in the input array. For input with non-positive entries: next prime for absolute value of each entry
+Yq	1	1	1		1	1	1		true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For input with positive entries: $n$-th prime for each value $n$ in the input array. For input with non-positive entries: next prime for absolute value of each entry. \sa \matl+Zq+
 													N = max(in{1}(:)); p = primes(max(11,ceil(N*log(N*log(N))))); out{1} = reshape(p(in{1}), size(in{1})); clear N p
 													elseif all(in{1}<=0)
 													in{1} = -floor(in{1}); np = NaN(size(in{1}));
@@ -1728,7 +1728,7 @@ Yq	1	1	1		1	1	1		true	true	true	true	if all(in{1}>0)	n-th prime / next prime	For
 													else
 													error('MATL:runtime', 'MATL run-time error: input should have all entries positive or all non-positive')
 													end
-Zq	1	1	1		1	1	1		true	true	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+
+Zq	1	1	1		1	1	1		true	true	true	true	out{1} = primes(in{1});	prime numbers up to a given value	\matlab+primes+. \sa \matl+Yq+
 r	0	inf	0	2	0	1	1		true	true	true	true	[out{:}] = rand(in{:});	uniformly distributed pseudorandom numbers	\matlab+rand+
 Xr	0	inf	0	2	0	1	1		true	true	true	true	if numel(in)==0, in{1} = 1; end; [out{:}] = randn(in{:});	normally distributed pseudorandom numbers	\matlab+randn+
 Yr	1	inf	1	2	1	1	1		true	true	true	true	if numel(in)==2 && isscalar(in{2}), in{2} = [1 in{2}]; end	pseudorandom integers from uniform discrete distribution	\matlab+randi+. If the first input is a vector of $2$ elements it is automatically sorted. With $2$ inputs, if the second input is a scalar \matlab+n+ it is transformed into \matlab+[1 n]+
