@@ -127,9 +127,9 @@
 \matl{YN} & 0-- (0) & 1 & \matlab+NaN+ function. If $0$ inputs: produces literal \matlab+NaN+. \\
 \matl{ZN} & 1 & 1 & \matlab+isnan+ \\
 \matl{O} & 0-- (0 / 2) & 1 & \matlab+zeros+ (if $0$ inputs: produces output $0$) \\
-\matl{XO} & 1--4 (2) & 1 & \matlab+datestr+ \\
-\matl{YO} & 1--6 (1 / 2) & 1 & \matlab+datenum+. With $2$ inputs, if the second input is numeric it is interpreted as a format specifier as in \matlab+datestr+ \\
-\matl{ZO} & 1--3 (1 / 2) & 1--6 (1) & \matlab+datevec+ \\
+\matl{XO} & 1--4 (2) & 1 & \matlab+datestr+. \sa \matl{YO}, \matl{ZO} \\
+\matl{YO} & 1--6 (1 / 2) & 1 & \matlab+datenum+. With $2$ inputs, if the second input is numeric it is interpreted as a format specifier as in \matlab+datestr+. \sa \matl{XO}, \matl{ZO} \\
+\matl{ZO} & 1--3 (1 / 2) & 1--6 (1) & \matlab+datevec+. \sa \matl{XO}, \matl{YO} \\
 \matl{P} & 1--2 (1 / 2) & 1 & \matlab+flip+. \sa \matl{XP} \\
 \matl{XP} & 1 & 1 & \matlab+flipud+. \sa \matl{P} \\
 \matl{YP} & 0 & 1 & \matlab+pi+ \\
@@ -137,7 +137,7 @@
 \matl{Q} & 1 & 1 & \matlab|(...)+1| \\
 \matl{XQ} & 2--6 (3) & 1 & \matlab+accumarray+. If first input is \matlab+char+ it is converted to \matlab+double+. The third input may be omitted, and then it is interpreted as \matlab+[]+. Fourth/third argument specifies an anonymous function, as follows:  1: \matlab+'@sum'+, 2: \matlab+'@mean'+, 3: \matlab+'@(x){sort(x).'}'+, 4: \matlab+'@max'+, 5: \matlab+'@min'+, 6: \matlab+'@prod'+, 7: \matlab+'@(x){x.'}'+, 8: \matlab+'@(x){x}'+, 9: \matlab+'@(x){sort(x)}'+, 10: \matlab+'@(x)x(1)'+, 11: \matlab+'@(x)x(end)'+, 12: \matlab+'@(x){cumsum(x).'}'+, 13: \matlab+'@(x){cumprod(x)}'+, 14: \matlab+'@nansum'+, 15: \matlab+'@nanmean'+, 16: \matlab+'@nanmax'+, 17: \matlab+'@nanmin'+, 18: \matlab+'@(x){cummax(x).'}'+, 19: \matlab+'@(x){cummin(x)}'+, 20: \matlab+'@(x){cummax(x).'}'+, 21: \matlab+'@(x){cummin(x)}'+ \\
 \matl{YQ} & 1--2 (1) & 1--2 (2) & \matlab+rat+ \\
-\matl{ZQ} & 1--4 (2 / 1) & 1--2 (1) & (i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. If $3$ inputs: \matlab+polyfit+. If $4$ inputs: \matlab+inpolygon+ \\
+\matl{ZQ} & 1--4 (2 / 1) & 1--2 (1) & (i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. (iii) If $3$ inputs: \matlab+polyfit+. (iv) If $4$ inputs: \matlab+inpolygon+ \\
 \matl{R} & 1--2 (1 / 2) & 1 & \matlab+triu+. \sa \matl{XR}. \\
 \matl{XR} & 1--2 (1 / 2) & 1 & \matlab+triu(..., 1)+. If $2$ inputs: builds an upper triangular or symmetric matrix from a vector (or from an array in linear order). Second input indicates if the diagonal is filled/not and if the matrix is made symmetric, as follows. 0: don't use diagonal, don't make symmetric. 1: use diagonal, don't make symmetric. 2: don't use diagonal, make symmetric. 3: use diagonal, make symmetric. \sa \matl{R}, \matl{ZR} \\
 \matl{YR} & 1--2 (1 / 2) & 1 & \matlab+tril+. \sa \matl{ZR}. \\
