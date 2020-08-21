@@ -10,7 +10,11 @@ elseif nargin>2
     ind = cell(1,nargin-1);
     for k = 2:nargin
         r = varargin{k};
-        ind{k-1} = ceil(1/r:1/r:size(varargin{1},k-1));
+        if isscalar(r)
+            ind{k-1} = ceil(1/r:1/r:size(varargin{1},k-1));
+        else
+            ind{k-1} = repelems(1:size(varargin{1},k-1), [1:size(varargin{1},k-1); r]);
+        end
     end
     y = varargin{1}(ind{:});
 else
