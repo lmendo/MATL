@@ -971,7 +971,7 @@ XQ	2	6	3		1	1	1		true	true	true	true	str = {'@sum' '@mean' '@(x){sort(x).''}' '@
 													if numel(in)>=3 && isscalar(in{3}), in = [in(1:2) {[]} in(3:end)]; end
 													if numel(in)>=4, in{4} = str2func(str{in{4}}); end; clear str
 													out{1} = accumarray(in{:});
-YQ	1	2	1		1	2	2		true	true	true	true	[out{:}] = rat(in{:});	rational approximation	\matlab+rat+
+YQ	1	2	2		1	2	2		true	true	true	true	[out{:}] = rat(in{:});	rational approximation	\matlab+rat+
 ZQ	1	4	2	1	1	2	1		true	true	true	true	if numel(in)==1, out{1} = roots(in{1});	polynomial roots / evaluate polynomial / fit polynomial / inpolygon	(i) If $1$ input: \matlab+roots+. (ii) If $2$ inputs: \matlab+polyval+. (iii) If $3$ inputs: \matlab+polyfit+. (iv) If $4$ inputs: \matlab+inpolygon+
 													elseif numel(in)==2, out{1} = polyval(in{:});
 													elseif numel(in)==3, out{1} = polyfit(in{:});
