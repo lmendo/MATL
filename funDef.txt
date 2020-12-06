@@ -816,7 +816,7 @@ YG	2	inf	2	3	0	0	0		true	true	true	true	if (isnumeric(in{end}) || islogical(in{e
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
 													end
-ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately. Flag strings in first to second-last inputs can be replaced by numbers, as follows: 1: \matlab+'equal'+, 2: \matlab+'image'+, 3: \matlab+'square'+, 4: \matlab+'ij'+, 5: \matlab+'xy'+, 6: \matlab+'normal'+, 7: \matlab+'off'+, 8: \matlab+'on'+, 9: \matlab+'tight'+, 10: \matlab+'manual'+, 11: \matlab+'fill'+, 12: \matlab+'auto'+, 13: \matlab+'vis3d'+.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $3$ inputs (including the last input 2), the second input specifies colormap size. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.  $4$: \matlab+grid+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.
+ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of graphics / format	Depending on numeric last input, calls a graphic function or \matlab+format+ with the remaining inputs.  $0$: \matlab+format+.  $1$: \matlab+axis+. Calls \matlab+drawnow+ to update figure immediately. Flag strings in first to second-last inputs can be replaced by numbers, as follows: 1: \matlab+'equal'+, 2: \matlab+'image'+, 3: \matlab+'square'+, 4: \matlab+'ij'+, 5: \matlab+'xy'+, 6: \matlab+'normal'+, 7: \matlab+'off'+, 8: \matlab+'on'+, 9: \matlab+'tight'+, 10: \matlab+'manual'+, 11: \matlab+'fill'+, 12: \matlab+'auto'+, 13: \matlab+'vis3d'+.  $2$: \matlab+colormap+. If the first input is numeric, has the shape of a colormap, and has some entry greater than $1$, it is normalized by converting to \matlab+uint8+, then to \matlab+double+, and then dividing by $255$. With $3$ inputs (including the last input 2), the second input specifies colormap size. With $0$ outputs, calls \matlab+drawnow+ to update figure immediately.  $3$: \matlab+hold+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.  $4$: \matlab+grid+. Flag strings in first input can be replaced by numbers, as follows: 1: \matlab+'on'+, 2: \matlab+'off'+.  $5$: \matlab+colorbar+. If the first input is logical (not necessarily scalar) it activates or deactivates the colorbar
 													case 0
 													format(in{1:end-1});
 													case 1
@@ -859,6 +859,11 @@ ZG	1	inf	2	3	0	1	0		true	true	true	true	switch in{end}	control appearance of gra
 													str = {'on' 'off'};
 													if numel(in)>1 && isnumeric(in{1}), in(1) = str(in{1}); end; clear k str
 													grid(in{1:end-1})
+													case 5
+													if numel(in)==2 && islogical(in{1}), if in{1} colorbar, else colorbar off, end
+													else
+													colorbar(in{1:end-1})
+													end
 													otherwise
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
