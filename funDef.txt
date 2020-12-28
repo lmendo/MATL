@@ -896,7 +896,7 @@ YI	3	4	3	4	1	1	1		true	true	true	true	str = {'distinct' 'sliding'};	rearrange ma
 													if isscalar(in{3}), in{3}(2) = numel(in{1})/in{3}; end
 													if prod(in{3})~=numel(in{1}), in{3} = round(in{3}*sqrt(numel(in{1})/prod(in{3}))); end
 													out{1} = col2im(in{:});
-ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functions	Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.  $2$: \matlab+imdilate+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.  $3$: \matlab+imerode+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.
+ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functions	Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.  $2$: \matlab+imdilate+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.  $3$: \matlab+imerode+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.  $4$: \matlab+bweuler+. 
 													case 0
 													if islogical(in{1}) || ischar(in{1}), in{1} = double(in{1}); end
 													[out{:}] = imfill(in{1:end-1});
@@ -910,6 +910,8 @@ ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functi
 													mask = {NaN NaN NaN [false true false; true false true; false true false] [false true false; true true true; false true false] NaN NaN [true true true; true false true; true true true] [true true true; true true true; true true true]};
 													if isnumeric(in{2}), in(2) = mask(in{2}); end; clear mask
 													[out{:}] = imerode(in{1:end-1});
+													case 4
+													[out{:}] = bweuler(in{1:end-1});
 													otherwise
 													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
 													end
