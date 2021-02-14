@@ -1434,6 +1434,10 @@ This hasn't been fixed.
 Octave's \matlab+reshape+ for symbolic arrays doesn't allow \matlab+[]+ as part of the shape specification. This hasn't been fixed.
 \item
 Octave's \matlab+ismember+, \matlab+mean+, \matlab+svd+ don't work with symbolic data. This hasn't been fixed.
+\item
+\matlab+sum([],1)+ gives an empty array of size $1 \times 0$ in MATLAB, but \matlab+0+ in Octave. An analogous difference exists with \matlab+prod+. This has been fixed.
+\item
+\matlab+sum(sym([]))+ gives \matlab+0+ in MATLAB, but an empty array of size $1 \times 0$ in Octave. An analogous difference exists with \matlab+prod+. This has been fixed. 
 \end{itemize}
 
 
