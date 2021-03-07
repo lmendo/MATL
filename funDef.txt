@@ -1581,7 +1581,7 @@ i	0	2	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; 
 													CB_G = [CB_G out(1)]; clear valid y
 Xi	1	5	1		1	2	1		true	true	true	false	if isempty(strfind(in{1}, '://')), in{1} = ['http://' in{1}]; end;	return contents of a URL as a string	\matlab+urlread+. If the input string doesn't contain \matl+'://'+, the string \matl+'http://'+ is prepended
 													[out{:}] = urlread(in{:});
-Yi	1	inf	1		1	3	1		true	true	true	false	[out{:}] = imread(in{:});	read image from file	\matlab+imread+
+Yi	1	inf	1		1	3	1	2	true	true	true	false	[out{:}] = imread(in{:});	read image from file	\matlab+imread+
 Zi
 j	0	1	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; end	input string	\matlab+input(..., 's')+. If $0$ inputs: uses default prompt string. \sa \matl+i+
 													out{1} = input(in{1},'s');
