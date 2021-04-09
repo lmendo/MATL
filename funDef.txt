@@ -300,7 +300,7 @@ Z(	2	inf	3		1	1	1		true	true	true	true	arrayDestination = in{1};	assignment ( ) 
 													end
 													out{1} = arrayDestination;
 % The code for Z( is the same as it was for ( before introducing element-wise indexing, except for the `indices = ...` line
-)	2	inf	2		1	2	1	2	true	true	true	true	if numel(in)==2 && iscell(in{2})	reference ( ) indexing / split array	reference \matlab+( )+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl+Y)+, \matl+Z)+
+)	2	inf	2		1	2	1	2	true	true	true	true	if numel(in)==2 && iscell(in{2})	reference ( ) indexing / split array	reference \matlab+( )+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind)=[]+, where \matlab+x+ and \matlab+ind+ are the inputs. \sa \matl+Y)+, \matl+Z)+
 													array = in{1};
 													indices = in{2};
 													Ni = numel(indices);
@@ -371,7 +371,7 @@ X)	2	inf	2		0	inf	-1		true	true	true	true	assert(iscell(in{1}), 'MATL:runtime', 
 													out = reshape(array(indices{:}),1,[]);
 													if nout>=0, out = out(1:nout); end
 													clear indices array Ni sz n
-Y)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing with final colon	reference \matlab+(..., :)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind,:)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl+)+, \matl+Z)+
+Y)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing with final colon	reference \matlab+(..., :)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(ind,:)=[]+, where \matlab+x+ and \matlab+ind+ are the inputs. \sa \matl+)+, \matl+Z)+
 													indices = [in(2:end) {':'}];
 													Ni = numel(indices);
 													sz = size(array);
@@ -388,7 +388,7 @@ Y)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing wi
 													out{1} = array(indices{:});
 													if nout>1, y = array; y(indices{:}) = []; out{2} = y; end
 % Y) is the same as ) was before introducing element-wise indexing, except for the `indices = ...` line
-Z)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing with initial colon	reference \matlab+(:, ...)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(:,ind)=[]+, where \matlab+y+ and \matlab+ind+ are the inputs. \sa \matl+)+, \matl+Y)+
+Z)	1	inf	2		1	2	1	2	true	true	true	true	array = in{1};	reference ( ) indexing with initial colon	reference \matlab+(:, ...)+ indexing. If $2$ outputs: only one input index can be used. The second output produces the "complementary" array \matlab+y=x; y(:,ind)=[]+, where \matlab+x+ and \matlab+ind+ are the inputs. \sa \matl+)+, \matl+Y)+
 													indices = [{':'} in(2:end)];
 													Ni = numel(indices);
 													sz = size(array);
