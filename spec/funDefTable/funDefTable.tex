@@ -187,7 +187,7 @@
 \matl{Ze} & 1--2 (1 / 2) & 1 & (i) For $1$ input: \matlab+exp+. (ii) For $2$ inputs: Levenshtein distance between char, logical or numeric inputs. Either input can be a cell array, and then the result is a vector or matrix of distances. \\
 \matl{f} & 1--3 (1) & 1--3 (1 / 2) & \matlab+find+ \\
 \matl{Xf} & 1--4 (2 / 1) & 1 & (i) If 2 or more inputs: \matlab+strfind+. Works also when the first input is a numeric array or a cell array of numeric arrays. In this case each numeric array is linearized, and results are row vectors. (ii) If 1 input: output is a cell array of all non-empty substrings. Works also for numeric or cell arrays \\
-\matl{Yf} & 1 & 1 & \matlab+factor+. For input $1$ it returns an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ produces $1$). \sa \matl{YF} \\
+\matl{Yf} & 1 & 1 & (i) For a scalar numeric or symbolic input: \matlab+factor+. Input $1$ gives an empty array, not $1$ like \matlab+factor+ does. For negative input, \matlab+factor+ is applied to the absolute value of the input (so input $-1$ gives $1$). (ii) For a numeric or symbolic input with two elements: divides each element by the greatest common divisor. \sa \matl{YF} \\
 \matl{g} & 1 & 1 & (i) For non-cell input: \matlab+logical+. Works also for complex numbers, using their absolute value. (ii) For cell input: \matlab+cell2mat+ \\
 \matl{Xg} & 1-- (2) & 1-- ($^\square$) & \matlab+ndgrid+ \\
 \matl{Yg} & 1--3 (1) & 1 & \matlab+gamma+ / \matlab+gammainc+ / \matlab+betainc+, depending on number of inputs \\
