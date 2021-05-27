@@ -1496,7 +1496,7 @@ Code: \matl{ju}.
 
 Code: \matl{jtt!=XRa\textasciitilde{})}. This produces the same result as in the previous example, but without using \matl{u}.
 
-\matl{j} inputs a string. This is duplicated twice by \matl{tt}, and the last copy is transposed by \matl{!}. Function \matl{=} consumes both copies (normal and transposed) and compares them element-wise with singleton expansion, producing a logical matrix. Entry $(m,n)$ of this matrix is \matlab+true+ if and only if the $m$-th character of the input string equals the $n$-th character. Thus the matrix is symmetric and contains \matlab+true+ values along the diagonal. The stack now conbtains the original string and the comparison matrix.
+\matl{j} inputs a string. This is duplicated twice by \matl{tt}, and the last copy is transposed by \matl{!}. Function \matl{=} consumes both copies (normal and transposed) and compares them element-wise with singleton expansion, producing a logical matrix. Entry $(m,n)$ of this matrix is \matlab+true+ if and only if the $m$-th character of the input string equals the $n$-th character. Thus the matrix is symmetric and contains \matlab+true+ values along the diagonal. The stack now contains the original string and the comparison matrix.
 
 \matl{XR} corresponds to \matlab+triu(..., 1)+, and thus keeps the part of the matrix above the diagonal, making all other entries \matlab+false+. This will assure that only duplicates with respect to \emph{preceding characters} are detected.
 
@@ -1510,6 +1510,9 @@ Thanks to the following people (in alphabetical order) for their contributions:
 \item
 \user{@AnderBiguri} for his suggestion to use Octave's two-output version of \matlab+factor+, which was key to solving an Octave compatibility issue with this function applied to symbolic input.
 % https://chat.stackoverflow.com/transcript/message/51809771#51809771
+% His suggestion was not directly applicable because of this:
+% https://stackoverflow.com/questions/58727452/how-to-call-a-shadowed-function-in-octave
+% So I ended up applying Ander's suggestion to a replica of the function
 \item
 \user{@AndrasDeak} for his very extensive testing of the compiler. Also for his help (together with \user{@beaker}) regarding a bug in Octave's \matlab+ismember+ function with complex inputs.
 % https://chat.stackoverflow.com/transcript/message/40084076#40084076
