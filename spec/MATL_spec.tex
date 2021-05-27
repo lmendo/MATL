@@ -1427,9 +1427,10 @@ Octave's \matlab+mode+ doesn't handle char input. This has been fixed.
 \item
 Octave treats ranges specially to save memory\footnote{ \url{https://www.gnu.org/software/octave/doc/v4.2.0/Ranges.html}}. When applying function \matlab+nnz+ to a range an error occurs. This has been fixed.
 \item
-\matlab+factor+ applied to a symbolic scalar gives a symbolic array in MATLAB, but not in Octave.
-% Not sure what it is
-This hasn't been fixed.
+\matlab+factor+ applied to a symbolic scalar gives a symbolic array with the factors in MATLAB, but something different in Octave.
+% It's also symbolic, but I'm not sure what it is
+This has been fixed.
+% with the help of Ander Biguri's suggestion to use the two-output version of \matlab+factor+; see acknowledgments
 \item
 Octave's \matlab+reshape+ for symbolic arrays doesn't allow \matlab+[]+ as part of the shape specification. This hasn't been fixed.
 \item
@@ -1506,6 +1507,9 @@ Code: \matl{jtt!=XRa\textasciitilde{})}. This produces the same result as in the
 
 Thanks to the following people (in alphabetical order) for their contributions:
 \begin{itemize}
+\item
+\user{@AnderBiguri} for his suggestion to use Octave's two-output version of \matlab+factor+, which was key to solving an Octave compatibility issue with this function applied to symbolic input.
+% https://chat.stackoverflow.com/transcript/message/51809771#51809771
 \item
 \user{@AndrasDeak} for his very extensive testing of the compiler. Also for his help (together with \user{@beaker}) regarding a bug in Octave's \matlab+ismember+ function with complex inputs.
 % https://chat.stackoverflow.com/transcript/message/40084076#40084076
