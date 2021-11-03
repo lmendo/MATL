@@ -1899,11 +1899,11 @@ Yv	1	2	1		1	3	1	[false true false]	true	true	true	true	if isnumeric(in{1}) || is
 % The above is needed to include 0 as whitespace
 													out{1} = strtrim(in{:});
 													end
-Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && (isnumeric(in{1})||isa(in{1},'sym'))	symmetric range / symmetric array / remove trailing blanks	(i) For one scalar numeric or symbolic input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two numeric inputs: applies symmetric range indexing to the first input along each dimension specified by the (linearized) second input. The indexing along a given dimension doesn't repeat the last entry if the number specifying the dimension is positive, and repeats it if negative. (iii) For one string or cell array input: \matlab+deblank+
+Zv	1	2	1	2	1	1	1		true	true	true	true	if (numel(in)==1) && (numel(in{1})==1) && (isnumeric(in{1})||isa(in{1},'sym'))	symmetric range / symmetric array / remove trailing blanks	(i) For one scalar numeric or symbolic input \matlab+n+: symmetric range. For nonnegative \matlab+n+ it rounds down and then gives \matlab+[1:n n-1:-1:1]+; for negative \matlab+n+ it removes sign, rounds down and gives \matlab+[n:-1:1 2:n]+. (ii) For two numeric inputs, or a logical and a numeric input: applies symmetric range indexing to the first input along each dimension specified by the (linearized) second input. The indexing along a given dimension doesn't repeat the last entry if the number specifying the dimension is positive, and repeats it if negative. (iii) For one string or cell array input: \matlab+deblank+
 													if in{1}>=0, in{1} = floor(in{1}); out{1} = [1:in{1} in{1}-1:-1:1]; else, in{1} = floor(-in{1}); out{1} = [in{1}:-1:1 2:in{1}]; end
 													elseif (numel(in)==1) && (ischar(in{1})||iscell(in{1}))
 													out{1} = deblank(in{:});
-													elseif (numel(in)==2) && isnumeric(in{1}) && isnumeric(in{2})
+													elseif (numel(in)==2) && (isnumeric(in{1})||islogical(in{1})) && isnumeric(in{2})
 													result = in{1};
 													for k = in{2}(:).'
 													removeLast = k>0; dim = abs(k);
