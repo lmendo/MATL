@@ -1443,6 +1443,8 @@ Octave's \matlab+ismember+, \matlab+mean+, \matlab+svd+, \matlab+gcd+, \matlab+l
 \matlab+bwlabeln+ with first input of size  $1 \times 1$ different than \matlab+0+ or \matlab+false+ gives an error on some systems.
 % TIO, Octave 4.2.2, Linux 5.2.11-100.fc29.x86_64 (Fedora). vi21
 This has been fixed.
+\item
+\matlab+perms+ with an input array with more than one singleton dimension gives a different result in Octave than in MATLAB (where the result corresponds to linearizing the input). This has been fixed.
 \end{itemize}
 
 
