@@ -115,6 +115,7 @@
 \matl{ZI} & 1-- (2 / 3) & 1-- (1) & Depending on numeric last input, calls an image processing function with the remaining inputs.  $0$: \matlab+imfill+. If first input is logical or numerical it is converted to char.  $1$: \matlab+bwlabeln+.  $2$: \matlab+imdilate+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.  $3$: \matlab+imerode+. This function allows second input to be number $4$, $5$, $8$ or $9$, which is interpreted as the corresponding neighbourhood mask.  $4$: \matlab+bweuler+.  \\
 \matl{J} & 0 & 0-- ($^\dagger$) & paste from clipboard J \\
 \matl{XJ} & 0-- (1) & 0 & copy to clipboard J \\
+\matl{ZJ} & 1-- (2 / 3) & 0-- (1) & Depending on numeric last input, calls a symbolic-specific function with the remaining inputs.  $0$: \matlab+simplify+.  $1$: \matlab+pretty+.  $2$: \matlab+latex+.  $3$: \matlab+numden+.  \sa \matl{X\$} \\
 \matl{K} & 0 & 0-- ($^\dagger$) & paste from clipboard K \\
 \matl{XK} & 0-- (1) & 0 & copy to clipboard K \\
 \matl{L} & 1 & 0-- ($^\dagger$) & paste from multi-level clipboard L. Input specifies level \\

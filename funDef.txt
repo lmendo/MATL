@@ -920,7 +920,19 @@ ZI	1	inf	2	3	1	inf	1		true	true	true	true	switch in{end}	image processing functi
 J	0	0	0		0	inf	numel(CB_J)		true	true	false	true	out = CB_J(1:nout);	paste from clipboard J	paste from clipboard J
 XJ	0	inf	1		0	0	0		false	true	false	true	CB_J = in;	copy to clipboard J	copy to clipboard J
 YJ
-ZJ
+ZJ	1	inf	2	3	0	inf	1		true	true	true	true	assert(strcmp(class(in{1}), 'sym'), 'MATL:runtime', 'MATL run-time error: first input is not symbolic')	symbolic-specific functions	Depending on numeric last input, calls a symbolic-specific function with the remaining inputs.  $0$: \matlab+simplify+.  $1$: \matlab+pretty+.  $2$: \matlab+latex+.  $3$: \matlab+numden+.  \sa \matl+X$+
+													switch in{end}
+													case 0
+													[out{:}] = simplify(in{1:end-1});
+													case 1
+													[out{:}] = pretty(in{1:end-1});
+													case 2
+													[out{:}] = latex(in{1:end-1});
+													case 3
+													[out{:}] = numden(in{1:end-1});
+													otherwise
+													error('MATL:runtime', 'MATL run-time error: unrecognized last input');
+													end
 K	0	0	0		0	inf	numel(CB_K)		true	true	false	true	out = CB_K(1:nout);	paste from clipboard K	paste from clipboard K
 XK	0	inf	1		0	0	0		false	true	false	true	CB_K = in;	copy to clipboard K	copy to clipboard K
 YK
