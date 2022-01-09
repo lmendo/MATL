@@ -246,9 +246,11 @@ for n = 1:numel(descrFormatted)
             % necessary (that depends on the function. For `find` it would be necessary, because its first output changes
             % depending on whether there's a second output or not). So I don't specify
         case {'[false true false]' '[false,true,false]' '[false, true, false]'}
-            altOutStr = '2nd'; % It should be specified "2nd of 3"
+            altOutStr = '2nd'; % It should be specified '2nd of 3'
         case {'[false false true]' '[false,false,true]' '[false, false, true]'}
             altOutStr = '3rd';
+        case {'[true false false true]' '[true,false,false,true]' '[true, false, false, true]'}
+            altOutStr = '1st and 4th';
         case {'ndims(in{1})'}
             altOutStr = 'number of dimensions of first input';
         otherwise

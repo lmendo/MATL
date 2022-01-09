@@ -115,6 +115,8 @@ for n = 1:numel(F)
                         altOut = '2nd';
                     case {'[false false true]' '[false,false,true]' '[false, false, true]'}
                         altOut = '3rd';
+                    case {'[true false false true]' '[true,false,false,true]' '[true, false, false, true]'}
+                        altOut = '1st and 4th';
                     case {'ndims(in{1})'}
                         altOut = '$^\times$';
                     otherwise
