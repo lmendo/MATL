@@ -1,4 +1,4 @@
-function varargout = bwlabeln_comp(varargin)
+function varargout = bwlabeln(varargin)
 % bwlabeln(1), bwlabeln(8), bwlabeln(true) give an error on TIO. This patches that
 if numel(varargin{1})==1 && varargin{1} % patch
     varargout{1} = 1;

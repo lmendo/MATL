@@ -1,4 +1,4 @@
-function BW2 = bwselect_comp(BW1, C, R, N)
+function BW2 = bwselect(BW1, C, R, N)
 % bwselect in some versions of Octave's Image Package (for example 2.12.0) gives different results
 % from those in Matlab. This fixes that. The approach used here is: find the connected components
 % and select those that contain any of the input pixels
