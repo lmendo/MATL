@@ -749,7 +749,14 @@ XE	3	3	3		1	1	1		true	true	true	true	if numel(in{3})==1, in{3} = repmat(in{3}, s
 													out{1} = z; clear ii jj x y
 													end
 YE
-ZE
+ZE	1	4	1	2	1	1	1		true	true	true	true	if numel(in)<=3	N-dimensional inverse discrete Fourier transform (IFFT)	(i) With $1$, $2$ or $3$ inputs: \matlab+ifftn+. If first input is a vector and second input is a scalar, a $1$ is prepended or appended to the second input according to the vector orientation (so the result is the same as that of \matlab+ifft+). (ii) With $4$ inputs: \matlab+ifft+
+													if numel(in)>=2 && isvector(in{1}) && isscalar(in{2}), if size(in{1},1)==1, in{2} = [1 in{2}]; else in{2} = [in{2} 1]; end, end
+													out{1} = ifftn(in{:});
+													elseif numel(in)==4
+													out{1} = ifft(in{:});
+													else
+													error('MATL:runtime', 'MATL run-time error: incorrect number of inputs')
+													end
 F
 XF
 YF	1	1	1		1	2	1	2	true	true	true	true	trim = (any(in{1}<0) && (nout==1)) || (~any(in{1}<0) && (nout==2)); in{1} = abs(in{1});	Exponents of prime factor decomposition	(i) With $1$ output: exponents of prime factor decomposition, without skipping primes. If the input is a numeric array it is linearized, and each result is in an output row. If any entry in the input is negative, the absolute value is taken, and the output contains only non-zero exponents. (ii) With $2$ outputs: first output gives the prime factors, second gives the exponents. Primes that are not factors are skipped, as are their zero exponents. If any entry in the input is negative, the absolute value is taken, and all intermediate primes are included, possibly with zero exponents. \sa \matl+Yf+

@@ -331,6 +331,7 @@ Y5
 4	'pre'
 5	'post'
 6	'both'
+7	'nonsymmetric'
 
 
 
