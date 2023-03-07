@@ -967,7 +967,7 @@ M	1	1	1		0	inf	1+(in{1}<=numCbM)*(numel(CB_M{mod(in{1}-1,numCbM)+1})-1)		true	tr
 													else
 													error('MATL:runtime', 'MATL run-time error: incorrect input')
 													end
-XM	1	2	1		1	3	1		true	true	true	true	if ~iscell(in{1})	mode (most frequent value)	\matlab+mode+. First input can be a cell array of strings
+XM	1	2	1		1	3	1	[false true]	true	true	true	true	if ~iscell(in{1})	mode (most frequent value)	\matlab+mode+. First input can be a cell array of strings
 													[out{:}] = mode(in{:});
 													else
 													[x, ~, y] = unique(in{1}(:));
