@@ -586,7 +586,7 @@ Z?	1	6	3		1	1	1		true	true	true	true	charOut = numel(in)==3 && ischar(in{3});	cr
 													clear k charOut y
 @
 X@
-Y@	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	all possible permutations / variations	If $1$ input: \matlab+perms+. If $2$ inputs: variations (without repetition). In either case, the results are sorted
+Y@	1	2	1	2	1	1	1		true	true	true	true	if numel(in)==1	all possible permutations / variations	If $1$ input: \matlab+perms+. If $2$ inputs: variations (without repetition). In either case, the rows in the result are sorted in ascending order as a group
 													out{1} = sortrows(perms(in{:}));
 													else
 													n = in{2}; combs = cell(1,n);
