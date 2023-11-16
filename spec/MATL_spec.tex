@@ -1268,7 +1268,7 @@ Lines of compiled code are stored in a cell array of strings \matlab+C+, from wh
 
 The function definition file and predefined literal file centralize all information about functions. This allows to define new functions without actually modifying the compiler code.
 
-The \parte{run function}, \matlab+matl_compile+, executes the compiled program. If an error is found, an error message is issued with a link to the MATL statement that generated the error. In debug mode it inserts breakpoints and opens relevant variables (taking advantage of MATLAB's \matlab+openvar+).
+The \parte{run function}, \matlab+matl_run+, executes the compiled program. If an error is found, an error message is issued with a link to the MATL statement that generated the error. In debug mode it inserts breakpoints and opens relevant variables (taking advantage of MATLAB's \matlab+openvar+).
 
 The \parte{help function}, \matlab+matl_help+, provides command-line help. It uses a struct array \matlab+H+ that contains help information for all MATL functions and statements. This struct array is generated from the function definition file, the predefined literal file and additional information by a \matlab+genHelp+ function, and is stored in file \matlab+help.mat+.
 
