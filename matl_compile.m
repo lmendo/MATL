@@ -19,8 +19,8 @@ function S = matl_compile(S, F, L, pOutFile, cOutFile, verbose, isMatlab, verNum
 %
 % The multi-level clipboard L (variable 'CB_L') is a cell array of cells. The "outer" cells
 % refer to clipboard levels. The "inner cells" refer to copied elements within that clipboard 
-% level. CB_L is a dynamic cell array: outer cells are created on the fly
-% when clipboard levels are copied to.
+% level. CB_L is a dynamic cell array: outer cells are created on the fly when clipboard levels
+% are copied to.
 
 global indStepComp C implicitInputBlock
 
@@ -256,7 +256,7 @@ for n = 1:numel(S)
                 appendLines(implicitInputBlock, S(n).nesting); % code block for implicit input
                 newLines = { sprintf('condDoWhile%i = STACK{end}; if ~isreal(condDoWhile%i), condDoWhile%i = real(condDoWhile%i); end', S(n).nesting, S(n).nesting, S(n).nesting, S(n).nesting) ...
                     'STACK(end) = [];' ...
-                    sprintf('if condDoWhile%i, else', S(n).nesting) }; % We use 'if condDoWhile%i, else' rather than 'if ~condDoWhile%i'
+                    sprintf('if condDoWhile%i, else', S(n).nesting) }; % we use 'if condDoWhile%i, else' rather than 'if ~condDoWhile%i'
                     % so as to reproduce Matlab's behaviour when the condition is an array ('if ~condDoWhile%i' wouldn't do)
                 appendLines(newLines, S(n).nesting);
             elseif strcmp(S(S(n).from).type, 'controlFlow.while')
@@ -312,7 +312,25 @@ for n = 1:numel(S)
         case 'controlFlow.break'
             appendLines('break', S(n).nesting)
         case 'controlFlow.continue'
-            appendLines('continue', S(n).nesting)
+            if strcmp(S(S(n).from).type, 'controlFlow.for') || strcmp(S(S(n).from).type, 'controlFlow.doTwice') 
+                appendLines('continue', S(n).nesting)
+            elseif strcmp(S(S(n).from).type, 'controlFlow.doWhile')
+                % evaluate loop condition before 'continue', as would be done before 'end'. The
+                % loop condition has nesting corresponding to the "from" statement, not to the
+                % current statement
+                newLines = { sprintf('condDoWhile%i = STACK{end}; if ~isreal(condDoWhile%i), condDoWhile%i = real(condDoWhile%i); end', S(S(n).from).nesting, S(S(n).from).nesting, S(S(n).from).nesting, S(S(n).from).nesting) ...
+                        'STACK(end) = [];' ...
+                        'continue' };
+                appendLines(newLines, S(n).nesting);
+            elseif strcmp(S(S(n).from).type, 'controlFlow.while')
+                % same as for 'doWhile' loop, just changing the root of the name of the condition variable
+                newLines = { sprintf('condWhile%i = STACK{end}; if ~isreal(condWhile%i), condWhile%i = real(condWhile%i); end', S(S(n).from).nesting, S(S(n).from).nesting, S(S(n).from).nesting, S(S(n).from).nesting) ...
+                    'STACK(end) = [];' ...
+                    'continue' };
+                appendLines(newLines, S(n).nesting);
+            else
+                error('MATL:compiler:internal', 'MATL internal error while compiling statement %s%s%s', strongBegin, S(n).source, strongEnd)
+            end
         case 'controlFlow.forValue'
             k = S(S(n).from).nesting;
             appendLines(sprintf('STACK{end+1} = varFor%i;', k), S(n).nesting)
