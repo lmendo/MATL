@@ -1,10 +1,10 @@
 function genPreLitTableLatex
 
 p = path;
-if exist('C:\Users\Luis\Dropbox\MATL', 'dir')
-    baseFolder = 'C:\Users\Luis\Dropbox\MATL';
-elseif exist('C:\Users\lmendo\Dropbox\MATL', 'dir')
-    baseFolder = 'C:\Users\lmendo\Dropbox\MATL';
+if exist('C:\Users\Luis\Google Drive\MATL', 'dir')
+    baseFolder = 'C:\Users\Luis\Google Drive\MATL';
+elseif exist('C:\Users\lmendo\Google Drive\MATL', 'dir')
+    baseFolder = 'C:\Users\lmendo\Google Drive\MATL';
 else
     error('Base folder not found')
 end
