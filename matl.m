@@ -59,7 +59,7 @@ elseif numel(varargin)==2 && varargin{1}(1)=='-'
     s = varargin{2};
     inputNeeded = false;
 elseif numel(varargin)==2 && varargin{1}(1)~='-'
-    error('MATL:main', 'MATL error while processing options: two input strings have identified, but the first string does not begin with %s-%s', strongBegin, strongEnd)
+    error('MATL:main', 'MATL error while processing options: two input strings have been identified, but the first string does not begin with %s-%s', strongBegin, strongEnd)
 else
     error('MATL:main', 'MATL error while processing options: the number of inputs cannot exceed 2')
 end
