@@ -1618,8 +1618,8 @@ j	0	1	0		1	1	1		true	true	true	true	if isempty(in), in{1} = defaultInputPrompt; 
 Xj	1	1	1		1	1	1		true	true	true	true	out{1} = real(in{:});	real part	\matlab+real+
 Yj	1	1	1		1	1	1		true	true	true	true	out{1} = imag(in{:});	imaginary part	\matlab+imag+
 Zj	1	1	1		1	2	1	2	true	true	true	true	if nout==1, out{1} = conj(in{1}); elseif nout==2, out = {real(in{1}), imag(in{1})}; end	complex conjugate / real and imaginary parts	(i) With one output: complex conjugate (\matlab+conj+). (ii) With two outputs: real and imaginary parts (\matlab+real+, \matlab+imag+)
-k	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical or symbolic arrays
-Xk	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical or symbolic arrays
+k	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = floor(in{1}); else, out{1} = lower(in{1}); end	convert string to lowercase / round towards minus infinity	\matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical or symbolic arrays. \sa \matl+Xk+
+Xk	1	1	1		1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym'), out{1} = ceil(in{1}); else, out{1} = upper(in{1}); end	convert string to uppercase / round towards infinity	\matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical or symbolic arrays. \sa \matl+k+
 Yk	2	2	2		1	3	1	[false false true]	true	true	true	true	x = in{1}(:).'; y = in{2}(:); if ~isa(x,'sym')&&~isa(y,'sym') [dmin, ind] = min(abs(bsxfun(@minus, x, y)),[],1); else [dmin, ind] = min(abs(x-y),[],1); end	closest value	closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements
 													out{1} = reshape(y(ind), size(in{1}));
 													if nout>=2, out{2} = reshape(dmin, size(in{1})); end;
@@ -1734,7 +1734,7 @@ Yo	1	3	1	2	1	1	1		true	true	true	true	if isnumeric(in{1}) || isa(in{1},'sym')	ro
 													end
 													end
 													out{1} = y; clear x xlu ind t nn
-Zo	1	1	1		1	1	1		true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+
+Zo	1	1	1		1	1	1		true	true	true	true	out{1} = fix(in{:});	round to nearest integer towards zero	\matlab+fix+. \sa \matl+k+, \matl+Xk+
 p	1	3	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{:});	product of elements	\matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl|Xp|
 Xp	1	3	1		1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end; out{1} = prod(in{1},1,in{2:end});	product along first dimension	\matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl+p+.
 Yp	1	4	1	2	1	1	1		true	true	true	true	if ischar(in{1}), in{1} = double(in{1}); end;	cumulative product	\matlab+cumprod+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the product at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively

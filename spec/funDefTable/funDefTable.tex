@@ -205,8 +205,8 @@
 \matl{Xj} & 1 & 1 & \matlab+real+ \\
 \matl{Yj} & 1 & 1 & \matlab+imag+ \\
 \matl{Zj} & 1 & 1--2 (1 / 2) & (i) With one output: complex conjugate (\matlab+conj+). (ii) With two outputs: real and imaginary parts (\matlab+real+, \matlab+imag+) \\
-\matl{k} & 1 & 1 & \matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical or symbolic arrays \\
-\matl{Xk} & 1 & 1 & \matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical or symbolic arrays \\
+\matl{k} & 1 & 1 & \matlab+lower+ for strings or cell arrays; \matlab+floor+ for numerical or symbolic arrays. \sa \matl{Xk} \\
+\matl{Xk} & 1 & 1 & \matlab+upper+ for strings or cell arrays of strings; \matlab+ceil+ for numerical or symbolic arrays. \sa \matl{k} \\
 \matl{Yk} & 2 & 1--3 (1 / 3rd) & closest value in second input to each value in first input, in terms of absolute difference. For equidistant values it picks the one that appears first (in linear order) in the second input. Second output gives resulting absolute differences. Third output gives linear indices of selected elements \\
 \matl{l} & 0-- (0 / 2) & 1 & \matlab+ones+ (if $0$ inputs: produces output $1$) \\
 \matl{Xl} & 2--3 (2 / 3) & 1 & (i) With $2$ inputs, the minimum of the two inputs is computed, element-wise with singleton expansion. (ii) With $3$ inputs, the function computes the minimum between the first and the second, and then the maximum between that and the third, element-wise with singleton expansion. (i, ii) Output is \matlab+char+ if first input is. \sa \matl{X<}, \matl{X>} \\
@@ -222,7 +222,7 @@
 \matl{o} & 1--3 (1 / 2) & 1 & (i) With one non-cell array, non-\matlab+double+ input: \matlab+double+. (ii) For cell array input behaves similarly to \matlab+char+: linearizes cell array, converts cell contents to \matlab+double+ and concatenates vertically, padding if needed. By default, padding is with zeros on the right. Optional second input indicates fill side: left if it evaluates to \matlab+false+, right if it evaluates to \matlab+true+. Third optional input specifies fill value. (iii) With one input of type \matlab+double+: \matlab+mod(..., 2)+ \\
 \matl{Xo} & 1 & 1 & \matlab+int64+ \\
 \matl{Yo} & 1--3 (1 / 2) & 1 & (i) For numeric arrays: \matlab+round+. Third input can be a number instead of a string, as follows: 1: \matlab+'significant'+, 2: \matlab+'decimals'+. (ii) For character arrays or cell arrays of strings: change case. Optional second input specifies in which characters or cells the case will be changed \\
-\matl{Zo} & 1 & 1 & \matlab+fix+ \\
+\matl{Zo} & 1 & 1 & \matlab+fix+. \sa \matl{k}, \matl{Xk} \\
 \matl{p} & 1--3 (1 / 2) & 1 & \matlab+prod+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl{Xp} \\
 \matl{Xp} & 1--3 (1) & 1 & \matlab+prod(..., 1, ...)+. If first input is \matlab+char+ it is converted to \matlab+double+. \sa \matl{p}. \\
 \matl{Yp} & 1--4 (1 / 2) & 1 & \matlab+cumprod+. Allows first input to be char. If $3$ numeric inputs: the third input is interpreted as a minimum which is applied after the product at each position. If $4$ numeric inputs: last two inputs are minimum and maximum respectively \\
